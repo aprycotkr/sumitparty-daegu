@@ -1,0 +1,291 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, viewport-fit=cover, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>대구 동성로점 — 썸잇</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
+<meta name="description" content="썸잇 대구 동성로점 솔로파티 날짜 선택">
+<meta property="og:title" content="대구 동성로점 — 썸잇">
+<meta property="og:image" content="https://sumitparty.com/og-image.png">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://sumitparty.com/daegu-booking.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,
+'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','821379504055811');fbq('track','PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=821379504055811&ev=PageView&noscript=1"/></noscript>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#C9A96E;--gold-light:#E8D4A8;
+  --black:#0A0A0A;--dark:#141414;--border:#242424;
+  --font-display:'Cormorant Garamond',serif;--font-body:'Montserrat',sans-serif;
+}
+html{overflow-x:hidden;-webkit-text-size-adjust:none}
+body{background:var(--black);color:#fff;font-family:var(--font-body);min-height:100vh;overflow-x:hidden}
+
+/* ── VENUE HEADER ── */
+.venue-header{
+  position:relative;height:280px;overflow:hidden;
+  cursor:pointer;
+}
+.venue-header img.vh-bg{
+  width:100%;height:100%;object-fit:cover;
+  filter:brightness(0.42);transition:filter 0.35s;
+  display:block;
+}
+.venue-header:hover img.vh-bg{filter:brightness(0.52);}
+.vh-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to bottom,rgba(0,0,0,0.15) 0%,rgba(0,0,0,0.68) 100%);
+  pointer-events:none;
+}
+.vh-content{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  padding:20px 22px 26px;
+}
+.back-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  color:rgba(255,255,255,0.78);font-size:0.83rem;font-weight:500;
+  width:fit-content;transition:color 0.2s;text-decoration:none;
+}
+.back-btn svg{opacity:0.7;}
+.venue-header:hover .back-btn{color:#fff;}
+.vh-info{margin-top:auto;}
+.vh-addr{
+  display:flex;align-items:center;gap:5px;
+  margin-bottom:9px;
+}
+.vh-addr span{font-size:0.76rem;color:rgba(255,255,255,0.58);font-weight:400;}
+.vh-name{
+  font-family:var(--font-display);
+  font-size:2.1rem;font-weight:600;color:#fff;
+  letter-spacing:0.02em;line-height:1.1;
+}
+.vh-tag{
+  margin-top:7px;font-size:0.7rem;
+  color:rgba(255,255,255,0.42);letter-spacing:0.08em;text-transform:uppercase;
+}
+
+/* ── CONTENT ── */
+.wrap{max-width:520px;margin:0 auto;padding:26px 16px 80px;}
+.sec-label{
+  font-size:0.68rem;font-weight:700;
+  letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:14px;
+}
+
+/* ── PARTY CARDS ── */
+.party-list{display:flex;flex-direction:column;gap:10px;}
+.party-card{
+  background:var(--dark);border:1px solid var(--border);
+  border-radius:14px;padding:18px 18px 16px;
+  transition:border-color 0.2s,background 0.2s;
+}
+.party-card:not(.is-closed):hover{border-color:#333;background:#181818;}
+.party-card.is-closed{opacity:0.4;pointer-events:none;}
+
+.pc-top{
+  display:flex;align-items:flex-start;
+  justify-content:space-between;gap:10px;
+  margin-bottom:13px;
+}
+.pc-date-col{}
+.pc-date{font-size:1.02rem;font-weight:600;color:#fff;margin-bottom:3px;}
+.pc-time{font-size:0.78rem;color:rgba(255,255,255,0.4);}
+.pc-badges{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;}
+.bdg-open{
+  background:linear-gradient(135deg,#C9A96E,#a07840);
+  color:#000;font-size:0.6rem;font-weight:800;
+  padding:3px 9px;border-radius:4px;
+  letter-spacing:0.08em;text-transform:uppercase;
+}
+.bdg-almost{
+  background:rgba(255,65,25,0.13);color:#ff6040;
+  border:1px solid rgba(255,65,25,0.28);
+  font-size:0.6rem;font-weight:700;
+  padding:3px 8px;border-radius:4px;
+}
+.bdg-closed-pill{
+  background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.28);
+  font-size:0.6rem;font-weight:600;
+  padding:3px 8px;border-radius:4px;
+}
+
+.pc-bottom{
+  display:flex;align-items:center;
+  justify-content:space-between;gap:8px;
+}
+.pc-seats{font-size:0.78rem;color:rgba(255,255,255,0.38);font-weight:400;}
+.btn-apply{
+  background:transparent;border:1px solid var(--gold);
+  color:var(--gold);font-family:var(--font-body);
+  font-size:0.82rem;font-weight:600;
+  padding:9px 20px;border-radius:9px;cursor:pointer;
+  letter-spacing:0.03em;text-decoration:none;display:inline-block;
+  transition:background 0.2s,color 0.2s;white-space:nowrap;
+}
+.btn-apply:hover{background:var(--gold);color:#000;}
+.btn-closed-label{
+  font-size:0.8rem;font-weight:500;
+  color:rgba(255,255,255,0.2);
+  border:1px solid rgba(255,255,255,0.1);
+  padding:9px 20px;border-radius:9px;
+}
+
+.loading-ph{
+  text-align:center;padding:44px 0;
+  color:rgba(255,255,255,0.28);font-size:0.84rem;
+}
+
+@media(max-width:480px){
+  .venue-header{height:240px;}
+  .vh-content{padding:16px 18px 20px;}
+  .vh-name{font-size:1.7rem;}
+  .wrap{padding:20px 14px 60px;}
+  .party-card{padding:16px 14px 14px;}
+  .pc-bottom{gap:6px;}
+  .btn-apply{padding:9px 14px;font-size:0.78rem;}
+  .pc-seats{font-size:0.72rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- VENUE HEADER — click goes to party intro -->
+<div class="venue-header" id="venueHeaderDiv" onclick="goToVenue()">
+  <img class="vh-bg" src="대구점.jpg" alt="대구 동성로점">
+  <div class="vh-overlay"></div>
+  <div class="vh-content">
+    <span class="back-btn" onclick="event.stopPropagation();window.location.href='daegu.html'">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      홈으로
+    </span>
+    <div class="vh-info">
+      <div class="vh-addr">
+        <span>📍 대구 중구 경상감영길 32 3층</span>
+      </div>
+      <div class="vh-name">대구 동성로점</div>
+      <div class="vh-tag">매주 토요일 · 19:00–23:00</div>
+    </div>
+  </div>
+</div>
+
+<!-- PARTY LIST -->
+<div class="wrap">
+  <div class="sec-label">신청 가능한 파티</div>
+  <div class="party-list" id="partyList">
+    <div class="loading-ph">날짜 불러오는 중…</div>
+  </div>
+</div>
+
+<script>
+var DAEGU_GAS_URL = 'https://script.google.com/macros/s/AKfycbxnJhftdjyEro7uKUNTfsAKp7U1g7knABAQBeebu5mfIIkonjXcTlgRK8qUanuOZ4prxw/exec';
+var OPEN_DATE = '2026-07-11';
+
+var FIRST_PARTY = new Date('2026-07-11T00:00:00+09:00');
+
+function getSaturdays(n) {
+  var days = [];
+  var d = new Date();
+  d.setHours(0,0,0,0);
+  var diff = (6 - d.getDay() + 7) % 7 || 7;
+  d.setDate(d.getDate() + diff);
+  if (d < FIRST_PARTY) d = new Date(FIRST_PARTY);
+  for (var i = 0; i < n; i++) {
+    days.push(new Date(d));
+    d.setDate(d.getDate() + 7);
+  }
+  return days;
+}
+function toKey(d){
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function toLabel(d){
+  return (d.getMonth()+1)+'월 '+d.getDate()+'일 (토)';
+}
+
+function renderList(status){
+  var list = document.getElementById('partyList');
+  var sats = getSaturdays(5);
+  list.innerHTML = '';
+
+  sats.forEach(function(d){
+    var key = toKey(d);
+    var label = toLabel(d);
+    var st = status[key] || {};
+    var maleSt = st.male || 'open';
+    var femaleSt = st.female || 'open';
+    var allClosed = maleSt==='closed' && femaleSt==='closed';
+    var anyAlmost = !allClosed && (maleSt==='almost' || femaleSt==='almost');
+    var isOpen = (key === OPEN_DATE);
+    var mRem = st.maleRemaining !== undefined ? st.maleRemaining : 20;
+    var fRem = st.femaleRemaining !== undefined ? st.femaleRemaining : 20;
+
+    var badges = '';
+    if (allClosed) {
+      badges = '<span class="bdg-closed-pill">마감</span>';
+    } else {
+      if (isOpen) badges += '<span class="bdg-open">OPEN 할인</span>';
+      if (anyAlmost) badges += '<span class="bdg-almost">마감임박</span>';
+    }
+
+    var btn = allClosed
+      ? '<span class="btn-closed-label">마감</span>'
+      : '<a class="btn-apply" href="daegu-party.html?date='+key+'">신청하기</a>';
+
+    var seats = allClosed
+      ? '모집 마감'
+      : '남 '+mRem+'/20 · 여 '+fRem+'/20 남음';
+
+    var card = document.createElement('div');
+    card.className = 'party-card'+(allClosed?' is-closed':'');
+    card.innerHTML =
+      '<div class="pc-top">'+
+        '<div class="pc-date-col">'+
+          '<div class="pc-date">'+label+'</div>'+
+          '<div class="pc-time">19:00–23:00</div>'+
+        '</div>'+
+        '<div class="pc-badges">'+badges+'</div>'+
+      '</div>'+
+      '<div class="pc-bottom">'+
+        '<span class="pc-seats">'+seats+'</span>'+
+        btn+
+      '</div>';
+    list.appendChild(card);
+  });
+
+  // store first available date for venue header click
+  var first = sats.find(function(d){
+    var k = toKey(d);
+    var st2 = status[k] || {};
+    return !(st2.male==='closed' && st2.female==='closed');
+  });
+  window._venuePartyDate = first ? toKey(first) : '';
+}
+
+function goToVenue() {
+  var date = window._venuePartyDate || '';
+  window.location.href = 'daegu-party.html' + (date ? '?date='+date : '');
+}
+
+(function init(){
+  if (!DAEGU_GAS_URL) { renderList({}); return; }
+  fetch(DAEGU_GAS_URL+'?action=getDateStatus')
+    .then(function(r){return r.json();})
+    .then(function(res){ renderList(res.result==='success' ? res.data||{} : {}); })
+    .catch(function(){ renderList({}); });
+})();
+</script>
+</body>
+</html>

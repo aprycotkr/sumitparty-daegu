@@ -1,0 +1,322 @@
+// ================================================================
+// 썸잇 대구점 Google Apps Script
+//
+// 설치 방법:
+// 1. script.google.com → 새 프로젝트 생성
+// 2. 이 코드 전체 붙여넣기
+// 3. SPREADSHEET_ID, SOLAPI_API_KEY, SOLAPI_API_SECRET, SENDER_NUMBER 입력
+// 4. 배포 → 새 배포 → 웹 앱 → "모든 사용자" 접근, "나" 실행 → 배포
+// 5. 배포 URL을 daegu-apply.html의 DAEGU_CONFIG.DAEGU_GAS_URL에 입력
+// ================================================================
+
+// ── 설정 ──────────────────────────────────────────────────────
+const CONFIG = {
+  SPREADSHEET_ID: '1GmyPzz70F2zyNTyMic0qs5Hsrvw8iU1gZH_QbDjtVEg',
+  SHEET_NAME: '신청자',
+  DATE_SHEET_NAME: '날짜관리',
+  SOLAPI_API_KEY: '',          // Solapi 발급 API Key
+  SOLAPI_API_SECRET: '',       // Solapi 발급 API Secret
+  SENDER_NUMBER: '',           // 발신번호 (숫자만: 01012345678)
+};
+
+// ── 열 인덱스 (0-based) ───────────────────────────────────────
+const COL = {
+  TIMESTAMP:  0,  // A: 제출시간
+  DATE:       1,  // B: 파티날짜
+  NAME:       2,  // C: 이름
+  GENDER:     3,  // D: 성별
+  BIRTH:      4,  // E: 생년월일
+  INSTAGRAM:  5,  // F: 인스타그램
+  PHONE:      6,  // G: 연락처
+  TICKET:     7,  // H: 권종
+  PRICE:      8,  // I: 금액
+  PHOTO_URL:  9,  // J: 사진URL
+  STATUS:    10,  // K: 심사결과 (검토중/합격/불합격)
+};
+
+// ── 진입점 ────────────────────────────────────────────────────
+function doGet(e) {
+  const action = e.parameter.action || '';
+  try {
+    if (action === 'getDateStatus') {
+      return jsonResponse(getDateStatus());
+    }
+    if (action === 'updateDateStatus') {
+      return jsonResponse(updateDateStatusFromGet(e.parameter));
+    }
+    return jsonResponse({ result: 'error', message: 'unknown action' });
+  } catch (err) {
+    return jsonResponse({ result: 'error', message: err.message });
+  }
+}
+
+function doPost(e) {
+  try {
+    const payload = JSON.parse(e.postData.contents);
+    const action = payload.action || '';
+    if (action === 'submitApplication') {
+      return jsonResponse(submitApplication(payload));
+    }
+    if (action === 'updateDateStatus') {
+      return jsonResponse(updateDateStatus(payload));
+    }
+    return jsonResponse({ result: 'error', message: 'unknown action' });
+  } catch (err) {
+    return jsonResponse({ result: 'error', message: err.message });
+  }
+}
+
+// ── 날짜 상태 조회 ────────────────────────────────────────────
+// 날짜관리 시트 구조:
+//   A: 날짜 (YYYY-MM-DD)  B: 남성상태  C: 여성상태
+//   상태값: open / almost / closed
+// 응답에 maleRemaining / femaleRemaining (신청자 시트 집계) 포함
+function getDateStatus() {
+  const ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
+  const data = {};
+
+  // 날짜관리 시트에서 상태 읽기
+  const dateSheet = ss.getSheetByName(CONFIG.DATE_SHEET_NAME);
+  if (dateSheet) {
+    dateSheet.getDataRange().getValues().forEach(function(row) {
+      const dateKey = row[0] ? Utilities.formatDate(new Date(row[0]), 'Asia/Seoul', 'yyyy-MM-dd') : null;
+      if (!dateKey) return;
+      data[dateKey] = { male: row[1] || 'open', female: row[2] || 'open' };
+    });
+  }
+
+  // 신청자 시트에서 날짜별 남녀 인원 집계 (불합격 제외)
+  const applySheet = ss.getSheetByName(CONFIG.SHEET_NAME);
+  if (applySheet && applySheet.getLastRow() > 1) {
+    const rows = applySheet.getRange(2, 1, applySheet.getLastRow() - 1, 11).getValues();
+    const counts = {};
+    rows.forEach(function(row) {
+      const dateKey = String(row[COL.DATE] || '').trim();
+      const gender  = String(row[COL.GENDER] || '').trim();
+      const status  = String(row[COL.STATUS] || '').trim();
+      if (!dateKey || !gender || status === '불합격') return;
+      if (!counts[dateKey]) counts[dateKey] = { male: 0, female: 0 };
+      if (gender === '남성') counts[dateKey].male++;
+      else if (gender === '여성') counts[dateKey].female++;
+    });
+    Object.keys(counts).forEach(function(key) {
+      if (!data[key]) data[key] = { male: 'open', female: 'open' };
+      data[key].maleRemaining   = Math.max(0, 20 - counts[key].male);
+      data[key].femaleRemaining = Math.max(0, 20 - counts[key].female);
+    });
+  }
+
+  return { result: 'success', data: data };
+}
+
+// ── 날짜 상태 업데이트 (GET 방식 — 어드민에서 호출) ──────────
+function updateDateStatusFromGet(params) {
+  const dateStr = String(params.date || '').trim();
+  if (!dateStr) return { result: 'error', message: 'date required' };
+  const male   = params.male   || 'open';
+  const female = params.female || 'open';
+  return updateDateStatus({ updates: [{ date: dateStr, male: male, female: female }] });
+}
+
+// ── 날짜 상태 업데이트 ────────────────────────────────────────
+// payload: { action, updates: [{ date: 'YYYY-MM-DD', male: 'open', female: 'open' }, ...] }
+// 날짜관리 시트에 행이 없으면 추가, 있으면 남성상태/여성상태 덮어씀
+function updateDateStatus(payload) {
+  const ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
+  let sheet = ss.getSheetByName(CONFIG.DATE_SHEET_NAME);
+  if (!sheet) {
+    sheet = ss.insertSheet(CONFIG.DATE_SHEET_NAME);
+    sheet.appendRow(['날짜', '남성상태', '여성상태']);
+    sheet.setFrozenRows(1);
+  }
+
+  const updates = payload.updates || [];
+
+  updates.forEach(function(u) {
+    const dateStr = String(u.date || '').trim();
+    if (!dateStr) return;
+    const male   = u.male   || 'open';
+    const female = u.female || 'open';
+
+    const allData = sheet.getDataRange().getValues();
+    let found = false;
+    for (let i = 1; i < allData.length; i++) {
+      const cell = allData[i][0];
+      let cellKey = '';
+      if (cell instanceof Date) {
+        cellKey = Utilities.formatDate(cell, 'Asia/Seoul', 'yyyy-MM-dd');
+      } else {
+        cellKey = String(cell || '').trim();
+      }
+      if (cellKey === dateStr) {
+        sheet.getRange(i + 1, 2, 1, 2).setValues([[male, female]]);
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      sheet.appendRow([dateStr, male, female]);
+    }
+  });
+
+  return { result: 'success' };
+}
+
+// ── 신청서 제출 ───────────────────────────────────────────────
+// payload: { action, date, name, gender, birth, instagram, phone, ticket, price, photoUrl, branch }
+function submitApplication(payload) {
+  const ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
+  let sheet = ss.getSheetByName(CONFIG.SHEET_NAME);
+  if (!sheet) {
+    sheet = ss.insertSheet(CONFIG.SHEET_NAME);
+    sheet.appendRow(['제출시간','파티날짜','이름','성별','생년월일','인스타그램','연락처','권종','금액','사진URL','심사결과']);
+    sheet.setFrozenRows(1);
+  }
+
+  // 중복 신청 방지: 같은 날짜 + 같은 연락처
+  const existing = sheet.getDataRange().getValues();
+  for (let i = 1; i < existing.length; i++) {
+    if (
+      String(existing[i][COL.PHONE]) === String(payload.phone) &&
+      String(existing[i][COL.DATE]) === String(payload.date)
+    ) {
+      return { result: 'duplicate', message: '이미 신청된 연락처입니다.' };
+    }
+  }
+
+  const now = new Date();
+  const row = new Array(11).fill('');
+  row[COL.TIMESTAMP]  = Utilities.formatDate(now, 'Asia/Seoul', 'yyyy-MM-dd HH:mm:ss');
+  row[COL.DATE]       = payload.date || '';
+  row[COL.NAME]       = payload.name || '';
+  row[COL.GENDER]     = payload.gender || '';
+  row[COL.BIRTH]      = payload.birth || payload.bdate || '';
+  row[COL.INSTAGRAM]  = payload.instagram || payload.insta || '';
+  row[COL.PHONE]      = payload.phone || '';
+  row[COL.TICKET]     = payload.ticket || '1+2부';
+  row[COL.PRICE]      = payload.price || '';
+  row[COL.PHOTO_URL]  = payload.photoUrl || '';
+  row[COL.STATUS]     = '검토중';
+
+  sheet.appendRow(row);
+  return { result: 'success' };
+}
+
+// ── 심사결과 변경 트리거 ──────────────────────────────────────
+// 스프레드시트에서 K열(인덱스 10)을 수동으로 "합격" 또는 "불합격"으로 바꾸면
+// onEdit 트리거가 실행되어 자동으로 SMS 발송.
+//
+// 설치: Apps Script 편집기 → 트리거 추가 → onEdit → 스프레드시트 편집 시
+function onEdit(e) {
+  try {
+    const sheet = e.range.getSheet();
+    if (sheet.getName() !== CONFIG.SHEET_NAME) return;
+
+    const col = e.range.getColumn();      // 1-based
+    const row = e.range.getRow();
+    if (col !== COL.STATUS + 1) return;   // K열 = 11번째
+    if (row <= 1) return;                 // 헤더 제외
+
+    const newStatus = String(e.value || '').trim();
+    if (newStatus !== '합격' && newStatus !== '불합격') return;
+
+    const rowData = sheet.getRange(row, 1, 1, 11).getValues()[0];
+    const phone     = String(rowData[COL.PHONE] || '').replace(/\D/g, '');
+    const name      = rowData[COL.NAME]  || '';
+    const dateStr   = rowData[COL.DATE]  || '';
+    const gender    = rowData[COL.GENDER] || '';
+    const price     = rowData[COL.PRICE] ? Number(rowData[COL.PRICE]).toLocaleString() : '';
+
+    if (!phone) return;
+
+    if (newStatus === '합격') {
+      const msg = buildPassMsg(name, gender, dateStr, price);
+      sendSms(phone, msg);
+    } else {
+      const msg = buildFailMsg(name);
+      sendSms(phone, msg);
+    }
+  } catch (err) {
+    console.error('onEdit error:', err);
+  }
+}
+
+// ── SMS 메시지 템플릿 ─────────────────────────────────────────
+function buildPassMsg(name, gender, dateStr, price) {
+  return (
+    '[썸잇 대구점] ' + name + '님, 합격을 축하드립니다!\n\n' +
+    '■ 파티 일시: ' + dateStr + ' 19:00\n' +
+    '■ 장소: 개별 문자로 별도 안내드립니다.\n' +
+    '■ 권종: 1+2부\n' +
+    '■ 금액: ' + price + '원\n\n' +
+    '■ 입금 계좌\n' +
+    '토스뱅크 1000-3571-5174\n' +
+    '예금주: 김경민\n\n' +
+    '* 입금 후 파티 장소를 안내드립니다.\n' +
+    '* 노쇼 및 당일 취소 환불 불가\n\n' +
+    '인스타 @sum_it.official'
+  );
+}
+
+function buildFailMsg(name) {
+  return (
+    '[썸잇 대구점] ' + name + '님,\n' +
+    '아쉽게도 이번 파티 참가가 어렵게 되었습니다.\n\n' +
+    '다음 기회에 다시 신청해 주세요.\n' +
+    '인스타 @sum_it.official'
+  );
+}
+
+// ── Solapi SMS 발송 ───────────────────────────────────────────
+function sendSms(to, text) {
+  if (!CONFIG.SOLAPI_API_KEY || !CONFIG.SOLAPI_API_SECRET) {
+    console.warn('Solapi 키 미설정 — SMS 미발송:', to);
+    return;
+  }
+
+  const date   = new Date().toISOString();
+  const salt   = Utilities.getUuid();
+  const hmac   = buildHmac(date, salt);
+
+  const payload = {
+    message: {
+      to:   to,
+      from: CONFIG.SENDER_NUMBER,
+      text: text,
+    }
+  };
+
+  const options = {
+    method:      'post',
+    contentType: 'application/json',
+    headers: {
+      Authorization: 'HMAC-SHA256 apiKey=' + CONFIG.SOLAPI_API_KEY +
+                     ', date=' + date +
+                     ', salt=' + salt +
+                     ', signature=' + hmac,
+    },
+    payload:           JSON.stringify(payload),
+    muteHttpExceptions: true,
+  };
+
+  const res = UrlFetchApp.fetch('https://api.solapi.com/messages/v4/send', options);
+  const json = JSON.parse(res.getContentText());
+  if (json.errorCode) {
+    console.error('SMS 발송 실패:', json.errorCode, json.errorMessage);
+  }
+}
+
+function buildHmac(date, salt) {
+  const msg  = date + salt;
+  const key  = Utilities.newBlob(CONFIG.SOLAPI_API_SECRET).getBytes();
+  const data = Utilities.newBlob(msg).getBytes();
+  const sig  = Utilities.computeHmacSignature(Utilities.MacAlgorithm.HMAC_SHA_256, data, key);
+  return sig.map(function(b){ return ('0' + (b & 0xff).toString(16)).slice(-2); }).join('');
+}
+
+// ── 공통 응답 헬퍼 ────────────────────────────────────────────
+function jsonResponse(obj) {
+  return ContentService
+    .createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}

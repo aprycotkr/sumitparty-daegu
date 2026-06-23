@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, viewport-fit=cover, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>파티 신청서 — 썸잇 대구</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#C9A96E;--gold-light:#E8D4A8;--gold-dark:#8A6B3A;
+  --black:#0A0A0A;--dark:#111111;--dark2:#1A1A1A;--dark3:#2A2A2A;
+  --white:#FFFFFF;--gray:#6B7280;
+  --font-display:'Cormorant Garamond',serif;
+  --font-body:'Montserrat',sans-serif;
+}
+html,body{width:100%;min-height:100%;-webkit-text-size-adjust:none;overflow-x:hidden}
+body{background:var(--black);font-family:var(--font-body);font-weight:300;color:var(--white);padding-bottom:0}
+footer{background:var(--dark);border-top:1px solid rgba(255,255,255,0.05);padding:4rem 3rem 2rem;margin-top:1rem}
+.footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:4rem;max-width:1200px;margin:0 auto 3.5rem}
+.footer-brand{font-family:var(--font-display);font-size:2rem;font-weight:500;color:var(--gold);letter-spacing:0.1em;margin-bottom:0.2rem}
+.footer-brand-sub{font-size:0.52rem;letter-spacing:0.25em;text-transform:uppercase;color:rgba(201,169,110,0.5);font-weight:600;margin-bottom:1rem}
+.footer-tagline{font-size:0.72rem;color:rgba(255,255,255,0.28);line-height:1.9;font-weight:300;font-style:italic;font-family:var(--font-display)}
+.footer-heading{font-size:0.58rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:1.3rem}
+.footer-links{list-style:none;display:flex;flex-direction:column;gap:0.7rem;padding:0;margin:0}
+.footer-links a{color:rgba(255,255,255,0.38);text-decoration:none;font-size:0.72rem;transition:color 0.2s;font-weight:300}
+.footer-links a:hover{color:var(--gold)}
+.footer-info{font-size:0.68rem;color:rgba(255,255,255,0.22);line-height:2.2;font-weight:300}
+.footer-info a{color:var(--gold);text-decoration:none}
+.footer-bottom{border-top:1px solid rgba(255,255,255,0.05);padding-top:2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;max-width:1200px;margin:0 auto}
+.footer-copy{font-size:0.58rem;color:rgba(255,255,255,0.15);letter-spacing:0.1em}
+.footer-legal{display:flex;gap:2rem}
+.footer-legal a{font-size:0.58rem;color:rgba(255,255,255,0.15);text-decoration:none;letter-spacing:0.1em;transition:color 0.2s}
+.footer-legal a:hover{color:rgba(255,255,255,0.4)}
+@media(max-width:768px){
+  footer{padding:3rem 1.5rem 2rem}
+  .footer-grid{grid-template-columns:1fr;gap:2.5rem}
+  .footer-bottom{flex-direction:column;align-items:flex-start}
+}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--black)}::-webkit-scrollbar-thumb{background:var(--gold-dark);border-radius:2px}
+
+/* ── HEADER ── */
+.page-header{text-align:center;padding:3rem 1.5rem 2rem;border-bottom:1px solid rgba(201,169,110,0.1)}
+.header-logo{font-family:var(--font-display);font-size:1.6rem;font-weight:500;color:var(--gold);letter-spacing:0.15em;text-decoration:none;display:inline-block;margin-bottom:0.3rem}
+.header-logo-sub{font-size:0.52rem;letter-spacing:0.25em;text-transform:uppercase;color:rgba(201,169,110,0.5);font-weight:600;display:block;margin-bottom:0.5rem}
+.header-title{font-family:var(--font-display);font-size:1.6rem;font-weight:300;margin-bottom:0.3rem}
+.header-sub{font-size:0.68rem;color:rgba(255,255,255,0.35);letter-spacing:0.1em;font-weight:300}
+#formSubtitle{color:var(--gold);font-size:0.7rem;letter-spacing:0.08em;font-weight:500}
+
+/* ── PROGRESS ── */
+.progress-wrap{max-width:480px;margin:1.8rem auto;padding:0 1.5rem;display:flex;gap:6px}
+.progress-dot{flex:1;height:3px;background:rgba(255,255,255,0.1);border-radius:2px;transition:background 0.3s}
+.progress-dot.done{background:rgba(201,169,110,0.4)}
+.progress-dot.active{background:var(--gold)}
+
+/* ── CARD ── */
+.card{background:var(--dark);border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:2rem 1.5rem;max-width:480px;margin:0 auto;position:relative}
+.step-label{font-size:0.58rem;letter-spacing:0.35em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:0.6rem}
+.step-title{font-family:var(--font-display);font-size:1.6rem;font-weight:300;color:var(--white);margin-bottom:0.3rem}
+.step-desc{font-size:0.72rem;color:rgba(255,255,255,0.35);margin-bottom:1.8rem;line-height:1.6;font-weight:300}
+
+/* ── FIELD ── */
+.field{margin-bottom:1.3rem}
+.field label{display:block;font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;font-weight:600;color:rgba(255,255,255,0.5);margin-bottom:0.5rem}
+.field label .req{color:var(--gold)}
+.field input[type=text],.field input[type=tel]{
+  width:100%;padding:0.85rem 1rem;
+  background:var(--dark2);border:1px solid rgba(255,255,255,0.1);
+  border-radius:8px;font-size:1rem;color:var(--white);
+  outline:none;font-family:var(--font-body);font-weight:300;
+  transition:border-color 0.2s
+}
+.field input:focus{border-color:var(--gold)}
+.field input::placeholder{color:rgba(255,255,255,0.2)}
+.field-hint{font-size:0.62rem;color:rgba(255,255,255,0.2);margin-top:5px;font-weight:300}
+
+/* ── DATE LIST ── */
+.selected-date-card{display:flex;align-items:center;gap:12px;background:rgba(201,169,110,0.06);border:1px solid rgba(201,169,110,0.2);border-radius:10px;padding:12px 14px;margin-bottom:1.3rem}
+.date-list{display:flex;flex-direction:column;gap:8px}
+.date-opt{
+  padding:1rem 1.1rem;border:1px solid rgba(255,255,255,0.1);
+  border-radius:10px;background:var(--dark2);cursor:pointer;transition:all 0.2s;
+  display:flex;align-items:center;justify-content:space-between
+}
+.date-opt:hover:not(.closed){border-color:rgba(201,169,110,0.4)}
+.date-opt.sel{border-color:var(--gold);background:rgba(201,169,110,0.06)}
+.date-opt.closed{opacity:0.45;cursor:not-allowed;pointer-events:none}
+.date-opt.almost .date-status{color:#f59e0b}
+.date-opt-left{}
+.date-opt-date{font-size:0.88rem;font-weight:600;color:rgba(255,255,255,0.85);margin-bottom:2px;transition:color 0.2s}
+.date-opt.sel .date-opt-date{color:var(--gold)}
+.date-opt-day{font-size:0.62rem;color:rgba(255,255,255,0.3);font-weight:300}
+.date-status{font-size:0.58rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:3px 10px;border-radius:3px}
+.status-open{background:rgba(201,169,110,0.12);color:var(--gold);border:1px solid rgba(201,169,110,0.3)}
+.status-almost{background:rgba(245,158,11,0.12);color:#f59e0b;border:1px solid rgba(245,158,11,0.3)}
+.status-closed{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.25);border:1px solid rgba(255,255,255,0.08)}
+.date-loading{text-align:center;padding:1.5rem;font-size:0.72rem;color:rgba(255,255,255,0.3)}
+
+/* ── GENDER BUTTONS ── */
+.gender-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.gender-btn{
+  padding:0.85rem;border:1px solid rgba(255,255,255,0.1);
+  border-radius:8px;background:var(--dark2);
+  font-size:0.82rem;font-weight:500;color:rgba(255,255,255,0.5);
+  cursor:pointer;font-family:var(--font-body);transition:all 0.2s
+}
+.gender-btn.sel{border-color:var(--gold);background:rgba(201,169,110,0.08);color:var(--gold)}
+
+/* ── INSTA INPUT ── */
+.insta-wrap{display:flex;align-items:center;border:1px solid rgba(255,255,255,0.1);border-radius:8px;overflow:hidden;background:var(--dark2);transition:border-color 0.2s}
+.insta-wrap:focus-within{border-color:var(--gold)}
+.insta-at{padding:0.85rem 0.8rem 0.85rem 1rem;font-size:1rem;color:var(--gold);font-weight:600;background:rgba(201,169,110,0.07);border-right:1px solid rgba(201,169,110,0.15)}
+.insta-wrap input{border:none!important;flex:1;padding:0.85rem 1rem;font-size:1rem;background:transparent;color:var(--white);outline:none;font-family:var(--font-body);font-weight:300}
+.insta-wrap input::placeholder{color:rgba(255,255,255,0.2)}
+
+/* ── PHOTO UPLOAD ── */
+.photo-area{
+  border:1.5px dashed rgba(201,169,110,0.3);border-radius:12px;
+  padding:2.5rem 1.5rem;text-align:center;cursor:pointer;
+  transition:all 0.2s;position:relative;background:var(--dark2)
+}
+.photo-area:hover{border-color:var(--gold);background:rgba(201,169,110,0.04)}
+.photo-area.has-file{border-color:var(--gold);border-style:solid;background:rgba(201,169,110,0.04)}
+.photo-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.photo-preview{width:100px;height:100px;border-radius:8px;object-fit:cover;margin:0 auto 10px;display:none;border:2px solid rgba(201,169,110,0.3)}
+.photo-icon{font-size:2.2rem;margin-bottom:0.6rem}
+.photo-text{font-size:0.75rem;color:rgba(255,255,255,0.4);line-height:1.6;font-weight:300}
+.photo-text strong{color:var(--gold);font-weight:500}
+.photo-privacy{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:0.8rem 1rem;font-size:0.62rem;color:rgba(255,255,255,0.25);margin-top:0.8rem;line-height:1.7;font-weight:300}
+
+/* ── TERMS ── */
+.terms-list{display:flex;flex-direction:column;gap:8px}
+.term-item{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:1rem;border:1px solid rgba(255,255,255,0.08);
+  border-radius:10px;cursor:pointer;transition:all 0.2s;background:var(--dark2)
+}
+.term-item.chk{border-color:rgba(201,169,110,0.35);background:rgba(201,169,110,0.04)}
+.term-check{
+  width:20px;height:20px;border:1.5px solid rgba(255,255,255,0.2);
+  border-radius:4px;flex-shrink:0;display:flex;align-items:center;
+  justify-content:center;transition:all 0.2s;font-size:11px;color:var(--black);margin-top:1px
+}
+.term-item.chk .term-check{background:var(--gold);border-color:var(--gold)}
+.term-name{font-size:0.78rem;font-weight:500;color:rgba(255,255,255,0.7);margin-bottom:0.2rem}
+.term-desc{font-size:0.65rem;color:rgba(255,255,255,0.3);line-height:1.5;font-weight:300}
+
+/* ── BUTTONS ── */
+.btn-primary{
+  width:100%;padding:0.95rem;background:var(--gold);color:var(--black);
+  border:none;border-radius:10px;font-size:0.75rem;font-weight:700;
+  letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;
+  font-family:var(--font-body);transition:all 0.2s;margin-top:1.5rem;
+  display:block;text-align:center;text-decoration:none
+}
+.btn-primary:hover{background:var(--gold-light);transform:translateY(-1px)}
+.btn-primary:disabled{background:rgba(201,169,110,0.3);cursor:not-allowed;transform:none}
+.btn-back{background:none;border:none;color:rgba(255,255,255,0.3);font-size:0.68rem;cursor:pointer;padding:0 0 1rem;font-family:var(--font-body);letter-spacing:0.1em;transition:color 0.2s}
+.btn-back:hover{color:rgba(255,255,255,0.6)}
+.btn-secondary{width:100%;padding:0.9rem;background:transparent;color:rgba(255,255,255,0.4);border:1px solid rgba(255,255,255,0.1);border-radius:10px;font-size:0.72rem;font-weight:500;cursor:pointer;font-family:var(--font-body);transition:all 0.2s;margin-top:8px;text-decoration:none;display:block;text-align:center}
+.btn-secondary:hover{border-color:rgba(255,255,255,0.25);color:rgba(255,255,255,0.6)}
+
+/* ── ERROR ── */
+.err{font-size:0.65rem;color:#f87171;margin-top:5px;font-weight:300}
+
+/* ── COMPLETE ── */
+.complete-wrap{text-align:center;padding:1rem 0}
+.complete-icon{width:64px;height:64px;background:rgba(201,169,110,0.1);border:1px solid rgba(201,169,110,0.3);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.2rem;font-size:1.6rem}
+.complete-title{font-family:var(--font-display);font-size:1.8rem;font-weight:300;margin-bottom:0.6rem}
+.complete-desc{font-size:0.72rem;color:rgba(255,255,255,0.35);line-height:1.8;margin-bottom:0.3rem;font-weight:300}
+.complete-info{background:rgba(201,169,110,0.06);border:1px solid rgba(201,169,110,0.15);border-radius:10px;padding:1.2rem;margin-top:1.5rem;text-align:left}
+.complete-info-title{font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:0.8rem}
+.complete-info-row{display:flex;justify-content:space-between;padding:0.5rem 0;font-size:0.75rem;border-bottom:1px solid rgba(255,255,255,0.05)}
+.complete-info-row:last-child{border-bottom:none}
+.complete-info-row span:first-child{color:rgba(255,255,255,0.35);font-weight:300}
+.complete-info-row span:last-child{color:var(--white);font-weight:500}
+
+/* ── LOADING OVERLAY ── */
+.loading-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99999;align-items:center;justify-content:center}
+.loading-overlay.show{display:flex}
+.loading-box{background:var(--dark);border:1px solid rgba(201,169,110,0.2);border-radius:16px;padding:2.5rem 3rem;text-align:center;min-width:260px}
+.loading-spinner{width:48px;height:48px;border:3px solid rgba(201,169,110,0.2);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 1.2rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-title{font-size:0.85rem;font-weight:600;color:var(--white);margin-bottom:1rem;letter-spacing:0.05em}
+.loading-prog-wrap{width:100%;background:rgba(201,169,110,0.1);border-radius:999px;height:4px;margin-bottom:6px}
+.loading-prog-bar{height:4px;background:var(--gold);border-radius:999px;width:0%;transition:width 0.3s ease}
+.loading-pct{font-size:0.7rem;color:var(--gold);font-weight:500}
+
+@media(max-width:520px){
+  .card{border-radius:0;border-left:none;border-right:none;margin:0}
+}
+</style>
+<!-- Meta Pixel -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+n.push=n;n.loaded=!0;n.version="2.0";n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+document,"script","https://connect.facebook.net/en_US/fbevents.js");
+fbq("init","821379504055811");
+fbq("track","PageView");
+</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=821379504055811&ev=PageView&noscript=1"/></noscript>
+<!-- End Meta Pixel -->
+</head>
+<body>
+
+<!-- LOADING -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-box">
+    <div class="loading-spinner"></div>
+    <div class="loading-title">신청서 접수 중</div>
+    <div class="loading-prog-wrap"><div class="loading-prog-bar" id="progBar"></div></div>
+    <div class="loading-pct" id="progPct">0%</div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div class="page-header">
+  <a href="daegu.html" class="header-logo">Sumit</a>
+  <span class="header-logo-sub">대구점</span>
+  <div class="header-title" style="font-family:'Cormorant Garamond',serif;font-weight:300">파티 신청서</div>
+  <div class="header-sub"><span id="formSubtitle">썸잇 솔로파티 — 대구점</span></div>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-wrap" id="progressWrap">
+  <div class="progress-dot active" id="pd1"></div>
+  <div class="progress-dot" id="pd2"></div>
+  <div class="progress-dot" id="pd3"></div>
+  <div class="progress-dot" id="pd4"></div>
+  <div class="progress-dot" id="pd5"></div>
+</div>
+
+<div style="max-width:480px;margin:0 auto;padding:0 1rem">
+
+<!-- STEP 1: 연락처 -->
+<div id="s1" class="card">
+  <div class="step-label">Step 1 / 5</div>
+  <h2 class="step-title">연락처 확인</h2>
+  <p class="step-desc">중복 신청 방지 및 합격 안내를 위해 사용됩니다.</p>
+  <div class="field">
+    <label for="phone">휴대폰 번호 <span class="req">*</span></label>
+    <input type="tel" id="phone" placeholder="01012345678" maxlength="11">
+    <div class="err" id="phoneErr"></div>
+  </div>
+  <button class="btn-primary" onclick="step1Next()">다음으로</button>
+</div>
+
+<!-- STEP 2: 날짜 + 기본정보 -->
+<div id="s2" class="card" style="display:none">
+  <button class="btn-back" onclick="goStep(1)">← 뒤로</button>
+  <div class="step-label">Step 2 / 5</div>
+  <h2 class="step-title">기본 정보</h2>
+  <p class="step-desc">이름, 성별, 생년월일을 입력해주세요.</p>
+
+  <div class="selected-date-card">
+    <span style="font-size:1.1rem">📅</span>
+    <div style="flex:1">
+      <div style="font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:2px">선택된 파티</div>
+      <div style="font-size:0.88rem;font-weight:600;color:#fff" id="selectedDateDisplay">—</div>
+    </div>
+    <a href="daegu-booking.html" style="font-size:0.72rem;color:rgba(255,255,255,0.35);text-decoration:none;white-space:nowrap;flex-shrink:0">변경</a>
+  </div>
+  <div class="err" id="dateErr"></div>
+
+  <div class="field">
+    <label for="name">이름 (실명) <span class="req">*</span></label>
+    <input type="text" id="name" placeholder="홍길동">
+    <div class="err" id="nameErr"></div>
+  </div>
+
+  <div class="field">
+    <label>성별 <span class="req">*</span></label>
+    <div class="gender-grid">
+      <button class="gender-btn" onclick="selGender(this,'남성')">남성</button>
+      <button class="gender-btn" onclick="selGender(this,'여성')">여성</button>
+    </div>
+    <div class="err" id="genderErr"></div>
+  </div>
+
+  <div class="field">
+    <label for="bdate">생년월일 <span class="req">*</span></label>
+    <input type="tel" id="bdate" placeholder="19980523" maxlength="10" oninput="formatBdate(this)" inputmode="numeric" autocomplete="bday">
+    <div class="field-hint">생년월일 8자리 · 예) 19980523</div>
+    <div class="err" id="bdayErr"></div>
+  </div>
+
+  <button class="btn-primary" onclick="step2Next()" id="step2Btn">다음으로</button>
+</div>
+
+<!-- STEP 3: 인스타 -->
+<div id="s3" class="card" style="display:none">
+  <button class="btn-back" onclick="goStep(2)">← 뒤로</button>
+  <div class="step-label">Step 3 / 5</div>
+  <h2 class="step-title">상세 정보</h2>
+  <p class="step-desc">합격 후 연락 및 프로필 확인에 사용됩니다.</p>
+  <div class="field">
+    <label for="insta">인스타그램 아이디 <span class="req">*</span></label>
+    <div class="insta-wrap">
+      <span class="insta-at">@</span>
+      <input type="text" id="insta" placeholder="instagram_id" oninput="this.value=this.value.replace(/[^a-zA-Z0-9._]/g,'')">
+    </div>
+    <div class="field-hint">영문, 숫자, 밑줄(_), 마침표(.)만 입력 가능합니다.</div>
+    <div class="err" id="instaErr"></div>
+  </div>
+  <button class="btn-primary" onclick="step3Next()">다음으로</button>
+</div>
+
+<!-- STEP 4: 사진 -->
+<div id="s4" class="card" style="display:none">
+  <button class="btn-back" onclick="goStep(3)">← 뒤로</button>
+  <div class="step-label">Step 4 / 5</div>
+  <h2 class="step-title">사진 업로드</h2>
+  <p class="step-desc">외모 심사를 위한 사진입니다. 얼굴이 잘 보이는 사진으로 올려주세요.</p>
+  <div class="field">
+    <label>얼굴 사진 <span class="req">*</span></label>
+    <div class="photo-area" id="photoArea">
+      <input type="file" id="photoInput" accept="image/*" onchange="handlePhoto(this)">
+      <img class="photo-preview" id="photoPreview" alt="">
+      <div class="photo-icon" id="photoIcon">📷</div>
+      <div class="photo-text" id="photoText"><strong>클릭하여 사진 선택</strong><br>정면을 바라보는 얼굴이 잘 보이는 최근 사진</div>
+    </div>
+    <div class="err" id="photoErr"></div>
+    <div class="photo-privacy">🔒 사진은 외모 심사 용도로만 사용됩니다. 심사 완료 후 즉시 삭제되며, 제3자에게 공유되지 않습니다.</div>
+  </div>
+  <button class="btn-primary" id="photoNextBtn" onclick="step4Next()">다음으로</button>
+</div>
+
+<!-- STEP 5: 약관 + 입금 안내 -->
+<div id="s5" class="card" style="display:none">
+  <button class="btn-back" onclick="goStep(4)">← 뒤로</button>
+  <div class="step-label">Step 5 / 5</div>
+  <h2 class="step-title">마지막 단계입니다!</h2>
+  <p class="step-desc">약관 동의 후 신청서를 제출해주세요.</p>
+
+  <div class="terms-list">
+    <div class="term-item" onclick="toggleTerm(0)">
+      <div class="term-check" id="tc0"></div>
+      <div>
+        <div class="term-name">서비스 이용약관 동의 (필수)</div>
+        <div class="term-desc">참가비 환불 규정 및 파티 이용 규칙에 동의합니다. 노쇼 및 당일취소는 환불이 불가합니다. <a href="terms.html" target="_blank" onclick="event.stopPropagation()" style="color:var(--gold);text-decoration:underline">전문 보기</a></div>
+      </div>
+    </div>
+    <div class="term-item" onclick="toggleTerm(1)">
+      <div class="term-check" id="tc1"></div>
+      <div>
+        <div class="term-name">개인정보 수집 및 이용 동의 (필수)</div>
+        <div class="term-desc">프로필 작성 및 합격 안내를 위한 개인정보 처리에 동의합니다. <a href="privacy.html" target="_blank" onclick="event.stopPropagation()" style="color:var(--gold);text-decoration:underline">전문 보기</a></div>
+      </div>
+    </div>
+    <div class="term-item" onclick="toggleTerm(2)">
+      <div class="term-check" id="tc2"></div>
+      <div>
+        <div class="term-name">촬영 및 마케팅 활용 동의 (필수)</div>
+        <div class="term-desc">파티 진행 중 사진이 촬영될 수 있으며, 얼굴 모자이크 처리 후 마케팅 용도로 활용될 수 있습니다.</div>
+      </div>
+    </div>
+  </div>
+  <div class="err" id="termErr" style="margin-top:8px"></div>
+
+  <!-- 입금 안내 -->
+  <div style="background:rgba(201,169,110,0.06);border:1px solid rgba(201,169,110,0.2);border-radius:10px;padding:1.1rem 1.2rem;margin-top:1.3rem">
+    <div style="font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:0.8rem">🏦 입금 계좌 안내</div>
+    <div style="display:flex;justify-content:space-between;padding:0.45rem 0;font-size:0.78rem;border-bottom:1px solid rgba(255,255,255,0.06)">
+      <span style="color:rgba(255,255,255,0.4)">은행</span><span style="font-weight:500">토스뱅크</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;padding:0.45rem 0;font-size:0.78rem;border-bottom:1px solid rgba(255,255,255,0.06)">
+      <span style="color:rgba(255,255,255,0.4)">계좌번호</span><span style="font-weight:600;letter-spacing:0.05em">1000-3571-5174</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;padding:0.45rem 0;font-size:0.78rem;border-bottom:1px solid rgba(255,255,255,0.06)">
+      <span style="color:rgba(255,255,255,0.4)">예금주</span><span style="font-weight:500">김경민</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;padding:0.45rem 0;font-size:0.85rem">
+      <span style="color:rgba(255,255,255,0.4)">입금 금액</span>
+      <span id="previewPrice" style="font-weight:700;color:var(--gold);font-size:1rem">-</span>
+    </div>
+  </div>
+  <div style="font-size:0.65rem;color:rgba(255,255,255,0.3);line-height:1.8;margin-top:0.8rem;padding:0 0.2rem">
+    ✅ 신청서 제출 후 위 계좌로 입금하셔야 심사가 진행됩니다.<br>
+    입금자명은 신청하신 이름으로 보내주세요.
+  </div>
+
+  <button class="btn-primary" id="submitBtn" onclick="submitForm()" style="margin-top:1.2rem">신청서 제출하기 →</button>
+</div>
+
+<!-- COMPLETE -->
+<div id="sc" class="card" style="display:none">
+  <div class="complete-wrap">
+    <div class="complete-icon">✅</div>
+    <h2 class="complete-title">신청서가 접수되었습니다</h2>
+    <p class="complete-desc" style="color:var(--gold);font-weight:500;font-size:0.78rem;margin-bottom:1.2rem">입금 완료 후 프로필 검토가 진행됩니다</p>
+
+    <div class="complete-info" style="text-align:left;margin-bottom:1rem">
+      <div class="complete-info-title">📋 신청 정보 확인</div>
+      <div class="complete-info-row"><span>이름</span><span id="cName">-</span></div>
+      <div class="complete-info-row"><span>희망 날짜</span><span id="cDate">-</span></div>
+      <div class="complete-info-row"><span>성별</span><span id="cGender">-</span></div>
+      <div class="complete-info-row"><span>참가비</span><span id="cPrice" style="color:var(--gold);font-weight:600">-</span></div>
+    </div>
+
+    <div class="complete-info" style="text-align:left;margin-bottom:1rem">
+      <div class="complete-info-title">🏦 입금 계좌 안내</div>
+      <div class="complete-info-row"><span>은행</span><span>토스뱅크</span></div>
+      <div class="complete-info-row"><span>계좌번호</span><span style="font-weight:600;letter-spacing:0.05em">1000-3571-5174</span></div>
+      <div class="complete-info-row"><span>예금주</span><span>김경민</span></div>
+      <div class="complete-info-row"><span>입금 금액</span><span id="cPrice2" style="color:var(--gold);font-weight:600">-</span></div>
+    </div>
+
+    <button type="button" id="copyAccountBtn" onclick="copyAccount()" style="width:100%;background:var(--gold);color:var(--black);border:none;border-radius:10px;padding:0.95rem;font-family:var(--font-body);font-size:0.82rem;font-weight:600;letter-spacing:0.03em;cursor:pointer;margin-bottom:1.5rem;transition:background 0.2s">계좌번호 복사하기</button>
+
+    <div style="background:rgba(201,169,110,0.06);border:1px solid rgba(201,169,110,0.2);border-radius:10px;padding:1rem 1.1rem;font-size:0.68rem;color:rgba(255,255,255,0.5);line-height:1.9;text-align:left;margin-bottom:1.5rem">
+      ⚠️ <strong style="color:rgba(255,255,255,0.7)">입금자명은 신청하신 이름으로 해주세요.</strong><br>
+      입금 확인 후 프로필 검토를 진행하며,<br>
+      결과는 <strong style="color:rgba(255,255,255,0.7)">문자</strong>로 개별 안내드립니다.
+    </div>
+
+    <div style="background:var(--dark2);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:1rem 1.2rem;font-size:0.72rem;color:rgba(255,255,255,0.45);line-height:2.2;text-align:left;margin-bottom:1rem">
+      <div style="font-size:0.58rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:0.7rem">📋 다음 단계 안내</div>
+      <div>1. 위 계좌로 참가비 입금 <span style="color:rgba(255,255,255,0.6)">(입금자명: 신청 이름)</span></div>
+      <div>2. 입금 확인 후 운영팀 프로필 검토 진행</div>
+      <div>3. 합격 시 <span style="color:rgba(255,255,255,0.6)">파티 장소 상세 주소</span> 문자 개별 안내</div>
+    </div>
+
+    <div style="text-align:center;margin-bottom:1.2rem;padding:0.8rem 0;border-top:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06)">
+      <p style="font-size:0.58rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.2);margin-bottom:0.6rem">문의하기</p>
+      <a href="https://instagram.com/sum_it.official" target="_blank"
+         style="text-decoration:none;display:inline-flex;align-items:center;gap:7px;color:rgba(255,255,255,0.55);font-size:0.75rem;font-weight:400">
+        <img src="icon-insta.png" style="width:18px;height:18px;object-fit:contain" alt="">
+        @sum_it.official
+      </a>
+    </div>
+
+    <a href="daegu.html" class="btn-secondary" style="text-decoration:none;display:block;text-align:center">대구 홈으로 돌아가기</a>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand">Sumit</div>
+      <div class="footer-brand-sub">대구점</div>
+      <p class="footer-tagline">낯선 만남이 가장 설레는 순간이 되는 곳.<br>분위기와 대화, 그리고 끌림이 자연스럽게 이어집니다.</p>
+    </div>
+    <div>
+      <p class="footer-heading">Navigation</p>
+      <ul class="footer-links">
+        <li><a href="daegu.html">대구점</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="footer-heading">고객 센터</p>
+      <div class="footer-info">
+        <p>상호: 썸잇 | 대표자: 김경민</p>
+        <p>사업자등록번호: 793-02-03419</p>
+        <p style="margin-top:0.6rem">인스타그램: <a href="https://instagram.com/sum_it.official" target="_blank">@sum_it.official</a></p>
+        <p>이메일: aprycotkr@naver.com</p>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2026 Sumit Party. All rights reserved.</p>
+    <div class="footer-legal">
+      <a href="terms.html">이용약관</a>
+      <a href="privacy.html">개인정보처리방침</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ══════════════════════
+   설정값
+══════════════════════ */
+const DAEGU_CONFIG = {
+  CLOUDINARY_CLOUD_NAME: 'dgxafw2dm',
+  CLOUDINARY_UPLOAD_PRESET: 'sumit_apply',
+  DAEGU_GAS_URL: 'https://script.google.com/macros/s/AKfycbxnJhftdjyEro7uKUNTfsAKp7U1g7knABAQBeebu5mfIIkonjXcTlgRK8qUanuOZ4prxw/exec',
+  OPEN_DATE: '2026-07-11',        // OPEN 할인 적용 날짜
+  PRICES:      { '남성': 59900, '여성': 49900 },
+  OPEN_PRICES: { '남성': 49900, '여성': 39900 }
+};
+
+/* 가격 표시용 */
+const PRICES_DISPLAY = { '남성': '59,900원', '여성': '49,900원' };
+
+function getEffectivePrice(gender) {
+  var map = (fd && fd.date === DAEGU_CONFIG.OPEN_DATE) ? DAEGU_CONFIG.OPEN_PRICES : DAEGU_CONFIG.PRICES;
+  return map[gender] || 0;
+}
+function getEffectivePriceDisplay(gender) {
+  return getEffectivePrice(gender).toLocaleString() + '원';
+}
+
+/* 폼 데이터 */
+const fd = {
+  phone: '', name: '', gender: '',
+  byear: '', bmonth: '', bday: '',
+  insta: '', photoUrl: '', date: '',
+  dateLabel: '',
+  photoSelected: false, uploading: false, pendingNext: false,
+  eventId: 'lead_daegu_' + Date.now() + '_' + Math.random().toString(36).slice(2)
+};
+const terms = [false, false, false];
+
+/* 날짜 상태 */
+let dateStatusMap = {};
+const _statusReady = (async function(){
+  if (!DAEGU_CONFIG.DAEGU_GAS_URL) return;
+  try {
+    const res = await fetch(DAEGU_CONFIG.DAEGU_GAS_URL + '?action=getDateStatus');
+    const json = await res.json();
+    if (json.result === 'success') dateStatusMap = json.data || {};
+  } catch(e) {}
+})();
+
+/* 스텝 이동 */
+function goStep(n) {
+  ['s1','s2','s3','s4','s5','sc'].forEach(s => document.getElementById(s).style.display = 'none');
+  document.getElementById(n === 6 ? 'sc' : 's' + n).style.display = 'block';
+  for (let i = 1; i <= 5; i++) {
+    const el = document.getElementById('pd' + i);
+    el.className = 'progress-dot' + (i < n ? ' done' : i === n ? ' active' : '');
+  }
+  if (n === 6) document.getElementById('progressWrap').style.display = 'none';
+  window.scrollTo(0, 0);
+}
+
+/* STEP 1 */
+function step1Next() {
+  const v = document.getElementById('phone').value.trim();
+  if (!/^01[0-9]{8,9}$/.test(v)) {
+    document.getElementById('phoneErr').textContent = '올바른 휴대폰 번호를 입력해주세요.'; return;
+  }
+  document.getElementById('phoneErr').textContent = '';
+  fd.phone = v;
+
+  // URL param에서 날짜 읽기
+  const dateKey = new URLSearchParams(window.location.search).get('date') || '';
+  if (dateKey) {
+    const parts = dateKey.split('-');
+    if (parts.length === 3) {
+      const d = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
+      if (!isNaN(d.getTime())) {
+        const wd = ['일','월','화','수','목','금','토'];
+        fd.date = dateKey;
+        fd.dateLabel = (d.getMonth()+1)+'월 '+d.getDate()+'일 ('+wd[d.getDay()]+')';
+      }
+    }
+  }
+  document.getElementById('selectedDateDisplay').textContent =
+    fd.date ? fd.dateLabel + ' · 19:00–23:00' : '날짜를 선택해주세요';
+
+  fbq('track', 'InitiateCheckout');
+  goStep(2);
+}
+
+/* STEP 2 */
+async function step2Next() {
+  if (!fd.date) {
+    document.getElementById('dateErr').textContent = '날짜 정보가 없습니다. 날짜 선택 페이지로 이동합니다.';
+    setTimeout(function(){ window.location.href = 'daegu-booking.html'; }, 1500);
+    return;
+  }
+  document.getElementById('dateErr').textContent = '';
+  const nm = document.getElementById('name').value.trim();
+  if (!nm) { document.getElementById('nameErr').textContent = '이름을 입력해주세요.'; return; }
+  document.getElementById('nameErr').textContent = '';
+  if (!fd.gender) { document.getElementById('genderErr').textContent = '성별을 선택해주세요.'; return; }
+
+  // 마감 재확인
+  const btn = document.getElementById('step2Btn');
+  btn.disabled = true; btn.textContent = '확인 중...';
+  await _statusReady;
+  btn.textContent = '다음으로'; btn.disabled = false;
+
+  const st = dateStatusMap[fd.date] || {};
+  const gKey = fd.gender === '남성' ? 'male' : 'female';
+  if (st[gKey] === 'closed') {
+    document.getElementById('dateErr').textContent = `죄송합니다. 해당 날짜는 ${fd.gender} 마감되었습니다.`; return;
+  }
+  document.getElementById('genderErr').textContent = '';
+
+  const bdateRaw = document.getElementById('bdate').value.replace(/\./g, '');
+  if (bdateRaw.length !== 8) { document.getElementById('bdayErr').textContent = '생년월일 8자리를 입력해주세요. (예: 19980523)'; return; }
+  const by = bdateRaw.slice(0,4), bm = bdateRaw.slice(4,6), bd = bdateRaw.slice(6,8);
+  const yr = parseInt(by), mo = parseInt(bm), dy = parseInt(bd);
+  if (yr < 1990 || yr > 2007 || mo < 1 || mo > 12 || dy < 1 || dy > 31) {
+    document.getElementById('bdayErr').textContent = '올바른 생년월일을 입력해주세요. (90~07년생)'; return;
+  }
+  document.getElementById('bdayErr').textContent = '';
+  fd.name = nm; fd.byear = by; fd.bmonth = String(mo); fd.bday = String(dy);
+  goStep(3);
+}
+
+/* STEP 3 */
+function step3Next() {
+  const v = document.getElementById('insta').value.trim();
+  if (!v) { document.getElementById('instaErr').textContent = '인스타그램 아이디를 입력해주세요.'; return; }
+  document.getElementById('instaErr').textContent = '';
+  fd.insta = v; goStep(4);
+}
+
+/* STEP 4 */
+function step4Next() {
+  if (!fd.photoSelected) { document.getElementById('photoErr').textContent = '사진을 업로드해주세요.'; return; }
+  if (fd.photoUrl) { document.getElementById('photoErr').textContent = ''; goToStep5(); return; }
+  if (fd.uploading) {
+    const btn = document.getElementById('photoNextBtn');
+    btn.textContent = '사진 업로드 중...'; btn.disabled = true;
+    document.getElementById('photoErr').textContent = '';
+    fd.pendingNext = true; return;
+  }
+  document.getElementById('photoErr').textContent = '사진 업로드에 실패했습니다. 다시 선택해주세요.';
+}
+
+function goToStep5() {
+  const price = getEffectivePriceDisplay(fd.gender);
+  document.getElementById('previewPrice').textContent = price;
+  goStep(5);
+}
+
+function resetPhotoNextBtn() {
+  const btn = document.getElementById('photoNextBtn');
+  if (btn) { btn.textContent = '다음으로'; btn.disabled = false; }
+}
+
+/* 성별 선택 */
+function selGender(el, g) {
+  document.querySelectorAll('.gender-btn').forEach(x => x.classList.remove('sel'));
+  el.classList.add('sel'); fd.gender = g;
+}
+
+function formatBdate(el) {
+  let v = el.value.replace(/\D/g, '').slice(0, 8);
+  if (v.length > 6) v = v.slice(0,4) + '.' + v.slice(4,6) + '.' + v.slice(6);
+  else if (v.length > 4) v = v.slice(0,4) + '.' + v.slice(4);
+  el.value = v;
+}
+
+/* 약관 토글 */
+function toggleTerm(i) {
+  terms[i] = !terms[i];
+  const el = document.querySelector('.terms-list .term-item:nth-child(' + (i+1) + ')');
+  const check = document.getElementById('tc' + i);
+  el.classList.toggle('chk', terms[i]);
+  check.textContent = terms[i] ? '✓' : '';
+}
+
+/* 사진 업로드 */
+function handlePhoto(input) {
+  if (!input.files || !input.files[0]) return;
+  fd.photoUrl = ''; fd.uploading = false; fd.photoSelected = false;
+  const file = input.files[0];
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      let w = img.width, h = img.height;
+      const maxSize = 1200;
+      if (w > maxSize) { h = h * maxSize / w; w = maxSize; }
+      if (h > maxSize) { w = w * maxSize / h; h = maxSize; }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      const preview = document.getElementById('photoPreview');
+      preview.src = canvas.toDataURL('image/jpeg', 0.8);
+      preview.style.display = 'block';
+      document.getElementById('photoIcon').style.display = 'none';
+      document.getElementById('photoArea').classList.add('has-file');
+      fd.photoSelected = true; fd.uploading = true; fd.photoUrl = '';
+      document.getElementById('photoText').innerHTML = '<strong style="color:var(--gold)">⏳ 업로드 중...</strong><br>잠시만 기다려주세요';
+      canvas.toBlob(async blob => {
+        const formData = new FormData();
+        formData.append('file', blob, 'photo.jpg');
+        formData.append('upload_preset', DAEGU_CONFIG.CLOUDINARY_UPLOAD_PRESET);
+        formData.append('folder', 'sumit_daegu');
+        try {
+          const res = await fetch(`https://api.cloudinary.com/v1_1/${DAEGU_CONFIG.CLOUDINARY_CLOUD_NAME}/image/upload`, { method: 'POST', body: formData });
+          const data = await res.json();
+          if (data.secure_url) {
+            fd.photoUrl = data.secure_url; fd.uploading = false;
+            document.getElementById('photoErr').textContent = '';
+            document.getElementById('photoText').innerHTML = '<strong style="color:var(--gold)">✓ 업로드 완료</strong><br>다시 클릭하면 변경할 수 있습니다';
+            if (fd.pendingNext) { fd.pendingNext = false; resetPhotoNextBtn(); goToStep5(); }
+          } else {
+            fd.uploading = false; fd.pendingNext = false; resetPhotoNextBtn();
+            document.getElementById('photoErr').textContent = '사진 업로드에 실패했습니다. 다시 시도해주세요.';
+          }
+        } catch {
+          fd.uploading = false; fd.pendingNext = false; resetPhotoNextBtn();
+          document.getElementById('photoErr').textContent = '사진 업로드 중 오류가 발생했습니다.';
+        }
+      }, 'image/jpeg', 0.8);
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+/* 최종 제출 */
+async function submitForm() {
+  if (!terms[0] || !terms[1] || !terms[2]) {
+    document.getElementById('termErr').textContent = '모든 약관에 동의해주세요.'; return;
+  }
+  document.getElementById('termErr').textContent = '';
+  document.getElementById('loadingOverlay').classList.add('show');
+  document.getElementById('submitBtn').disabled = true;
+
+  let pct = 0;
+  const interval = setInterval(() => {
+    pct = pct < 85 ? pct + Math.random() * 10 : pct + 0.5;
+    if (pct > 92) pct = 92;
+    document.getElementById('progBar').style.width = pct + '%';
+    document.getElementById('progPct').textContent = Math.floor(pct) + '%';
+  }, 300);
+
+  const submitPrice = getEffectivePrice(fd.gender);
+  const payload = {
+    branch: 'daegu',
+    phone: fd.phone, name: fd.name, gender: fd.gender,
+    bdate: fd.byear + '년 ' + fd.bmonth + '월 ' + fd.bday + '일',
+    insta: '@' + fd.insta,
+    photoUrl: fd.photoUrl,
+    date: fd.date,
+    dateLabel: fd.dateLabel,
+    ticket: '1+2부',
+    price: submitPrice,
+    submitTime: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }),
+    eventId: fd.eventId,
+    fbp: getCookie('_fbp'),
+    fbc: getCookie('_fbc'),
+  };
+
+  let submitOk = true;
+  if (DAEGU_CONFIG.DAEGU_GAS_URL) {
+    try {
+      await fetch(DAEGU_CONFIG.DAEGU_GAS_URL, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(payload)
+      });
+    } catch(e) { submitOk = false; }
+  }
+
+  clearInterval(interval);
+  if (!submitOk) {
+    document.getElementById('loadingOverlay').classList.remove('show');
+    document.getElementById('submitBtn').disabled = false;
+    alert('네트워크 오류가 발생했습니다.\n인터넷 연결을 확인 후 다시 시도해주세요.');
+    return;
+  }
+
+  document.getElementById('progBar').style.width = '100%';
+  document.getElementById('progPct').textContent = '100%';
+  await new Promise(r => setTimeout(r, 500));
+  document.getElementById('loadingOverlay').classList.remove('show');
+
+  const priceText = getEffectivePriceDisplay(fd.gender);
+  document.getElementById('cName').textContent = fd.name;
+  document.getElementById('cDate').textContent = fd.dateLabel;
+  document.getElementById('cGender').textContent = fd.gender;
+  document.getElementById('cPrice').textContent = priceText;
+  document.getElementById('cPrice2').textContent = priceText;
+
+  fbq('track', 'Lead', {}, { eventID: fd.eventId });
+  goStep(6);
+}
+
+function getCookie(name) {
+  const m = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+  return m ? decodeURIComponent(m[2]) : null;
+}
+
+function copyAccount() {
+  const accountNum = '100035715174';
+  const btn = document.getElementById('copyAccountBtn');
+  const done = () => {
+    btn.textContent = '✓ 복사되었습니다';
+    btn.style.background = '#4CAF50'; btn.style.color = '#fff';
+    setTimeout(() => { btn.textContent = '계좌번호 복사하기'; btn.style.background = 'var(--gold)'; btn.style.color = 'var(--black)'; }, 2000);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(accountNum).then(done).catch(() => fallbackCopy(accountNum, done));
+  } else { fallbackCopy(accountNum, done); }
+}
+
+function fallbackCopy(text, cb) {
+  const ta = document.createElement('textarea');
+  ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.focus(); ta.select();
+  try { document.execCommand('copy'); cb(); } catch(e) {}
+  document.body.removeChild(ta);
+}
+
+/* 안드로이드 키보드 인풋 가림 방지 */
+document.addEventListener('focusin', function(e) {
+  var el = e.target;
+  if (el.tagName !== 'INPUT' && el.tagName !== 'TEXTAREA') return;
+  setTimeout(function() {
+    var rect = el.getBoundingClientRect();
+    var visibleH = window.innerHeight * 0.5;
+    if (rect.bottom > visibleH) window.scrollBy({ top: rect.bottom - visibleH + 24, behavior: 'smooth' });
+  }, 400);
+  setTimeout(function() {
+    var rect = el.getBoundingClientRect();
+    var visibleH = window.innerHeight * 0.5;
+    if (rect.bottom > visibleH) window.scrollBy({ top: rect.bottom - visibleH + 24, behavior: 'smooth' });
+  }, 750);
+});
+</script>
+</body>
+</html>

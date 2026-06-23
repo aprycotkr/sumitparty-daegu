@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>썸잇 관리자 — 대구점</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#C9A96E;--gold-light:#E8D4A8;
+  --black:#0A0A0A;--dark:#111111;--dark2:#1A1A1A;
+  --white:#FFFFFF;
+  --green:#4ade80;--orange:#fb923c;--red:#f87171;
+  --font-display:'Cormorant Garamond',serif;
+  --font-body:'Montserrat',sans-serif;
+}
+html,body{min-height:100vh;background:var(--black);color:var(--white);font-family:var(--font-body);font-weight:300}
+
+.admin-wrap{min-height:100vh}
+.admin-header{position:sticky;top:0;z-index:50;background:rgba(10,10,10,0.97);border-bottom:1px solid rgba(201,169,110,0.12);padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between}
+.admin-brand .logo{font-family:var(--font-display);font-size:1.4rem;color:var(--gold);letter-spacing:0.1em}
+.admin-brand .sub{font-size:0.55rem;letter-spacing:0.25em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-top:1px}
+
+.admin-body{max-width:600px;margin:0 auto;padding:1.5rem 1rem 5rem}
+
+.month-divider{font-size:0.58rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);font-weight:600;padding:1.2rem 0 0.6rem;display:flex;align-items:center;gap:0.8rem}
+.month-divider::after{content:'';flex:1;height:1px;background:rgba(201,169,110,0.12)}
+
+.date-card{background:var(--dark);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:1.1rem 1.2rem;margin-bottom:8px;transition:border-color 0.25s}
+.date-card.saving{border-color:rgba(201,169,110,0.35)}
+.date-card.saved{border-color:rgba(74,222,128,0.35)}
+.date-card.err{border-color:rgba(248,113,113,0.35)}
+
+.dc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.9rem}
+.dc-date-text{font-family:var(--font-display);font-size:1.05rem;font-weight:400}
+.dc-dow{display:inline-block;font-size:0.55rem;font-weight:700;letter-spacing:0.08em;padding:2px 7px;border-radius:3px;margin-left:5px;vertical-align:middle}
+.dc-dow.sat{background:rgba(201,169,110,0.15);color:var(--gold)}
+.dc-indicator{font-size:0.6rem;letter-spacing:0.05em;transition:color 0.2s;min-width:60px;text-align:right}
+.dc-indicator.saving{color:var(--gold)}
+.dc-indicator.saved{color:var(--green)}
+.dc-indicator.err{color:var(--red)}
+
+.dc-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.dc-row:last-child{margin-bottom:0}
+.dc-label{font-size:0.6rem;color:rgba(255,255,255,0.35);font-weight:600;letter-spacing:0.05em;width:24px;flex-shrink:0}
+
+.status-btns{display:flex;gap:4px;flex:1}
+.sbtn{flex:1;padding:0.42rem 0.1rem;border-radius:6px;border:1px solid transparent;font-family:var(--font-body);font-size:0.6rem;font-weight:600;cursor:pointer;transition:all 0.15s;letter-spacing:0.02em}
+.sbtn.n   {background:rgba(74,222,128,0.05);border-color:rgba(74,222,128,0.12);color:rgba(74,222,128,0.4)}
+.sbtn.n.on{background:rgba(74,222,128,0.15);border-color:rgba(74,222,128,0.5);color:var(--green)}
+.sbtn.s   {background:rgba(251,146,60,0.05);border-color:rgba(251,146,60,0.12);color:rgba(251,146,60,0.4)}
+.sbtn.s.on{background:rgba(251,146,60,0.15);border-color:rgba(251,146,60,0.5);color:var(--orange)}
+.sbtn.c   {background:rgba(248,113,113,0.05);border-color:rgba(248,113,113,0.12);color:rgba(248,113,113,0.4)}
+.sbtn.c.on{background:rgba(248,113,113,0.15);border-color:rgba(248,113,113,0.5);color:var(--red)}
+
+.loading-msg{text-align:center;padding:4rem 1rem;color:rgba(255,255,255,0.25);font-size:0.72rem;letter-spacing:0.15em}
+
+.seat-row{display:flex;align-items:center;gap:8px;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.05)}
+.seat-wrap{display:flex;gap:8px;flex:1}
+.seat-group{display:flex;align-items:center;gap:5px;flex:1}
+.seat-group label{font-size:0.58rem;color:rgba(255,255,255,0.3);font-weight:600;white-space:nowrap}
+.seat-input{flex:1;padding:0.35rem 0.5rem;background:var(--dark2);border:1px solid rgba(255,255,255,0.1);border-radius:6px;color:var(--white);font-size:0.72rem;font-family:var(--font-body);outline:none;width:100%;text-align:center;transition:border-color 0.2s}
+.seat-input:focus{border-color:var(--gold)}
+.seat-input::placeholder{color:rgba(255,255,255,0.2)}
+</style>
+</head>
+<body>
+
+<div class="admin-wrap" id="adminWrap">
+  <div class="admin-header">
+    <div class="admin-brand">
+      <div class="logo">Sumit</div>
+      <div class="sub">대구점 마감 관리</div>
+    </div>
+  </div>
+  <div class="admin-body">
+    <div id="dateList"><div class="loading-msg">날짜 불러오는 중...</div></div>
+  </div>
+</div>
+
+<script>
+const DAEGU_GAS_URL = 'https://script.google.com/macros/s/AKfycbxnJhftdjyEro7uKUNTfsAKp7U1g7knABAQBeebu5mfIIkonjXcTlgRK8qUanuOZ4prxw/exec';
+const ADMIN_KEY = '';
+const PARTY_DAYS = [6]; // 토요일
+let statusMap = {};
+
+async function loadDashboard() {
+  try {
+    const res = await fetch(DAEGU_GAS_URL + '?action=getDateStatus');
+    const json = await res.json();
+    if (json.result === 'success') statusMap = json.data || {};
+  } catch (e) {}
+  renderList();
+}
+
+function renderList() {
+  const dates = getPartyDates(12);
+  const list = document.getElementById('dateList');
+  if (!dates.length) { list.innerHTML = '<div class="loading-msg">파티 날짜가 없습니다.</div>'; return; }
+
+  let html = '';
+  let lastMonth = -1;
+
+  for (const { dateStr, d } of dates) {
+    const m = d.getMonth() + 1;
+    if (m !== lastMonth) {
+      html += `<div class="month-divider">${d.getFullYear()}년 ${m}월</div>`;
+      lastMonth = m;
+    }
+    const st  = statusMap[dateStr] || {};
+    const mal = st.male   || 'open';
+    const fem = st.female || 'open';
+    const mL  = st.maleLeft   ?? '';
+    const fL  = st.femaleLeft ?? '';
+
+    html += `
+<div class="date-card" id="card-${dateStr}">
+  <div class="dc-top">
+    <div>
+      <span class="dc-date-text">${m}월 ${d.getDate()}일</span>
+      <span class="dc-dow sat">토</span>
+    </div>
+    <span class="dc-indicator" id="ind-${dateStr}"></span>
+  </div>
+  <div class="dc-row">
+    <span class="dc-label">남성</span>
+    <div class="status-btns" id="male-${dateStr}">
+      ${btnHtml(dateStr,'male','open',mal)}
+      ${btnHtml(dateStr,'male','almost',mal)}
+      ${btnHtml(dateStr,'male','closed',mal)}
+    </div>
+  </div>
+  <div class="dc-row">
+    <span class="dc-label">여성</span>
+    <div class="status-btns" id="female-${dateStr}">
+      ${btnHtml(dateStr,'female','open',fem)}
+      ${btnHtml(dateStr,'female','almost',fem)}
+      ${btnHtml(dateStr,'female','closed',fem)}
+    </div>
+  </div>
+  <div class="seat-row">
+    <span class="dc-label" style="color:rgba(255,255,255,0.25);font-size:0.55rem">잔여석</span>
+    <div class="seat-wrap">
+      <div class="seat-group">
+        <label>남</label>
+        <input class="seat-input" type="number" id="maleLeft-${dateStr}" value="${mL}" min="0" max="999" placeholder="—"
+          onchange="onSeatChange('${dateStr}')">
+      </div>
+      <div class="seat-group">
+        <label>여</label>
+        <input class="seat-input" type="number" id="femaleLeft-${dateStr}" value="${fL}" min="0" max="999" placeholder="—"
+          onchange="onSeatChange('${dateStr}')">
+      </div>
+    </div>
+  </div>
+</div>`;
+  }
+  list.innerHTML = html;
+}
+
+const STATUS_LABELS = { open: '정상', almost: '마감임박', closed: '마감' };
+
+function btnHtml(dateStr, gender, value, current) {
+  const cls = value === 'open' ? 'n' : value === 'almost' ? 's' : 'c';
+  const active = value === current ? ' on' : '';
+  return `<button class="sbtn ${cls}${active}" onclick="onBtn('${dateStr}','${gender}','${value}')">${STATUS_LABELS[value]}</button>`;
+}
+
+async function onBtn(dateStr, gender, newVal) {
+  const prev = statusMap[dateStr] || { male: 'open', female: 'open' };
+  if (prev[gender] === newVal) return;
+
+  const updated = { ...prev, [gender]: newVal };
+  statusMap[dateStr] = updated;
+  setCardState(dateStr, 'saving', '저장 중...');
+  rerenderBtns(dateStr);
+
+  await saveToGAS(dateStr, updated);
+}
+
+async function onSeatChange(dateStr) {
+  const mL = document.getElementById(`maleLeft-${dateStr}`)?.value;
+  const fL = document.getElementById(`femaleLeft-${dateStr}`)?.value;
+  const prev = statusMap[dateStr] || { male: 'open', female: 'open' };
+  const updated = { ...prev, maleLeft: mL, femaleLeft: fL };
+  statusMap[dateStr] = updated;
+  setCardState(dateStr, 'saving', '저장 중...');
+  await saveToGAS(dateStr, updated);
+}
+
+async function saveToGAS(dateStr, data) {
+  const prev = { ...data };
+  try {
+    const mL = data.maleLeft   ?? '';
+    const fL = data.femaleLeft ?? '';
+    const url = `${DAEGU_GAS_URL}?action=updateDateStatus`
+      + `&date=${encodeURIComponent(dateStr)}`
+      + `&male=${encodeURIComponent(data.male   || 'open')}`
+      + `&female=${encodeURIComponent(data.female || 'open')}`
+      + `&maleLeft=${encodeURIComponent(mL)}`
+      + `&femaleLeft=${encodeURIComponent(fL)}`
+      + `&key=${encodeURIComponent(ADMIN_KEY)}`;
+    const res  = await fetch(url);
+    const json = await res.json();
+    if (json.result !== 'success') throw new Error();
+    setCardState(dateStr, 'saved', '저장 완료 ✓');
+    setTimeout(() => setCardState(dateStr, '', ''), 2000);
+  } catch {
+    statusMap[dateStr] = prev;
+    rerenderBtns(dateStr);
+    setCardState(dateStr, 'err', '저장 실패 ✕');
+    setTimeout(() => setCardState(dateStr, '', ''), 2500);
+  }
+}
+
+function setCardState(dateStr, state, msg) {
+  const card = document.getElementById(`card-${dateStr}`);
+  const ind  = document.getElementById(`ind-${dateStr}`);
+  if (!card || !ind) return;
+  card.className = 'date-card' + (state ? ' ' + state : '');
+  ind.className  = 'dc-indicator' + (state ? ' ' + state : '');
+  ind.textContent = msg;
+}
+
+function rerenderBtns(dateStr) {
+  const st  = statusMap[dateStr] || {};
+  const mal = st.male   || 'open';
+  const fem = st.female || 'open';
+  const mWrap = document.getElementById(`male-${dateStr}`);
+  const fWrap = document.getElementById(`female-${dateStr}`);
+  if (mWrap) mWrap.innerHTML = btnHtml(dateStr,'male','open',mal)   + btnHtml(dateStr,'male','almost',mal)   + btnHtml(dateStr,'male','closed',mal);
+  if (fWrap) fWrap.innerHTML = btnHtml(dateStr,'female','open',fem) + btnHtml(dateStr,'female','almost',fem) + btnHtml(dateStr,'female','closed',fem);
+}
+
+function getPartyDates(weeks) {
+  const result = [];
+  const FIRST_PARTY = new Date('2026-07-11T00:00:00+09:00');
+  const today  = new Date(); today.setHours(0,0,0,0);
+  const start  = today < FIRST_PARTY ? FIRST_PARTY : today;
+  const end    = new Date(start); end.setDate(end.getDate() + weeks * 7);
+  const cur    = new Date(start);
+  while (cur <= end) {
+    const dow = cur.getDay();
+    if (PARTY_DAYS.includes(dow)) {
+      const dateStr = `${cur.getFullYear()}-${String(cur.getMonth()+1).padStart(2,'0')}-${String(cur.getDate()).padStart(2,'0')}`;
+      result.push({ dateStr, d: new Date(cur), dow });
+    }
+    cur.setDate(cur.getDate() + 1);
+  }
+  return result;
+}
+
+loadDashboard();
+</script>
+</body>
+</html>

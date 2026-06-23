@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, viewport-fit=cover, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>썸잇 대구 — 프리미엄 솔로파티</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
+<meta name="description" content="대구 프리미엄 솔로파티 썸잇 | 매주 토요일 남20 여20 소규모 솔로파티">
+<meta property="og:title" content="썸잇 대구 — 프리미엄 솔로파티">
+<meta property="og:description" content="대구 프리미엄 솔로파티 썸잇 | 매주 토요일 남20 여20 소규모 솔로파티">
+<meta property="og:image" content="https://sumitparty.com/og-image.png">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://sumitparty.com/daegu.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600;700;900&family=Inter:wght@600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#C9A96E;--gold-light:#E8D4A8;--gold-dark:#8A6B3A;
+  --black:#0A0A0A;--dark:#111111;--dark2:#1A1A1A;--dark3:#242424;
+  --white:#FFFFFF;
+  --font-display:'Cormorant Garamond',serif;
+  --font-body:'Montserrat',sans-serif;
+}
+html{scroll-behavior:smooth}
+html{-webkit-text-size-adjust:none;overflow-x:hidden}
+body{background:var(--black);color:var(--white);font-family:var(--font-body);font-weight:300;overflow-x:hidden}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--black)}::-webkit-scrollbar-thumb{background:var(--gold-dark);border-radius:2px}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.4rem 3rem;background:linear-gradient(to bottom,rgba(10,10,10,0.96),transparent);transition:background 0.3s,border 0.3s}
+nav.scrolled{background:rgba(10,10,10,0.97);border-bottom:1px solid rgba(201,169,110,0.08)}
+.nav-logo{font-family:var(--font-display);font-size:1.8rem;font-weight:500;color:var(--gold);letter-spacing:0.15em;text-decoration:none}
+.nav-badge{font-size:0.52rem;letter-spacing:0.2em;color:rgba(201,169,110,0.6);font-weight:600;margin-left:0.4rem;vertical-align:middle;text-transform:uppercase}
+.nav-links{display:flex;gap:2.5rem;list-style:none}
+.nav-links a{color:var(--white);text-decoration:none;font-size:0.68rem;letter-spacing:0.2em;text-transform:uppercase;font-weight:500;transition:color 0.2s;opacity:0.8}
+.nav-links a:hover{color:var(--gold);opacity:1}
+.nav-cta{background:transparent;border:1px solid var(--gold);color:var(--gold);padding:0.6rem 1.4rem;font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;font-family:var(--font-body);font-weight:600;cursor:pointer;transition:all 0.2s;text-decoration:none}
+.nav-cta:hover{background:var(--gold);color:var(--black)}
+.nav-menu-btn{display:none;background:none;border:none;cursor:pointer;flex-direction:column;gap:5px;padding:4px}
+.nav-menu-btn span{display:block;width:24px;height:1px;background:var(--white)}
+.mobile-nav{display:none;position:fixed;inset:0;background:var(--black);z-index:200;flex-direction:column;justify-content:flex-start;padding:5.5rem 2rem 2rem}
+.mobile-nav.open{display:flex}
+.mobile-nav a{color:var(--white);text-decoration:none;font-family:var(--font-body);font-size:1.15rem;font-weight:400;letter-spacing:0.08em;padding:1.3rem 0.5rem;border-bottom:1px solid rgba(201,169,110,0.12);transition:color 0.2s}
+.mobile-nav a:first-of-type{color:var(--gold)}
+.mobile-nav a:hover{color:var(--gold)}
+.mobile-nav .mobile-cta{margin-top:2.5rem;background:var(--gold);color:var(--black);text-align:center;font-family:var(--font-body);font-size:0.95rem;font-weight:600;letter-spacing:0.05em;padding:1.2rem;border:none;border-radius:14px;text-decoration:none;display:block}
+.mobile-nav-close{position:absolute;top:1.5rem;right:1.8rem;background:none;border:none;color:var(--white);font-size:1.6rem;cursor:pointer;line-height:1}
+
+/* ── HERO ── */
+#home{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;text-align:center;padding:20px}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 120% 80% at 50% 60%,#1a0a1e 0%,#0d0512 40%,var(--black) 100%)}
+.hero-bg::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 40% at 50% 100%,rgba(60,10,20,0.5) 0%,transparent 70%)}
+.hero-aurora{position:absolute;inset:0;background:radial-gradient(ellipse 65% 50% at 50% 52%,rgba(201,169,110,0.12) 0%,rgba(150,100,60,0.05) 45%,transparent 70%);animation:aurora 6s ease-in-out infinite alternate;z-index:1}
+@keyframes aurora{0%{opacity:0.5}100%{opacity:1}}
+canvas#starCanvas{position:absolute;inset:0;z-index:2;pointer-events:none}
+.hero-logo-wrap{position:relative;width:100%;min-height:90px;display:flex;align-items:center;justify-content:center;margin-bottom:2rem;opacity:0;animation:fadeUp 1s ease forwards 0.5s}
+.hero-logo-glow{position:absolute;width:240px;height:240px;background:radial-gradient(circle at center,rgba(201,169,110,0.2) 0%,transparent 65%);animation:logoGlow 3s ease-in-out infinite}
+@keyframes logoGlow{0%,100%{transform:scale(0.9);opacity:0.6}50%{transform:scale(1.1);opacity:1}}
+.hero-logo{width:260px;max-width:85vw;height:auto;display:block;object-fit:contain;filter:drop-shadow(0 0 24px rgba(201,169,110,0.5)) brightness(1.1);animation:floatLogo 4s ease-in-out infinite}
+@keyframes floatLogo{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.hero-content{position:relative;z-index:10;width:100%;max-width:520px;display:flex;flex-direction:column;align-items:center}
+.hero-eyebrow{font-size:0.62rem;letter-spacing:0.4em;text-transform:uppercase;color:rgba(201,169,110,0.9);font-weight:600;margin-bottom:1.8rem;opacity:0;animation:fadeUp 0.8s ease forwards 0.2s}
+.hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;opacity:0;animation:fadeUp 0.8s ease forwards 0.9s}
+.hero-btn{display:inline-block;padding:0.95rem 2.5rem;border:1px solid var(--gold);color:var(--gold);text-decoration:none;font-size:0.62rem;letter-spacing:0.3em;text-transform:uppercase;font-weight:600;transition:all 0.3s;font-family:var(--font-body)}
+.hero-btn:hover{background:var(--gold);color:var(--black);transform:translateY(-2px)}
+.hero-btn.solid{background:var(--gold);color:var(--black)}
+.hero-btn.solid:hover{background:var(--gold-light)}
+.hero-scroll{position:absolute;bottom:2rem;left:0;right:0;margin:0 auto;width:fit-content;display:flex;flex-direction:column;align-items:center;gap:6px;z-index:10;opacity:0;animation:fadeUp 0.8s ease forwards 1.3s}
+.hero-scroll span{font-size:0.55rem;letter-spacing:0.3em;text-transform:uppercase;color:rgba(255,255,255,0.3)}
+.scroll-line{width:1px;height:28px;background:linear-gradient(to bottom,rgba(201,169,110,0.8),transparent);animation:scrollAnim 2s ease-in-out infinite}
+@keyframes scrollAnim{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+
+/* ── DATE LIST ── */
+#dates{background:var(--dark)}
+.dg-date-list{margin-top:2.5rem;display:flex;flex-direction:column;gap:1px;background:rgba(255,255,255,0.05)}
+.dg-date-row{background:var(--dark);display:flex;align-items:center;justify-content:space-between;padding:1.5rem 2rem;text-decoration:none;cursor:pointer;transition:background 0.2s;gap:1rem}
+.dg-date-row:hover{background:var(--dark2)}
+.dg-date-row.closed{opacity:0.4;pointer-events:none}
+.dg-date-left{display:flex;flex-direction:column;gap:0.3rem}
+.dg-date-label{font-family:var(--font-display);font-size:1.6rem;font-weight:300;color:var(--white);line-height:1}
+.dg-date-sub{font-size:0.57rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.28)}
+.dg-date-right{display:flex;align-items:center;gap:0.9rem;flex-shrink:0}
+.dg-badge{font-size:0.5rem;font-weight:700;padding:4px 10px;letter-spacing:0.1em;white-space:nowrap}
+.dg-badge-open{background:rgba(201,169,110,0.12);border:1px solid rgba(201,169,110,0.4);color:var(--gold)}
+.dg-badge-almost{background:rgba(255,140,0,0.12);border:1px solid rgba(255,140,0,0.4);color:#FF8C00}
+.dg-badge-closed{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.28)}
+.dg-apply-arrow{font-size:0.62rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);padding:0.45rem 1rem;border:1px solid rgba(201,169,110,0.35);white-space:nowrap}
+.dg-capacity{font-size:0.58rem;color:rgba(255,255,255,0.32);letter-spacing:0.05em;white-space:nowrap}
+.dg-open-badge{font-size:0.48rem;font-weight:700;padding:3px 7px;background:rgba(201,169,110,0.12);border:1px solid rgba(201,169,110,0.35);color:var(--gold);letter-spacing:0.08em;white-space:nowrap}
+.dg-date-loading{padding:2.5rem;text-align:center;font-size:0.72rem;color:rgba(255,255,255,0.25)}
+@media(max-width:480px){.dg-date-label{font-size:1.2rem}.dg-date-row{padding:1.2rem 1.2rem}}
+
+/* ── TICKER ── */
+.ticker{background:var(--gold);padding:0.7rem 0;overflow:hidden;white-space:nowrap}
+.ticker-track{display:inline-flex;animation:ticker 22s linear infinite}
+.ticker-item{font-size:0.62rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--black);font-weight:700;padding:0 2rem}
+.ticker-dot{color:rgba(0,0,0,0.35);padding:0 0.3rem;font-size:0.62rem}
+
+/* ── BOOKING BANNER ── */
+.booking-banner{display:flex;text-decoration:none;position:relative;overflow:hidden;cursor:pointer;-webkit-tap-highlight-color:transparent;min-height:260px;align-items:flex-end}
+.booking-banner-bg{position:absolute;inset:0;background:linear-gradient(135deg,#0e0818 0%,#1a0d2e 40%,#0a0a0a 100%)}
+.booking-banner-bg::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 80% at 20% 50%,rgba(201,169,110,0.08) 0%,transparent 60%)}
+.booking-banner-bg::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(to right,transparent,var(--gold),transparent)}
+.booking-banner-tag{position:absolute;top:20px;right:20px;background:rgba(201,169,110,0.15);border:1px solid rgba(201,169,110,0.5);color:var(--gold);font-size:0.6rem;font-weight:600;padding:6px 14px;letter-spacing:0.2em;text-transform:uppercase;font-family:var(--font-body)}
+.booking-banner-content{position:relative;z-index:1;padding:2.5rem 2.5rem 2.8rem;width:100%}
+.booking-banner-location{font-size:0.6rem;letter-spacing:0.35em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:0.6rem}
+.booking-banner-title{font-family:var(--font-display);font-size:clamp(2rem,6vw,3.5rem);font-weight:300;color:var(--white);margin:0 0 0.3rem;line-height:1.1}
+.booking-banner-sub{font-size:0.72rem;color:rgba(255,255,255,0.45);margin:0 0 2rem;letter-spacing:0.1em;font-weight:300}
+.booking-banner-btn{display:inline-flex;align-items:center;gap:0.5rem;background:var(--white);color:var(--black);font-size:0.7rem;font-weight:700;padding:0.9rem 2.2rem;letter-spacing:0.1em;text-transform:uppercase;font-family:var(--font-body);animation:pulseCta 2s ease-in-out infinite}
+@keyframes pulseCta{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,0.35)}50%{box-shadow:0 0 0 10px rgba(255,255,255,0)}}
+
+/* ── SECTION BASE ── */
+.section{padding:7rem 3rem}
+.container{max-width:1200px;margin:0 auto}
+.section-label{font-size:0.58rem;letter-spacing:0.4em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:1.2rem;display:flex;align-items:center;gap:1rem}
+.section-label::after{content:'';flex:1;height:1px;background:rgba(201,169,110,0.2);max-width:60px}
+.section-title{font-family:var(--font-display);font-size:clamp(2.2rem,4.5vw,4rem);font-weight:300;line-height:1.1;margin-bottom:1rem}
+
+/* ── ABOUT ── */
+#about{background:var(--dark)}
+.about-layout{display:grid;grid-template-columns:1fr 1fr;gap:7rem;align-items:start}
+.about-desc{font-size:0.78rem;color:rgba(255,255,255,0.42);line-height:2;font-weight:300;margin-bottom:2.5rem}
+.about-details{display:flex;flex-direction:column;gap:1px;background:rgba(255,255,255,0.05)}
+.about-detail-item{background:var(--dark);padding:1.6rem 2rem;display:flex;align-items:flex-start;gap:1.5rem;transition:background 0.2s}
+.about-detail-item:hover{background:var(--dark2)}
+.about-detail-num{font-family:var(--font-display);font-size:1.3rem;color:rgba(201,169,110,0.6);font-style:italic;min-width:28px;line-height:1}
+.about-detail-key{font-size:0.55rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:0.25rem}
+.about-detail-val{font-size:0.8rem;color:rgba(255,255,255,0.65);font-weight:300}
+
+/* ── HIGHLIGHT STRIP ── */
+.highlight-strip{background:var(--black);border-top:1px solid rgba(201,169,110,0.07);border-bottom:1px solid rgba(201,169,110,0.07);padding:4rem 0}
+.highlight-grid{display:grid;grid-template-columns:repeat(3,1fr)}
+.highlight-item{padding:2.5rem 2rem;text-align:center;border-right:1px solid rgba(201,169,110,0.07)}
+.highlight-item:last-child{border-right:none}
+.highlight-num{font-family:'Inter',var(--font-body);font-size:clamp(2rem,4vw,3rem);font-weight:700;color:var(--gold);line-height:1;margin-bottom:0.4rem;white-space:nowrap}
+.highlight-label{font-size:0.6rem;letter-spacing:0.25em;text-transform:uppercase;color:rgba(255,255,255,0.3);font-weight:500}
+
+/* ── PRICING ── */
+#pricing{background:var(--dark)}
+.pricing-wrap{margin-top:4rem;border:1px solid rgba(201,169,110,0.15);background:rgba(201,169,110,0.03);padding:2.5rem 2.5rem 2rem;max-width:600px}
+.pricing-ticket-name{font-family:var(--font-display);font-size:1.4rem;font-weight:400;color:var(--white);margin-bottom:0.3rem}
+.pricing-ticket-desc{font-size:0.62rem;color:rgba(255,255,255,0.3);letter-spacing:0.08em;margin-bottom:1.8rem}
+.pricing-divider{height:1px;background:rgba(201,169,110,0.12);margin-bottom:1.5rem}
+.price-row{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 0;border-bottom:1px solid rgba(255,255,255,0.05)}
+.price-row:last-of-type{border-bottom:none}
+.price-gender{font-size:0.65rem;color:rgba(255,255,255,0.38);font-weight:300;letter-spacing:0.05em}
+.price-amount-wrap{display:flex;align-items:center;gap:0.7rem}
+.price-original{font-size:0.75rem;color:rgba(255,255,255,0.2);text-decoration:line-through;font-weight:300}
+.price-amount{font-family:var(--font-display);font-size:1.8rem;font-weight:300;color:var(--gold)}
+.price-amount sup{font-size:0.7rem;font-family:var(--font-body);color:rgba(201,169,110,0.6);font-weight:300;vertical-align:super}
+.price-badge-sale{background:rgba(201,169,110,0.15);border:1px solid rgba(201,169,110,0.4);color:var(--gold);font-size:0.5rem;font-weight:700;padding:3px 8px;letter-spacing:0.1em;white-space:nowrap}
+.price-note{margin-top:1.5rem;padding-top:1.2rem;border-top:1px solid rgba(255,255,255,0.05);font-size:0.62rem;color:rgba(255,255,255,0.25);line-height:1.8;font-weight:300}
+.price-note em{color:var(--gold);font-style:normal}
+.price-cta{display:block;text-align:center;margin-top:2rem;padding:0.85rem;background:var(--gold);color:var(--black);text-decoration:none;font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;font-weight:700;transition:all 0.2s}
+.price-cta:hover{background:var(--gold-light)}
+
+/* ── SCHEDULE ── */
+#schedule{background:var(--black)}
+.sc-date-badge{display:inline-block;background:rgba(201,169,110,0.1);border:1px solid rgba(201,169,110,0.3);color:var(--gold);font-size:0.65rem;font-weight:600;padding:0.5rem 1.2rem;letter-spacing:0.15em;margin-bottom:3rem}
+.sc-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(201,169,110,0.08);border:1px solid rgba(201,169,110,0.08);margin-bottom:4rem}
+.sc-info-col{background:var(--dark);padding:2rem;text-align:center}
+.sc-info-label{font-size:0.55rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:0.6rem}
+.sc-info-val{font-family:var(--font-display);font-size:clamp(1.4rem,3vw,2rem);font-weight:300;color:var(--white);line-height:1.2}
+.sc-tl-title{font-size:0.58rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:2rem}
+.sc-tl-list{display:flex;flex-direction:column;gap:0;border-top:1px solid rgba(255,255,255,0.06);max-width:420px}
+.sc-tl-row{display:flex;align-items:center;gap:1.5rem;padding:1.1rem 0;border-bottom:1px solid rgba(255,255,255,0.06)}
+.sc-tl-time{font-size:0.9rem;font-weight:600;color:var(--gold);min-width:52px;letter-spacing:0.02em}
+.sc-tl-desc{font-size:0.75rem;color:rgba(255,255,255,0.5);line-height:1.5;font-weight:300}
+
+/* ── NOTICE ── */
+#notice{background:var(--dark)}
+.notice-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(255,255,255,0.05);margin-top:3.5rem}
+.notice-item{background:var(--dark);padding:2rem}
+.notice-icon{font-size:1.2rem;margin-bottom:0.8rem}
+.notice-title{font-size:0.72rem;font-weight:600;color:rgba(255,255,255,0.8);margin-bottom:0.5rem}
+.notice-desc{font-size:0.68rem;color:rgba(255,255,255,0.35);line-height:1.8;font-weight:300}
+
+/* ── FAQ ── */
+#faq{background:var(--black)}
+.faq-list{display:flex;flex-direction:column;gap:1px;background:rgba(255,255,255,0.05);margin-top:3.5rem}
+.faq-item{background:var(--black);overflow:hidden}
+.faq-q{display:flex;align-items:center;justify-content:space-between;padding:1.5rem 2rem;cursor:pointer;transition:background 0.2s;gap:1rem}
+.faq-q:hover{background:var(--dark)}
+.faq-q-text{font-size:0.82rem;font-weight:500;color:rgba(255,255,255,0.8);line-height:1.5}
+.faq-icon{color:var(--gold);font-size:1.3rem;flex-shrink:0;transition:transform 0.3s;line-height:1;font-weight:300}
+.faq-item.open .faq-icon{transform:rotate(45deg)}
+.faq-answer{max-height:0;overflow:hidden;transition:max-height 0.35s ease}
+.faq-item.open .faq-answer{max-height:200px}
+.faq-a-text{padding:0 2rem 1.5rem;font-size:0.75rem;color:rgba(255,255,255,0.45);line-height:1.9;font-weight:300;border-top:1px solid rgba(255,255,255,0.05);padding-top:1.2rem}
+
+/* ── CTA ── */
+#cta{padding:10rem 0;background:var(--dark);text-align:center;position:relative;overflow:hidden}
+.cta-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(201,169,110,0.07) 0%,transparent 65%)}
+.cta-content{position:relative;z-index:1}
+.cta-title{font-family:var(--font-display);font-size:clamp(2.5rem,6vw,5rem);font-weight:300;line-height:1.2;margin-bottom:1.5rem}
+.cta-title em{font-style:italic;color:var(--gold)}
+.cta-sub{font-size:0.68rem;letter-spacing:0.3em;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-bottom:0.8rem}
+.cta-detail{font-size:0.72rem;color:rgba(255,255,255,0.2);margin-bottom:3rem;font-weight:300}
+.cta-btn{display:inline-block;padding:1.1rem 4rem;background:var(--gold);color:var(--black);text-decoration:none;font-size:0.62rem;letter-spacing:0.3em;text-transform:uppercase;font-weight:700;transition:all 0.3s}
+.cta-btn:hover{background:var(--gold-light);transform:translateY(-2px)}
+
+/* ── FOOTER ── */
+footer{background:var(--dark);border-top:1px solid rgba(255,255,255,0.05);padding:4rem 3rem 2rem}
+.footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:4rem;max-width:1200px;margin:0 auto 3.5rem}
+.footer-brand{font-family:var(--font-display);font-size:2rem;font-weight:500;color:var(--gold);letter-spacing:0.1em;margin-bottom:0.3rem}
+.footer-brand-sub{font-size:0.55rem;letter-spacing:0.25em;text-transform:uppercase;color:rgba(201,169,110,0.5);font-weight:600;margin-bottom:1rem}
+.footer-tagline{font-size:0.72rem;color:rgba(255,255,255,0.28);line-height:1.9;font-weight:300;font-style:italic;font-family:var(--font-display)}
+.footer-heading{font-size:0.58rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:1.3rem}
+.footer-links{list-style:none;display:flex;flex-direction:column;gap:0.7rem;padding:0;margin:0}
+.footer-links a{color:rgba(255,255,255,0.38);text-decoration:none;font-size:0.72rem;transition:color 0.2s;font-weight:300}
+.footer-links a:hover{color:var(--gold)}
+.footer-info{font-size:0.68rem;color:rgba(255,255,255,0.22);line-height:2.2;font-weight:300}
+.footer-info a{color:var(--gold);text-decoration:none}
+.footer-bottom{border-top:1px solid rgba(255,255,255,0.05);padding-top:2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;max-width:1200px;margin:0 auto}
+.footer-copy{font-size:0.58rem;color:rgba(255,255,255,0.15);letter-spacing:0.1em}
+.footer-legal{display:flex;gap:2rem}
+.footer-legal a{font-size:0.58rem;color:rgba(255,255,255,0.15);text-decoration:none;letter-spacing:0.1em;transition:color 0.2s}
+.footer-legal a:hover{color:rgba(255,255,255,0.4)}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .about-layout{grid-template-columns:1fr;gap:3rem}
+  .highlight-grid{grid-template-columns:repeat(3,1fr)}
+  .highlight-item{padding:1.5rem 0.6rem}
+  .sc-info-grid{grid-template-columns:1fr 1fr}
+  .notice-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr;gap:2.5rem}
+}
+@media(max-width:768px){
+  nav{padding:1.2rem 1.5rem}
+  .nav-links,.nav-cta{display:none}
+  .nav-menu-btn{display:flex}
+  .section{padding:5rem 1.5rem}
+  .booking-banner-content{padding:1.5rem}
+  .footer-bottom{flex-direction:column;align-items:flex-start}
+  footer{padding:3rem 1.5rem 2rem}
+  .sc-info-grid{grid-template-columns:1fr}
+  .pricing-wrap{padding:1.8rem 1.2rem 1.5rem}
+}
+</style>
+<!-- Meta Pixel -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+n.push=n;n.loaded=!0;n.version="2.0";n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+document,"script","https://connect.facebook.net/en_US/fbevents.js");
+fbq("init","821379504055811");
+fbq("track","PageView");
+fbq("track","ViewContent",{content_name:"썸잇 대구",content_category:"daegu"});
+</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=821379504055811&ev=PageView&noscript=1"/></noscript>
+<!-- End Meta Pixel -->
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="daegu.html" class="nav-logo">Sumit<span class="nav-badge">대구</span></a>
+  <ul class="nav-links">
+    <li><a href="#home">홈</a></li>
+    <li><a href="#about">소개</a></li>
+    <li><a href="#schedule">일정</a></li>
+  </ul>
+  <a href="daegu-booking.html" class="nav-cta">신청하기</a>
+  <button class="nav-menu-btn" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="mobile-nav" id="mobileNav">
+  <button class="mobile-nav-close" onclick="toggleMenu()">✕</button>
+  <a href="#home" onclick="toggleMenu()">홈</a>
+  <a href="#about" onclick="toggleMenu()">소개</a>
+  <a href="#schedule" onclick="toggleMenu()">일정</a>
+  <a href="daegu-booking.html" class="mobile-cta" onclick="toggleMenu()">지금 신청하기</a>
+</div>
+
+<!-- HERO -->
+<section id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-aurora"></div>
+  <canvas id="starCanvas"></canvas>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Daegu Premium Solo Party</p>
+    <div class="hero-logo-wrap">
+      <div class="hero-logo-glow"></div>
+      <img class="hero-logo" src="logo.png" alt="Sumit Logo">
+    </div>
+    <div class="hero-btns">
+      <a href="daegu-booking.html" class="hero-btn solid">신청하기</a>
+      <a href="#about" class="hero-btn">더 알아보기</a>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-track">
+    <span class="ticker-item">Daegu Premium Solo Party</span><span class="ticker-dot">✦</span>
+    <span class="ticker-item">대구 프리미엄 솔로파티</span><span class="ticker-dot">✦</span>
+    <span class="ticker-item">로테이션 소개팅 파티</span><span class="ticker-dot">✦</span>
+    <span class="ticker-item">매주 토요일 운영</span><span class="ticker-dot">✦</span>
+    <span class="ticker-item">남 20명 · 여 20명</span><span class="ticker-dot">✦</span>
+    <span class="ticker-item">외모 승인제</span><span class="ticker-dot">✦</span>
+    <span class="ticker-item">Daegu Premium Solo Party</span><span class="ticker-dot">✦</span>
+    <span class="ticker-item">대구 프리미엄 솔로파티</span><span class="ticker-dot">✦</span>
+    <span class="ticker-item">로테이션 소개팅 파티</span><span class="ticker-dot">✦</span>
+    <span class="ticker-item">매주 토요일 운영</span><span class="ticker-dot">✦</span>
+    <span class="ticker-item">남 20명 · 여 20명</span><span class="ticker-dot">✦</span>
+    <span class="ticker-item">외모 승인제</span><span class="ticker-dot">✦</span>
+  </div>
+</div>
+
+<!-- DATE LIST -->
+<section id="dates">
+  <div class="section container">
+    <p class="section-label">Upcoming Parties</p>
+    <h2 class="section-title">파티 날짜 선택</h2>
+    <div class="dg-date-list" id="dgDateList">
+      <div class="dg-date-loading">날짜 불러오는 중…</div>
+    </div>
+  </div>
+</section>
+
+<!-- HIGHLIGHT STRIP -->
+<div class="highlight-strip">
+  <div class="container">
+    <div class="highlight-grid">
+      <div class="highlight-item">
+        <div class="highlight-num">20 : 20</div>
+        <div class="highlight-label">남녀 인원 구성</div>
+      </div>
+      <div class="highlight-item">
+        <div class="highlight-num">매주 토</div>
+        <div class="highlight-label">운영 요일</div>
+      </div>
+      <div class="highlight-item">
+        <div class="highlight-num">19:00–23:00</div>
+        <div class="highlight-label">파티 시간</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section container">
+    <div class="about-layout">
+      <div>
+        <p class="section-label">About Sumit 대구</p>
+        <h2 class="section-title">낯선 만남이<br>가장 설레는 순간</h2>
+        <p class="about-desc">썸잇 대구는 남성 20명, 여성 20명이 참가하는 프리미엄 솔로파티입니다. 로테이션 방식으로 자리를 옮기며 자연스럽게 여러 사람을 만날 수 있어, 혼자 오셔도 어색함 없이 즐길 수 있습니다.</p>
+        <p class="about-desc" style="margin-bottom:0">매주 토요일, 대구에서 운영됩니다.</p>
+      </div>
+      <div class="about-details">
+        <div class="about-detail-item">
+          <div class="about-detail-num">①</div>
+          <div><p class="about-detail-key">인원 구성</p><p class="about-detail-val">남성 20명 + 여성 20명 (총 40명)</p></div>
+        </div>
+        <div class="about-detail-item">
+          <div class="about-detail-num">②</div>
+          <div><p class="about-detail-key">운영 방식</p><p class="about-detail-val">로테이션 자리이동 소개팅 파티</p></div>
+        </div>
+        <div class="about-detail-item">
+          <div class="about-detail-num">③</div>
+          <div><p class="about-detail-key">심사 방식</p><p class="about-detail-val">외모 승인제 운영</p></div>
+        </div>
+        <div class="about-detail-item">
+          <div class="about-detail-num">④</div>
+          <div><p class="about-detail-key">장소 안내</p><p class="about-detail-val">대구 · 합격자에게 개별 안내</p></div>
+        </div>
+        <div class="about-detail-item">
+          <div class="about-detail-num">⑤</div>
+          <div><p class="about-detail-key">참가 연령</p><p class="about-detail-val">90~07년생 · 남녀 동일</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SCHEDULE -->
+<section id="schedule">
+  <div class="section container">
+    <p class="section-label">Schedule</p>
+    <h2 class="section-title">파티 일정</h2>
+    <div class="sc-date-badge">✦ 첫 파티 · 2026년 7월 11일 (토)</div>
+    <div class="sc-info-grid">
+      <div class="sc-info-col">
+        <div class="sc-info-label">운영 요일</div>
+        <div class="sc-info-val">매주 토요일</div>
+      </div>
+      <div class="sc-info-col">
+        <div class="sc-info-label">파티 시간</div>
+        <div class="sc-info-val">19:00 – 23:00</div>
+      </div>
+    </div>
+    <p class="sc-tl-title">Party Timeline</p>
+    <div class="sc-tl-list">
+      <div class="sc-tl-row"><span class="sc-tl-time">19:00</span><span class="sc-tl-desc">입장 · 오리엔테이션</span></div>
+      <div class="sc-tl-row"><span class="sc-tl-time">19:30</span><span class="sc-tl-desc">1부 로테이션 소개팅 파티 시작</span></div>
+      <div class="sc-tl-row"><span class="sc-tl-time">21:00</span><span class="sc-tl-desc">2부 파티 컨텐츠 시작</span></div>
+      <div class="sc-tl-row"><span class="sc-tl-time">23:00</span><span class="sc-tl-desc">파티 종료</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- NOTICE -->
+<section id="notice">
+  <div class="section container">
+    <p class="section-label">Notice</p>
+    <h2 class="section-title">참가 유의사항</h2>
+    <div class="notice-grid">
+      <div class="notice-item">
+        <div class="notice-icon">📋</div>
+        <div class="notice-title">외모 승인제 운영</div>
+        <div class="notice-desc">신청 시 제출한 사진을 기반으로 운영팀 검토 후 합격 여부를 안내드립니다. 자기관리를 하는 깔끔한 인상의 분들을 선발합니다.</div>
+      </div>
+      <div class="notice-item">
+        <div class="notice-icon">📍</div>
+        <div class="notice-title">장소 개별 안내</div>
+        <div class="notice-desc">파티 장소 상세 주소는 합격 확정 후 개별 문자로 안내드립니다. 공개된 주소가 없으므로 합격 문자를 꼭 확인해주세요.</div>
+      </div>
+      <div class="notice-item">
+        <div class="notice-icon">🚫</div>
+        <div class="notice-title">노쇼 및 당일 취소 불가</div>
+        <div class="notice-desc">남녀 인원 균형 운영을 위해 노쇼 및 당일 취소 시 환불이 불가합니다. 부득이한 경우 최소 하루 전 연락 부탁드립니다.</div>
+      </div>
+      <div class="notice-item">
+        <div class="notice-icon">👗</div>
+        <div class="notice-title">복장 안내</div>
+        <div class="notice-desc">별도 드레스코드는 없으나 깔끔한 캐주얼을 권장합니다. 슬리퍼·운동복 등은 자제해주세요.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="section container">
+    <p class="section-label">FAQ</p>
+    <h2 class="section-title">자주 묻는 질문</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span class="faq-q-text">처음인데 혼자 가도 되나요?</span>
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer">
+          <p class="faq-a-text">네, 혼자 오시는 분들이 대부분입니다. 로테이션 방식으로 진행되어 오히려 여러 사람과 자연스럽게 대화할 수 있어요. 스태프가 처음부터 함께 안내해드리니 걱정 마세요.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span class="faq-q-text">외모 승인 기준이 뭔가요?</span>
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer">
+          <p class="faq-a-text">자기관리를 하고 깔끔한 인상의 분들을 선발합니다. 특정 수치보다는 제출한 사진을 기반으로 전반적인 분위기와 첫인상을 기준으로 검토합니다.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span class="faq-q-text">합격 결과는 얼마나 걸리나요?</span>
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer">
+          <p class="faq-a-text">신청서 접수 후 운영팀 검토를 거쳐 순차적으로 문자로 개별 안내드립니다. 합격 시 입금 안내와 파티 장소 상세 주소도 함께 발송됩니다.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span class="faq-q-text">환불 규정이 어떻게 되나요?</span>
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer">
+          <p class="faq-a-text">노쇼 및 당일 취소는 환불이 불가합니다. 자세한 환불 규정은 <a href="terms.html" style="color:var(--gold)">이용약관</a>을 확인해주세요.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span class="faq-q-text">대구 어디서 하나요?</span>
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer">
+          <p class="faq-a-text">합격 확정 후 문자로 상세 주소를 개별 안내드립니다. 대구 중심부에 위치한 파티 공간에서 진행됩니다.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="cta-bg"></div>
+  <div class="container" style="padding:0 3rem">
+    <div class="cta-content">
+      <h2 class="cta-title">낯선 만남이<br><em>가장 설레는 순간</em>이 되는 곳</h2>
+      <p class="cta-sub">썸잇 대구 · 매주 토요일</p>
+      <p class="cta-detail">첫 파티 2026년 7월 11일 (토) · 남20 여20</p>
+      <a href="daegu-booking.html" class="cta-btn">지금 신청하기</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand">Sumit</div>
+      <div class="footer-brand-sub">대구점</div>
+      <p class="footer-tagline">낯선 만남이 가장 설레는 순간이 되는 곳.<br>분위기와 대화, 그리고 끌림이 자연스럽게 이어집니다.</p>
+    </div>
+    <div>
+      <p class="footer-heading">Navigation</p>
+      <ul class="footer-links">
+        <li><a href="daegu.html">대구점</a></li>
+        <li><a href="daegu-booking.html">신청하기</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="footer-heading">고객 센터</p>
+      <div class="footer-info">
+        <p>상호: 썸잇 | 대표자: 김경민</p>
+        <p>사업자등록번호: 793-02-03419</p>
+        <p style="margin-top:0.6rem">인스타그램: <a href="https://instagram.com/sum_it.official" target="_blank">@sum_it.official</a></p>
+        <p>이메일: aprycotkr@naver.com</p>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2026 Sumit Party. All rights reserved.</p>
+    <div class="footer-legal">
+      <a href="terms.html">이용약관</a>
+      <a href="privacy.html">개인정보처리방침</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => navbar.classList.toggle('scrolled', window.scrollY > 50));
+function toggleMenu() { document.getElementById('mobileNav').classList.toggle('open'); }
+function toggleFaq(el) {
+  const item = el.parentElement;
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+/* ── Star Canvas ── */
+(function(){
+  const canvas = document.getElementById('starCanvas');
+  if (!canvas) return;
+  if (window.innerWidth > 768) {
+    const ctx = canvas.getContext('2d');
+    let W = canvas.width = window.innerWidth, H = canvas.height = window.innerHeight;
+    window.addEventListener('resize', () => { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; });
+    const stars = Array.from({length:55}, () => ({x:Math.random()*W, y:Math.random()*H, size:Math.random()*1.2, op:Math.random(), spd:0.003+Math.random()*0.007}));
+    (function animate(){
+      ctx.clearRect(0,0,W,H);
+      stars.forEach(s => { s.op+=s.spd; if(s.op>1||s.op<0) s.spd=-s.spd; ctx.beginPath(); ctx.arc(s.x,s.y,s.size,0,Math.PI*2); ctx.fillStyle=`rgba(255,255,255,${Math.abs(s.op)})`; ctx.fill(); });
+      requestAnimationFrame(animate);
+    })();
+  } else { canvas.style.display = 'none'; }
+})();
+
+/* ── Date List ── */
+(function(){
+  const DAEGU_GAS_URL = 'https://script.google.com/macros/s/AKfycbxnJhftdjyEro7uKUNTfsAKp7U1g7knABAQBeebu5mfIIkonjXcTlgRK8qUanuOZ4prxw/exec';
+  const FIRST_PARTY = new Date('2026-07-11T00:00:00+09:00');
+
+  function getUpcomingSaturdays(count) {
+    var result = [];
+    var today = new Date();
+    today.setHours(0,0,0,0);
+    var d = new Date(today);
+    var day = d.getDay();
+    var daysToSat = day === 6 ? 7 : (6 - day);
+    d.setDate(d.getDate() + daysToSat);
+    if (d < FIRST_PARTY) {
+      d = new Date(FIRST_PARTY);
+      var fp = d.getDay();
+      if (fp !== 6) d.setDate(d.getDate() + (6 - fp));
+    }
+    while (result.length < count) { result.push(new Date(d)); d.setDate(d.getDate() + 7); }
+    return result;
+  }
+
+  function toKey(d) {
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  }
+
+  function toLabel(d) {
+    var months = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+    return months[d.getMonth()] + ' ' + d.getDate() + '일 (토)';
+  }
+
+  async function renderDates() {
+    var list = document.getElementById('dgDateList');
+    if (!list) return;
+    var statusData = {};
+    try {
+      if (DAEGU_GAS_URL) {
+        var res = await fetch(DAEGU_GAS_URL + '?action=getDateStatus');
+        var json = await res.json();
+        if (json.result === 'success') statusData = json.data;
+      }
+    } catch(e) {}
+
+    var dates = getUpcomingSaturdays(5);
+    list.innerHTML = '';
+    dates.forEach(function(d) {
+      var key = toKey(d);
+      var label = toLabel(d);
+      var st = statusData[key] || {};
+      var maleSt = st.male || 'open';
+      var femSt  = st.female || 'open';
+      var allClosed = maleSt === 'closed' && femSt === 'closed';
+      var statusText, badgeClass;
+      if (allClosed) { statusText = '마감'; badgeClass = 'dg-badge dg-badge-closed'; }
+      else if (maleSt === 'almost' || femSt === 'almost') { statusText = '마감임박'; badgeClass = 'dg-badge dg-badge-almost'; }
+      else { statusText = '신청가능'; badgeClass = 'dg-badge dg-badge-open'; }
+
+      var capacityHtml = '';
+      if (st.maleRemaining !== undefined && st.femaleRemaining !== undefined) {
+        capacityHtml = '<span class="dg-capacity">남 ' + st.maleRemaining + '/20 · 여 ' + st.femaleRemaining + '/20</span>';
+      }
+      var openHtml = (key === '2026-07-11' && !allClosed) ? '<span class="dg-open-badge">OPEN 할인</span>' : '';
+
+      var row = document.createElement('a');
+      row.className = 'dg-date-row' + (allClosed ? ' closed' : '');
+      row.href = allClosed ? '#' : ('daegu-booking.html?date=' + key);
+      row.innerHTML =
+        '<div class="dg-date-left">' +
+          '<div class="dg-date-label">' + label + '</div>' +
+          '<div class="dg-date-sub">토요일 · 19:00 ~ 23:00</div>' +
+        '</div>' +
+        '<div class="dg-date-right">' +
+          capacityHtml +
+          openHtml +
+          '<span class="' + badgeClass + '">' + statusText + '</span>' +
+          (!allClosed ? '<span class="dg-apply-arrow">신청하기 →</span>' : '') +
+        '</div>';
+      list.appendChild(row);
+    });
+  }
+  renderDates();
+})();
+</script>
+</body>
+</html>
