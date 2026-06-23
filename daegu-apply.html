@@ -722,6 +722,7 @@ async function submitForm() {
 
   const submitPrice = getEffectivePrice(fd.gender);
   const payload = {
+    action: 'submitApplication',
     branch: 'daegu',
     phone: fd.phone, name: fd.name, gender: fd.gender,
     bdate: fd.byear + '년 ' + fd.bmonth + '월 ' + fd.bday + '일',
