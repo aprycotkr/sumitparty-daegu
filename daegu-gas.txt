@@ -44,6 +44,10 @@ function doGet(e) {
     if (action === 'updateDateStatus') {
       return jsonResponse(updateDateStatusFromGet(e.parameter));
     }
+    if (action === 'submitApplication') {
+      const payload = JSON.parse(e.parameter.data || '{}');
+      return jsonResponse(submitApplication(payload));
+    }
     return jsonResponse({ result: 'error', message: 'unknown action' });
   } catch (err) {
     return jsonResponse({ result: 'error', message: err.message });
