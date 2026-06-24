@@ -606,18 +606,9 @@ function toggleFaq(el) {
     return months[d.getMonth()] + ' ' + d.getDate() + '일 (토)';
   }
 
-  async function renderDates() {
+  function renderDates(statusData) {
     var list = document.getElementById('dgDateList');
     if (!list) return;
-    var statusData = {};
-    try {
-      if (DAEGU_GAS_URL) {
-        var res = await fetch(DAEGU_GAS_URL + '?action=getDateStatus');
-        var json = await res.json();
-        if (json.result === 'success') statusData = json.data;
-      }
-    } catch(e) {}
-
     var dates = getUpcomingSaturdays(5);
     list.innerHTML = '';
     dates.forEach(function(d) {
@@ -655,7 +646,14 @@ function toggleFaq(el) {
       list.appendChild(row);
     });
   }
-  renderDates();
+
+  renderDates({});
+  if (DAEGU_GAS_URL) {
+    fetch(DAEGU_GAS_URL + '?action=getDateStatus')
+      .then(function(r) { return r.json(); })
+      .then(function(json) { if (json.result === 'success') renderDates(json.data || {}); })
+      .catch(function() {});
+  }
 })();
 </script>
 </body>
