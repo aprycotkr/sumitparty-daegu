@@ -89,6 +89,16 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .open-banner{background:rgba(201,169,110,0.08);border:1px solid rgba(201,169,110,0.25);border-radius:8px;padding:1rem;margin-bottom:1.2rem}
 .open-banner-title{font-size:0.75rem;font-weight:700;color:var(--gold);margin-bottom:4px}
 .open-banner-body{font-size:0.65rem;color:rgba(201,169,110,0.6);font-weight:300}
+.earlybird-banner{background:rgba(201,169,110,0.06);border:1px solid rgba(201,169,110,0.25);border-radius:8px;padding:1rem;margin-bottom:1.2rem}
+.earlybird-banner-title{font-size:0.75rem;font-weight:700;color:var(--gold);margin-bottom:4px}
+.earlybird-banner-body{font-size:0.65rem;color:rgba(201,169,110,0.55);font-weight:300;line-height:1.7;margin-bottom:0.8rem}
+.earlybird-banner-body strong{color:var(--gold)}
+.eb-price-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.eb-price-cell{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:7px;padding:0.6rem 0.8rem;text-align:center}
+.ep-label{font-size:0.6rem;color:rgba(255,255,255,0.35);margin-bottom:4px;font-weight:300}
+.ep-original{font-size:0.65rem;color:rgba(255,255,255,0.3);text-decoration:line-through;margin-bottom:2px}
+.ep-discounted{font-size:0.95rem;font-weight:700;color:var(--gold)}
+.price-section-label{font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.28);font-weight:600;margin-bottom:0.7rem}
 .price-row{display:flex;justify-content:space-between;align-items:center;padding:0.75rem 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:0.75rem;color:rgba(255,255,255,0.5)}
 .price-row:last-of-type{border-bottom:none}
 .price-row.highlight{color:var(--white);font-weight:500}
@@ -236,22 +246,34 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
     <div class="sec">
       <div class="sec-title">참가비 안내</div>
       <div class="price-table-wrap">
-        <div class="deadline-banner">
-          <strong>마감 전 지금 신청하세요!</strong>
-          <span class="deadline-dot">● 마감 임박</span>
-          <p>잔여석이 빠르게 줄고 있습니다. 선착순으로 확정되며, 지금 신청하지 않으면 기회를 놓칠 수 있습니다.</p>
-        </div>
         <div class="open-banner" id="openBannerLeft" style="display:none">
           <div class="open-banner-title">🎉 OPEN 할인 적용 중!</div>
           <div class="open-banner-body">7월 11일 첫 파티 한정 특별 할인 가격입니다.</div>
         </div>
+        <div class="earlybird-banner" id="earlybirdBannerLeft" style="display:none">
+          <div class="earlybird-banner-title">🏷️ 얼리버드 할인 적용 중!</div>
+          <div class="earlybird-banner-body">파티 7일 이전 신청 시 <strong>5,000원 할인</strong>이 적용됩니다.<br><span id="earlybirdCountdown"></span></div>
+          <div class="eb-price-grid">
+            <div class="eb-price-cell">
+              <div class="ep-label">남성</div>
+              <div class="ep-original">59,900원</div>
+              <div class="ep-discounted">54,900원</div>
+            </div>
+            <div class="eb-price-cell">
+              <div class="ep-label">여성</div>
+              <div class="ep-original">49,900원</div>
+              <div class="ep-discounted">44,900원</div>
+            </div>
+          </div>
+        </div>
+        <div class="price-section-label">권종 참가비</div>
         <div class="price-row highlight">
-          <span>로테이션 파티 (1+2부) <span class="inki-badge">추천</span></span>
+          <span>1+2부 <span class="inki-badge">추천</span></span>
           <span class="val" id="leftPriceMain">남 59,900원 / 여 49,900원</span>
         </div>
         <div class="info-divider"></div>
         <div class="info-row"><span>참가 연령</span><span class="iv">90~07년생 (남녀 동일)</span></div>
-        <div class="info-row"><span>정원</span><span class="iv">남 20명 / 여 20명</span></div>
+        <div class="info-row"><span>정원</span><span class="iv">남녀 각 20명</span></div>
         <div class="info-row"><span>심사 방식</span><span class="iv gold">외모 승인제</span></div>
         <button class="apply-btn-main" onclick="goApply()">파티 참가 신청</button>
         <p class="price-guide">신청 후 운영진 검토를 거쳐 개별 합격 안내가 발송됩니다.</p>
@@ -264,13 +286,17 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
   <div class="detail-right">
     <div class="apply-card">
       <div class="card-top" id="cardTopStatus">✦ 현재 신청 가능</div>
+      <div class="earlybird-banner" id="earlybirdBannerRight" style="display:none;margin-bottom:0.8rem">
+        <div class="earlybird-banner-title" style="font-size:0.7rem">🏷️ 얼리버드 할인 적용 중!</div>
+        <div class="earlybird-banner-body" style="font-size:0.62rem;margin-bottom:0">파티 7일 이전 신청 시 <strong>5,000원 할인</strong></div>
+      </div>
       <div class="card-price-row hl">
-        <span>로테이션 파티 (1+2부) <span class="inki-badge">추천</span></span>
+        <span>1+2부 <span class="inki-badge">추천</span></span>
         <strong id="rightPriceMain">남 59,900 / 여 49,900원</strong>
       </div>
       <div class="card-divider"></div>
       <div class="card-info-row"><span>참가 연령</span><span>90~07년생</span></div>
-      <div class="card-info-row"><span>정원</span><span>남 20 / 여 20명</span></div>
+      <div class="card-info-row"><span>정원</span><span>남녀 각 20명</span></div>
       <div class="card-info-row"><span>심사 방식</span><span class="gold">외모 승인제</span></div>
       <div class="card-divider"></div>
       <div class="card-checklist">
@@ -332,7 +358,7 @@ var _statusReady = (function(){
     document.getElementById('floatingSub').textContent = dateText+' · 19:00–23:00';
   }
 
-  // OPEN 할인
+  // OPEN 할인 (7월 11일)
   if (dateParam === OPEN_DATE) {
     document.getElementById('openBadge').style.display = '';
     document.getElementById('openBannerLeft').style.display = '';
@@ -344,6 +370,26 @@ var _statusReady = (function(){
     document.getElementById('rightPriceMain').innerHTML =
       '<span class="price-original" style="font-size:0.65rem;text-decoration:line-through;opacity:0.5">59,900/49,900원</span><br>남 49,900 / 여 39,900원';
     document.getElementById('cardTopStatus').textContent = '✦ OPEN 할인 적용 중';
+
+  // 얼리버드 할인 (OPEN 날짜 제외, 파티 7일 이전 신청 시)
+  } else if (dateParam && parts.length === 3) {
+    var partyDate = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
+    var today = new Date(); today.setHours(0,0,0,0);
+    var daysUntilParty = Math.ceil((partyDate - today) / (1000*60*60*24));
+    var ebDaysLeft = daysUntilParty - 7;
+    if (ebDaysLeft > 0) {
+      document.getElementById('earlybirdBannerLeft').style.display = '';
+      document.getElementById('earlybirdBannerRight').style.display = '';
+      document.getElementById('earlybirdCountdown').textContent = '얼리버드 마감까지 ' + ebDaysLeft + '일 남았습니다.';
+      var el2 = document.getElementById('leftPriceMain');
+      el2.style.cssText = 'display:flex;flex-direction:column;align-items:flex-end;gap:2px';
+      el2.innerHTML =
+        '<span style="text-decoration:line-through;opacity:0.45;font-size:0.65rem;white-space:nowrap">59,900원/49,900원</span>' +
+        '<span style="white-space:nowrap">남 54,900원 / 여 44,900원</span>';
+      document.getElementById('rightPriceMain').innerHTML =
+        '<span style="font-size:0.65rem;text-decoration:line-through;opacity:0.5">59,900/49,900원</span><br>남 54,900 / 여 44,900원';
+      document.getElementById('cardTopStatus').textContent = '🏷️ 얼리버드 할인 적용 중';
+    }
   }
 })();
 
