@@ -73,6 +73,13 @@ canvas#starCanvas{position:absolute;inset:0;z-index:2;pointer-events:none}
 .scroll-line{width:1px;height:28px;background:linear-gradient(to bottom,rgba(201,169,110,0.8),transparent);animation:scrollAnim 2s ease-in-out infinite}
 @keyframes scrollAnim{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
 
+/* ── VIDEO SECTION ── */
+.video-section{background:var(--dark);padding:4rem 1.5rem}
+.video-inner{max-width:800px;margin:0 auto;text-align:center}
+.video-title{font-family:var(--font-display);font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:300;color:var(--white);margin-bottom:1.8rem;line-height:1.2}
+.video-wrap{position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px;border:1px solid rgba(201,169,110,0.15)}
+.video-wrap iframe{position:absolute;top:0;left:0;width:100%;height:100%}
+
 /* ── DATE LIST ── */
 #dates{background:var(--dark)}
 .dg-date-list{margin-top:2.5rem;display:flex;flex-direction:column;gap:1px;background:rgba(255,255,255,0.05)}
@@ -301,6 +308,23 @@ fbq("track","ViewContent",{content_name:"썸잇 대구",content_category:"daegu"
   <div class="hero-scroll">
     <span>Scroll</span>
     <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- VIDEO -->
+<section class="video-section">
+  <div class="video-inner">
+    <p class="section-label" style="justify-content:center;margin-bottom:0.8rem">Party Highlight</p>
+    <h2 class="video-title">파티 현장을 직접 확인하세요</h2>
+    <div class="video-wrap">
+      <iframe
+        src="https://www.youtube.com/embed/5JS_YLesUhk?rel=0&modestbranding=1"
+        title="썸잇 대구 파티 현장"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen>
+      </iframe>
+    </div>
   </div>
 </section>
 
