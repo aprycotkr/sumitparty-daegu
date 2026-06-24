@@ -38,7 +38,7 @@ html,body{background:var(--black);color:var(--white);font-family:var(--font-body
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--black)}::-webkit-scrollbar-thumb{background:var(--gold-dark);border-radius:2px}
 
 /* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.2rem 2rem;background:rgba(10,10,10,0.97);border-bottom:1px solid rgba(201,169,110,0.1)}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:max(1.2rem,env(safe-area-inset-top)) 2rem 1.2rem;background:rgba(10,10,10,0.97);border-bottom:1px solid rgba(201,169,110,0.1)}
 .nav-logo{font-family:var(--font-display);font-size:1.6rem;font-weight:500;color:var(--gold);letter-spacing:0.15em;text-decoration:none}
 .nav-back{font-size:0.65rem;color:rgba(255,255,255,0.4);text-decoration:none;letter-spacing:0.1em;display:flex;align-items:center;gap:0.4rem;transition:color 0.2s}
 .nav-back:hover{color:var(--gold)}

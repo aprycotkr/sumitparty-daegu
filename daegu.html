@@ -30,7 +30,7 @@ body{background:var(--black);color:var(--white);font-family:var(--font-body);fon
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--black)}::-webkit-scrollbar-thumb{background:var(--gold-dark);border-radius:2px}
 
 /* ── NAV ── */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.4rem 3rem;background:linear-gradient(to bottom,rgba(10,10,10,0.96),transparent);transition:background 0.3s,border 0.3s}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:max(1.4rem,env(safe-area-inset-top)) 3rem 1.4rem;background:linear-gradient(to bottom,rgba(10,10,10,0.96),transparent);transition:background 0.3s,border 0.3s}
 nav.scrolled{background:rgba(10,10,10,0.97);border-bottom:1px solid rgba(201,169,110,0.08)}
 .nav-logo{font-family:var(--font-display);font-size:1.8rem;font-weight:500;color:var(--gold);letter-spacing:0.15em;text-decoration:none}
 .nav-badge{font-size:0.52rem;letter-spacing:0.2em;color:rgba(201,169,110,0.6);font-weight:600;margin-left:0.4rem;vertical-align:middle;text-transform:uppercase}
@@ -41,7 +41,7 @@ nav.scrolled{background:rgba(10,10,10,0.97);border-bottom:1px solid rgba(201,169
 .nav-cta:hover{background:var(--gold);color:var(--black)}
 .nav-menu-btn{display:none;background:none;border:none;cursor:pointer;flex-direction:column;gap:5px;padding:4px}
 .nav-menu-btn span{display:block;width:24px;height:1px;background:var(--white)}
-.mobile-nav{display:none;position:fixed;inset:0;background:var(--black);z-index:200;flex-direction:column;justify-content:flex-start;padding:5.5rem 2rem 2rem}
+.mobile-nav{display:none;position:fixed;inset:0;background:var(--black);z-index:200;flex-direction:column;justify-content:flex-start;padding:max(5.5rem,calc(env(safe-area-inset-top) + 4rem)) 2rem max(2rem,calc(env(safe-area-inset-bottom) + 1rem))}
 .mobile-nav.open{display:flex}
 .mobile-nav a{color:var(--white);text-decoration:none;font-family:var(--font-body);font-size:1.15rem;font-weight:400;letter-spacing:0.08em;padding:1.3rem 0.5rem;border-bottom:1px solid rgba(201,169,110,0.12);transition:color 0.2s}
 .mobile-nav a:first-of-type{color:var(--gold)}
@@ -83,7 +83,7 @@ canvas#starCanvas{position:absolute;inset:0;z-index:2;pointer-events:none}
 /* ── DATE LIST ── */
 #dates{background:var(--dark)}
 .dg-date-list{margin-top:2.5rem;display:flex;flex-direction:column;gap:1px;background:rgba(255,255,255,0.05)}
-.dg-date-row{background:var(--dark);display:flex;align-items:center;justify-content:space-between;padding:1.5rem 2rem;text-decoration:none;cursor:pointer;transition:background 0.2s;gap:1rem}
+.dg-date-row{background:var(--dark);display:flex;align-items:center;justify-content:space-between;padding:1.5rem 2rem;text-decoration:none;cursor:pointer;transition:background 0.2s;gap:1rem;-webkit-tap-highlight-color:transparent}
 .dg-date-row:hover{background:var(--dark2)}
 .dg-date-row.closed{opacity:0.4;pointer-events:none}
 .dg-date-left{display:flex;flex-direction:column;gap:0.3rem;flex:1;min-width:0}
@@ -242,7 +242,7 @@ footer{background:var(--dark);border-top:1px solid rgba(255,255,255,0.05);paddin
   .footer-grid{grid-template-columns:1fr;gap:2.5rem}
 }
 @media(max-width:768px){
-  nav{padding:1.2rem 1.5rem}
+  nav{padding:max(1.2rem,env(safe-area-inset-top)) 1.5rem 1.2rem}
   .nav-links,.nav-cta{display:none}
   .nav-menu-btn{display:flex}
   .section{padding:5rem 1.5rem}
