@@ -100,9 +100,9 @@ body{background:var(--black);color:#fff;font-family:var(--font-body);min-height:
   justify-content:space-between;gap:10px;
   margin-bottom:13px;
 }
-.pc-date-col{}
-.pc-date{font-size:1.02rem;font-weight:600;color:#fff;margin-bottom:3px;}
-.pc-time{font-size:0.78rem;color:rgba(255,255,255,0.4);}
+.pc-date-col{flex:1;min-width:0;}
+.pc-date{font-size:1.02rem;font-weight:600;color:#fff;margin-bottom:3px;white-space:nowrap;}
+.pc-time{font-size:0.78rem;color:rgba(255,255,255,0.4);white-space:nowrap;}
 .pc-badges{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;}
 .bdg-open{
   background:linear-gradient(135deg,#C9A96E,#a07840);
@@ -184,9 +184,7 @@ body{background:var(--black);color:#fff;font-family:var(--font-body);min-height:
 <!-- PARTY LIST -->
 <div class="wrap">
   <div class="sec-label">신청 가능한 파티</div>
-  <div class="party-list" id="partyList">
-    <div class="loading-ph">날짜 불러오는 중…</div>
-  </div>
+  <div class="party-list" id="partyList"></div>
 </div>
 
 <script>
@@ -280,11 +278,12 @@ function goToVenue() {
 }
 
 (function init(){
-  if (!DAEGU_GAS_URL) { renderList({}); return; }
+  renderList({}); // 즉시 날짜 표시 (기본 open 상태)
+  if (!DAEGU_GAS_URL) return;
   fetch(DAEGU_GAS_URL+'?action=getDateStatus')
     .then(function(r){return r.json();})
-    .then(function(res){ renderList(res.result==='success' ? res.data||{} : {}); })
-    .catch(function(){ renderList({}); });
+    .then(function(res){ if (res.result==='success') renderList(res.data||{}); })
+    .catch(function(){});
 })();
 </script>
 </body>

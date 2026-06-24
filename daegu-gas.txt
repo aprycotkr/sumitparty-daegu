@@ -91,7 +91,7 @@ function getDateStatus() {
     const rows = applySheet.getRange(2, 1, applySheet.getLastRow() - 1, 11).getValues();
     const counts = {};
     rows.forEach(function(row) {
-      const dateKey = String(row[COL.DATE] || '').trim();
+      const dateKey = toDateKey(row[COL.DATE]);
       const gender  = String(row[COL.GENDER] || '').trim();
       const status  = String(row[COL.STATUS] || '').trim();
       if (!dateKey || !gender || status === '불합격') return;
@@ -178,7 +178,7 @@ function submitApplication(payload) {
   for (let i = 1; i < existing.length; i++) {
     if (
       String(existing[i][COL.PHONE]) === String(payload.phone) &&
-      String(existing[i][COL.DATE]) === String(payload.date)
+      toDateKey(existing[i][COL.DATE]) === String(payload.date)
     ) {
       return { result: 'duplicate', message: '이미 신청된 연락처입니다.' };
     }
@@ -311,6 +311,14 @@ function buildHmac(date, salt) {
   const data = Utilities.newBlob(msg).getBytes();
   const sig  = Utilities.computeHmacSignature(Utilities.MacAlgorithm.HMAC_SHA_256, data, key);
   return sig.map(function(b){ return ('0' + (b & 0xff).toString(16)).slice(-2); }).join('');
+}
+
+// ── 날짜 셀 값 → yyyy-MM-dd 변환 ────────────────────────────
+// 스프레드시트가 날짜 문자열을 Date 객체로 자동 변환하므로 통일 처리
+function toDateKey(val) {
+  if (!val) return '';
+  if (val instanceof Date) return Utilities.formatDate(val, 'Asia/Seoul', 'yyyy-MM-dd');
+  return String(val).trim();
 }
 
 // ── 공통 응답 헬퍼 ────────────────────────────────────────────
