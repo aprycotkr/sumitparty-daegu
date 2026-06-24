@@ -79,9 +79,9 @@ canvas#starCanvas{position:absolute;inset:0;z-index:2;pointer-events:none}
 .dg-date-row{background:var(--dark);display:flex;align-items:center;justify-content:space-between;padding:1.5rem 2rem;text-decoration:none;cursor:pointer;transition:background 0.2s;gap:1rem}
 .dg-date-row:hover{background:var(--dark2)}
 .dg-date-row.closed{opacity:0.4;pointer-events:none}
-.dg-date-left{display:flex;flex-direction:column;gap:0.3rem}
-.dg-date-label{font-family:var(--font-display);font-size:1.6rem;font-weight:300;color:var(--white);line-height:1}
-.dg-date-sub{font-size:0.57rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.28)}
+.dg-date-left{display:flex;flex-direction:column;gap:0.3rem;flex:1;min-width:0}
+.dg-date-label{font-family:var(--font-display);font-size:1.6rem;font-weight:300;color:var(--white);line-height:1;white-space:nowrap}
+.dg-date-sub{font-size:0.57rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.28);white-space:nowrap}
 .dg-date-right{display:flex;align-items:center;gap:0.9rem;flex-shrink:0}
 .dg-badge{font-size:0.5rem;font-weight:700;padding:4px 10px;letter-spacing:0.1em;white-space:nowrap}
 .dg-badge-open{background:rgba(201,169,110,0.12);border:1px solid rgba(201,169,110,0.4);color:var(--gold)}
@@ -229,6 +229,7 @@ footer{background:var(--dark);border-top:1px solid rgba(255,255,255,0.05);paddin
   .about-layout{grid-template-columns:1fr;gap:3rem}
   .highlight-grid{grid-template-columns:repeat(3,1fr)}
   .highlight-item{padding:1.5rem 0.6rem}
+  .highlight-num{font-size:1rem}
   .sc-info-grid{grid-template-columns:1fr 1fr}
   .notice-grid{grid-template-columns:1fr}
   .footer-grid{grid-template-columns:1fr;gap:2.5rem}
