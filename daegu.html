@@ -645,10 +645,10 @@ function toggleFaq(el) {
         '<div class="dg-date-left">' +
           '<div class="dg-date-label">' + label + '</div>' +
           '<div class="dg-date-sub">토요일 · 19:00 ~ 23:00</div>' +
+          (openHtml ? '<div style="margin-top:5px">' + openHtml + '</div>' : '') +
         '</div>' +
         '<div class="dg-date-right">' +
           capacityHtml +
-          openHtml +
           '<span class="' + badgeClass + '">' + statusText + '</span>' +
           (!allClosed ? '<span class="dg-apply-arrow">신청하기 →</span>' : '') +
         '</div>';
