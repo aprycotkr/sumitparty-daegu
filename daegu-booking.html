@@ -283,11 +283,17 @@ function goToVenue() {
 }
 
 (function init(){
-  renderList({}); // 즉시 날짜 표시 (기본 open 상태)
+  var cached = localStorage.getItem('daegu_dateStatus');
+  renderList(cached ? JSON.parse(cached) : {});
   if (!DAEGU_GAS_URL) return;
   fetch(DAEGU_GAS_URL+'?action=getDateStatus')
     .then(function(r){return r.json();})
-    .then(function(res){ if (res.result==='success') renderList(res.data||{}); })
+    .then(function(res){
+      if (res.result==='success') {
+        localStorage.setItem('daegu_dateStatus', JSON.stringify(res.data||{}));
+        renderList(res.data||{});
+      }
+    })
     .catch(function(){});
 })();
 </script>
