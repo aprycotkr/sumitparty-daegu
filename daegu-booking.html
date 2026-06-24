@@ -249,7 +249,7 @@ function renderList(status){
 
     var seats = allClosed
       ? '모집 마감'
-      : (showSeats ? '남 '+mRem+'/20 · 여 '+fRem+'/20 남음' : '');
+      : (showSeats ? '남 '+mRem+'석 · 여 '+fRem+'석 남음' : '');
 
     var card = document.createElement('div');
     card.className = 'party-card'+(allClosed?' is-closed':'');
