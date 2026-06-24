@@ -72,24 +72,37 @@ function doPost(e) {
 
 // ── 날짜 상태 조회 ────────────────────────────────────────────
 // 날짜관리 시트 구조:
-//   A: 날짜 (YYYY-MM-DD)  B: 남성상태  C: 여성상태
+//   A: 날짜 (YYYY-MM-DD)  B: 남성상태  C: 여성상태  D: 남성잔여(수동)  E: 여성잔여(수동)
 //   상태값: open / almost / closed
-// 응답에 maleRemaining / femaleRemaining (신청자 시트 집계) 포함
+// D/E에 값이 있으면 수동 설정값 우선, 없으면 신청자 시트 자동 집계
 function getDateStatus() {
   const ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
   const data = {};
 
-  // 날짜관리 시트에서 상태 읽기
+  // 날짜관리 시트에서 상태 + 수동 잔여석 읽기
   const dateSheet = ss.getSheetByName(CONFIG.DATE_SHEET_NAME);
   if (dateSheet) {
     dateSheet.getDataRange().getValues().forEach(function(row) {
       const dateKey = row[0] ? Utilities.formatDate(new Date(row[0]), 'Asia/Seoul', 'yyyy-MM-dd') : null;
       if (!dateKey) return;
-      data[dateKey] = { male: row[1] || 'open', female: row[2] || 'open' };
+      const entry = { male: row[1] || 'open', female: row[2] || 'open' };
+      // D컬럼(row[3]), E컬럼(row[4]) — 관리자가 직접 입력한 잔여석
+      const mL = row[3];
+      const fL = row[4];
+      if (mL !== '' && mL !== null && mL !== undefined) {
+        entry.maleRemaining = Number(mL);
+        entry.hasManualRemaining = true;
+      }
+      if (fL !== '' && fL !== null && fL !== undefined) {
+        entry.femaleRemaining = Number(fL);
+        entry.hasManualRemaining = true;
+      }
+      data[dateKey] = entry;
     });
   }
 
   // 신청자 시트에서 날짜별 남녀 인원 집계 (불합격 제외)
+  // 수동 설정값이 없는 경우에만 자동 집계값 사용
   const applySheet = ss.getSheetByName(CONFIG.SHEET_NAME);
   if (applySheet && applySheet.getLastRow() > 1) {
     const rows = applySheet.getRange(2, 1, applySheet.getLastRow() - 1, 11).getValues();
@@ -105,8 +118,10 @@ function getDateStatus() {
     });
     Object.keys(counts).forEach(function(key) {
       if (!data[key]) data[key] = { male: 'open', female: 'open' };
-      data[key].maleRemaining   = Math.max(0, 20 - counts[key].male);
-      data[key].femaleRemaining = Math.max(0, 20 - counts[key].female);
+      if (data[key].maleRemaining === undefined)
+        data[key].maleRemaining   = Math.max(0, 20 - counts[key].male);
+      if (data[key].femaleRemaining === undefined)
+        data[key].femaleRemaining = Math.max(0, 20 - counts[key].female);
     });
   }
 
@@ -115,11 +130,13 @@ function getDateStatus() {
 
 // ── 날짜 상태 업데이트 (GET 방식 — 어드민에서 호출) ──────────
 function updateDateStatusFromGet(params) {
-  const dateStr = String(params.date || '').trim();
+  const dateStr    = String(params.date || '').trim();
   if (!dateStr) return { result: 'error', message: 'date required' };
-  const male   = params.male   || 'open';
-  const female = params.female || 'open';
-  return updateDateStatus({ updates: [{ date: dateStr, male: male, female: female }] });
+  const male       = params.male       || 'open';
+  const female     = params.female     || 'open';
+  const maleLeft   = params.maleLeft   !== undefined ? params.maleLeft   : '';
+  const femaleLeft = params.femaleLeft !== undefined ? params.femaleLeft : '';
+  return updateDateStatus({ updates: [{ date: dateStr, male, female, maleLeft, femaleLeft }] });
 }
 
 // ── 날짜 상태 업데이트 ────────────────────────────────────────
@@ -137,10 +154,12 @@ function updateDateStatus(payload) {
   const updates = payload.updates || [];
 
   updates.forEach(function(u) {
-    const dateStr = String(u.date || '').trim();
+    const dateStr    = String(u.date || '').trim();
     if (!dateStr) return;
-    const male   = u.male   || 'open';
-    const female = u.female || 'open';
+    const male       = u.male       || 'open';
+    const female     = u.female     || 'open';
+    const maleLeft   = u.maleLeft   !== undefined ? u.maleLeft   : '';
+    const femaleLeft = u.femaleLeft !== undefined ? u.femaleLeft : '';
 
     const allData = sheet.getDataRange().getValues();
     let found = false;
@@ -153,13 +172,13 @@ function updateDateStatus(payload) {
         cellKey = String(cell || '').trim();
       }
       if (cellKey === dateStr) {
-        sheet.getRange(i + 1, 2, 1, 2).setValues([[male, female]]);
+        sheet.getRange(i + 1, 2, 1, 4).setValues([[male, female, maleLeft, femaleLeft]]);
         found = true;
         break;
       }
     }
     if (!found) {
-      sheet.appendRow([dateStr, male, female]);
+      sheet.appendRow([dateStr, male, female, maleLeft, femaleLeft]);
     }
   });
 

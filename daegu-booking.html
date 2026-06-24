@@ -220,7 +220,7 @@ function renderList(status){
   var sats = getSaturdays(5);
   list.innerHTML = '';
 
-  sats.forEach(function(d){
+  sats.forEach(function(d, idx){
     var key = toKey(d);
     var label = toLabel(d);
     var st = status[key] || {};
@@ -231,6 +231,9 @@ function renderList(status){
     var isOpen = (key === OPEN_DATE);
     var mRem = st.maleRemaining !== undefined ? st.maleRemaining : 20;
     var fRem = st.femaleRemaining !== undefined ? st.femaleRemaining : 20;
+
+    // 가장 가까운 날짜만 항상 잔여석 표시, 이후 날짜는 관리자가 직접 설정한 경우에만 표시
+    var showSeats = (idx === 0) || !!st.hasManualRemaining;
 
     var badges = '';
     if (allClosed) {
@@ -246,7 +249,7 @@ function renderList(status){
 
     var seats = allClosed
       ? '모집 마감'
-      : '남 '+mRem+'/20 · 여 '+fRem+'/20 남음';
+      : (showSeats ? '남 '+mRem+'/20 · 여 '+fRem+'/20 남음' : '');
 
     var card = document.createElement('div');
     card.className = 'party-card'+(allClosed?' is-closed':'');
