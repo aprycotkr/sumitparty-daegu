@@ -235,9 +235,12 @@ function onEdit(e) {
     const rowData = sheet.getRange(row, 1, 1, 11).getValues()[0];
     const phone     = String(rowData[COL.PHONE] || '').replace(/\D/g, '');
     const name      = rowData[COL.NAME]  || '';
-    const dateStr   = rowData[COL.DATE]  || '';
     const gender    = rowData[COL.GENDER] || '';
     const price     = rowData[COL.PRICE] ? Number(rowData[COL.PRICE]).toLocaleString() : '';
+    const rawDate   = rowData[COL.DATE];
+    const dateObj   = rawDate instanceof Date ? rawDate : new Date(rawDate);
+    const dow       = ['일','월','화','수','목','금','토'][dateObj.getDay()];
+    const dateStr   = (dateObj.getMonth()+1) + '/' + dateObj.getDate() + '(' + dow + ')';
 
     if (!phone) return;
 
