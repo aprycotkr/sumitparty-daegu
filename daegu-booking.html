@@ -121,6 +121,12 @@ body{background:var(--black);color:#fff;font-family:var(--font-body);min-height:
   font-size:0.6rem;font-weight:600;
   padding:3px 8px;border-radius:4px;
 }
+.bdg-earlybird{
+  background:rgba(201,169,110,0.12);color:var(--gold);
+  border:1px solid rgba(201,169,110,0.35);
+  font-size:0.6rem;font-weight:700;
+  padding:3px 8px;border-radius:4px;
+}
 
 .pc-bottom{
   display:flex;align-items:center;
@@ -235,11 +241,16 @@ function renderList(status){
     // 가장 가까운 날짜만 항상 잔여석 표시, 이후 날짜는 관리자가 직접 설정한 경우에만 표시
     var showSeats = (idx === 0) || !!st.hasManualRemaining;
 
+    var today = new Date(); today.setHours(0,0,0,0);
+    var daysUntil = Math.ceil((d - today) / (1000*60*60*24));
+    var isEarlybird = !isOpen && !allClosed && daysUntil > 7;
+
     var badges = '';
     if (allClosed) {
       badges = '<span class="bdg-closed-pill">마감</span>';
     } else {
       if (isOpen) badges += '<span class="bdg-open">OPEN 할인</span>';
+      if (isEarlybird) badges += '<span class="bdg-earlybird">🏷️ 얼리버드</span>';
       if (anyAlmost) badges += '<span class="bdg-almost">마감임박</span>';
     }
 
