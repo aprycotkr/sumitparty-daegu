@@ -97,6 +97,8 @@ canvas#starCanvas{position:absolute;inset:0;z-index:2;pointer-events:none}
 .dg-apply-arrow{font-size:0.62rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);padding:0.45rem 1rem;border:1px solid rgba(201,169,110,0.35);white-space:nowrap}
 .dg-capacity{font-size:0.58rem;color:rgba(255,255,255,0.32);letter-spacing:0.05em;white-space:nowrap}
 .dg-open-badge{font-size:0.48rem;font-weight:700;padding:3px 7px;background:rgba(201,169,110,0.12);border:1px solid rgba(201,169,110,0.35);color:var(--gold);letter-spacing:0.08em;white-space:nowrap}
+.dg-date-seats{font-size:0.6rem;color:rgba(255,255,255,0.38);margin-top:4px;letter-spacing:0.03em}
+.dg-earlybird-badge{font-size:0.48rem;font-weight:700;padding:3px 7px;background:rgba(201,169,110,0.1);border:1px solid rgba(201,169,110,0.3);color:var(--gold);letter-spacing:0.08em;white-space:nowrap}
 .dg-date-loading{padding:2.5rem;text-align:center;font-size:0.72rem;color:rgba(255,255,255,0.25)}
 @media(max-width:480px){.dg-date-label{font-size:1.2rem}.dg-date-row{padding:1.2rem 1.2rem}}
 
@@ -637,7 +639,9 @@ function toggleFaq(el) {
     if (!list) return;
     var dates = getUpcomingSaturdays(5);
     list.innerHTML = '';
-    dates.forEach(function(d) {
+    var today = new Date(); today.setHours(0,0,0,0);
+
+    dates.forEach(function(d, idx) {
       var key = toKey(d);
       var label = toLabel(d);
       var st = statusData[key] || {};
@@ -649,23 +653,35 @@ function toggleFaq(el) {
       else if (maleSt === 'almost' || femSt === 'almost') { statusText = '마감임박'; badgeClass = 'dg-badge dg-badge-almost'; }
       else { statusText = '신청가능'; badgeClass = 'dg-badge dg-badge-open'; }
 
-      var capacityHtml = '';
-      if (st.maleRemaining !== undefined && st.femaleRemaining !== undefined) {
-        capacityHtml = '<span class="dg-capacity">남 ' + st.maleRemaining + '/20 · 여 ' + st.femaleRemaining + '/20</span>';
+      // 잔여석 — 첫번째 날짜 또는 수동 설정된 경우만
+      var showSeats = (idx === 0) || !!st.hasManualRemaining;
+      var seatsHtml = '';
+      if (!allClosed && showSeats && st.maleRemaining !== undefined) {
+        seatsHtml = '<div class="dg-date-seats">남 ' + st.maleRemaining + '석 · 여 ' + st.femaleRemaining + '석 남음</div>';
       }
-      var openHtml = (key === '2026-07-11' && !allClosed) ? '<span class="dg-open-badge">OPEN 할인</span>' : '';
+
+      // 서브 배지 (OPEN 할인 or 얼리버드)
+      var subBadgeHtml = '';
+      if (key === '2026-07-11' && !allClosed) {
+        subBadgeHtml = '<div style="margin-top:5px"><span class="dg-open-badge">OPEN 할인</span></div>';
+      } else if (!allClosed) {
+        var daysUntil = Math.ceil((d - today) / (1000*60*60*24));
+        if (daysUntil > 7) {
+          subBadgeHtml = '<div style="margin-top:5px"><span class="dg-earlybird-badge">🏷️ 얼리버드</span></div>';
+        }
+      }
 
       var row = document.createElement('a');
       row.className = 'dg-date-row' + (allClosed ? ' closed' : '');
-      row.href = allClosed ? '#' : ('daegu-booking.html?date=' + key);
+      row.href = allClosed ? '#' : ('daegu-party.html?date=' + key);
       row.innerHTML =
         '<div class="dg-date-left">' +
           '<div class="dg-date-label">' + label + '</div>' +
           '<div class="dg-date-sub">토요일 · 19:00 ~ 23:00</div>' +
-          (openHtml ? '<div style="margin-top:5px">' + openHtml + '</div>' : '') +
+          seatsHtml +
+          subBadgeHtml +
         '</div>' +
         '<div class="dg-date-right">' +
-          capacityHtml +
           '<span class="' + badgeClass + '">' + statusText + '</span>' +
           (!allClosed ? '<span class="dg-apply-arrow">신청하기 →</span>' : '') +
         '</div>';
@@ -673,11 +689,17 @@ function toggleFaq(el) {
     });
   }
 
-  renderDates({});
+  var cached = localStorage.getItem('daegu_dateStatus');
+  renderDates(cached ? JSON.parse(cached) : {});
   if (DAEGU_GAS_URL) {
     fetch(DAEGU_GAS_URL + '?action=getDateStatus')
       .then(function(r) { return r.json(); })
-      .then(function(json) { if (json.result === 'success') renderDates(json.data || {}); })
+      .then(function(json) {
+        if (json.result === 'success') {
+          localStorage.setItem('daegu_dateStatus', JSON.stringify(json.data || {}));
+          renderDates(json.data || {});
+        }
+      })
       .catch(function() {});
   }
 })();
