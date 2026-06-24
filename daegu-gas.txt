@@ -247,6 +247,7 @@ function onEdit(e) {
     if (newStatus === '합격') {
       const msg = buildPassMsg(name, gender, dateStr, price);
       sendSms(phone, msg);
+      updateRosterSheet();
     } else {
       const msg = buildFailMsg(name);
       sendSms(phone, msg);
@@ -360,6 +361,78 @@ function toDateKey(val) {
   if (!val) return '';
   if (val instanceof Date) return Utilities.formatDate(val, 'Asia/Seoul', 'yyyy-MM-dd');
   return String(val).trim();
+}
+
+// ── 합격자 명단 자동 정리 (시트1) ────────────────────────────
+function updateRosterSheet() {
+  const ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
+  const applySheet = ss.getSheetByName(CONFIG.SHEET_NAME);
+  if (!applySheet) return;
+
+  // 시트1 가져오기 (없으면 첫 번째 시트)
+  const rosterSheet = ss.getSheetByName('시트1') || ss.getSheets()[0];
+  if (rosterSheet.getName() === CONFIG.SHEET_NAME) return; // 안전장치
+
+  // 합격자 날짜별 분류
+  const data = applySheet.getDataRange().getValues();
+  const dateMap = {};
+  const DOW = ['일','월','화','수','목','금','토'];
+
+  for (let i = 1; i < data.length; i++) {
+    const row    = data[i];
+    const status = String(row[COL.STATUS] || '').trim();
+    if (status.indexOf('합격') === -1) continue;
+
+    const dateKey = toDateKey(row[COL.DATE]);
+    if (!dateKey) continue;
+    if (!dateMap[dateKey]) dateMap[dateKey] = { male: [], female: [] };
+
+    const gender = String(row[COL.GENDER] || '').trim();
+    const entry  = [String(row[COL.NAME] || ''), String(row[COL.PHONE] || '')];
+    if (gender === '남성') dateMap[dateKey].male.push(entry);
+    else                   dateMap[dateKey].female.push(entry);
+  }
+
+  // 시트1 초기화
+  rosterSheet.clearContents();
+  rosterSheet.clearFormats();
+
+  const dates = Object.keys(dateMap).sort();
+  let r = 1;
+
+  dates.forEach(function(dateStr) {
+    const male   = dateMap[dateStr].male;
+    const female = dateMap[dateStr].female;
+    const d      = new Date(dateStr + 'T00:00:00+09:00');
+    const label  = (d.getMonth()+1) + '월 ' + d.getDate() + '일 (' + DOW[d.getDay()] + ')';
+
+    // 날짜 헤더
+    rosterSheet.getRange(r, 1, 1, 4).merge()
+      .setValue('📅 ' + label + '  —  남성 ' + male.length + '명 · 여성 ' + female.length + '명')
+      .setBackground('#1a1a1a').setFontColor('#C9A96E')
+      .setFontWeight('bold').setFontSize(12)
+      .setHorizontalAlignment('center');
+    r++;
+
+    // 열 헤더
+    rosterSheet.getRange(r, 1, 1, 2).setValues([['이름', '연락처']])
+      .setBackground('#0d1020').setFontColor('#8899ff').setFontWeight('bold');
+    rosterSheet.getRange(r, 3, 1, 2).setValues([['이름', '연락처']])
+      .setBackground('#200d0d').setFontColor('#ff8888').setFontWeight('bold');
+    r++;
+
+    // 데이터 행
+    const maxLen = Math.max(male.length, female.length);
+    for (let i = 0; i < maxLen; i++) {
+      const m = male[i]   || ['', ''];
+      const f = female[i] || ['', ''];
+      rosterSheet.getRange(r, 1, 1, 4).setValues([[m[0], m[1], f[0], f[1]]]);
+      r++;
+    }
+    r++; // 날짜 구분 빈 행
+  });
+
+  rosterSheet.autoResizeColumns(1, 4);
 }
 
 // ── 공통 응답 헬퍼 ────────────────────────────────────────────
