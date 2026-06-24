@@ -406,9 +406,15 @@ function updateRosterSheet() {
     const d      = new Date(dateStr + 'T00:00:00+09:00');
     const label  = (d.getMonth()+1) + '월 ' + d.getDate() + '일 (' + DOW[d.getDay()] + ')';
 
-    // 날짜 헤더
+    // 날짜 헤더 — COUNTA 수식으로 인원수 자동 계산
+    const dataStart = r + 2; // 열 헤더 다음 행부터 데이터
+    const maxLen = Math.max(male.length, female.length);
+    const dataEnd = dataStart + maxLen + 5;
+    const headerFormula =
+      '="📅 ' + label + '  —  남성 "&COUNTA(A' + dataStart + ':A' + dataEnd + ')&"명 · 여성 "&COUNTA(C' + dataStart + ':C' + dataEnd + ')&"명"';
+
     rosterSheet.getRange(r, 1, 1, 4).merge()
-      .setValue('📅 ' + label + '  —  남성 ' + male.length + '명 · 여성 ' + female.length + '명')
+      .setFormula(headerFormula)
       .setBackground('#1a1a1a').setFontColor('#C9A96E')
       .setFontWeight('bold').setFontSize(12)
       .setHorizontalAlignment('center');
@@ -422,7 +428,6 @@ function updateRosterSheet() {
     r++;
 
     // 데이터 행
-    const maxLen = Math.max(male.length, female.length);
     for (let i = 0; i < maxLen; i++) {
       const m = male[i]   || ['', ''];
       const f = female[i] || ['', ''];
