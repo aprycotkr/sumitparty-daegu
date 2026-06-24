@@ -764,6 +764,7 @@ async function submitForm() {
     eventId: fd.eventId,
     fbp: getCookie('_fbp'),
     fbc: getCookie('_fbc'),
+    userAgent: navigator.userAgent,
   };
 
   let submitOk = true;
