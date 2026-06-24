@@ -508,6 +508,22 @@ const fd = {
 };
 const terms = [false, false, false];
 
+/* 페이지 로드 시 URL 날짜 파라미터 즉시 처리 */
+(function() {
+  const dateKey = new URLSearchParams(window.location.search).get('date') || '';
+  if (!dateKey) return;
+  const parts = dateKey.split('-');
+  if (parts.length !== 3) return;
+  const d = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
+  if (isNaN(d.getTime())) return;
+  const wd = ['일','월','화','수','목','금','토'];
+  fd.date = dateKey;
+  fd.dateLabel = (d.getMonth()+1)+'월 '+d.getDate()+'일 ('+wd[d.getDay()]+')';
+  document.getElementById('formSubtitle').textContent = '썸잇 솔로파티 ' + fd.dateLabel + ' — 대구점';
+  const disp = document.getElementById('selectedDateDisplay');
+  if (disp) disp.textContent = fd.dateLabel + ' · 19:00–23:00';
+})();
+
 /* 날짜 상태 */
 let dateStatusMap = {};
 const _statusReady = (async function(){
@@ -539,20 +555,6 @@ function step1Next() {
   }
   document.getElementById('phoneErr').textContent = '';
   fd.phone = v;
-
-  // URL param에서 날짜 읽기
-  const dateKey = new URLSearchParams(window.location.search).get('date') || '';
-  if (dateKey) {
-    const parts = dateKey.split('-');
-    if (parts.length === 3) {
-      const d = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
-      if (!isNaN(d.getTime())) {
-        const wd = ['일','월','화','수','목','금','토'];
-        fd.date = dateKey;
-        fd.dateLabel = (d.getMonth()+1)+'월 '+d.getDate()+'일 ('+wd[d.getDay()]+')';
-      }
-    }
-  }
   document.getElementById('selectedDateDisplay').textContent =
     fd.date ? fd.dateLabel + ' · 19:00–23:00' : '날짜를 선택해주세요';
 
