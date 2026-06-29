@@ -238,6 +238,13 @@ footer{background:var(--dark);border-top:1px solid rgba(255,255,255,0.05);paddin
 /* ── ANIMATIONS ── */
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 @keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+/* ── MOBILE STICKY CTA ── */
+.mobile-cta-bar{display:none;position:fixed;bottom:0;left:0;right:0;z-index:300;padding:0.85rem 1.2rem;padding-bottom:calc(0.85rem + env(safe-area-inset-bottom));background:rgba(10,10,10,0.97);border-top:1px solid rgba(201,169,110,0.2);transform:translateY(100%);transition:transform 0.3s ease}
+.mobile-cta-bar.visible{transform:translateY(0)}
+.mobile-cta-bar a{display:block;background:var(--gold);color:var(--black);text-align:center;padding:0.95rem;font-family:var(--font-body);font-size:0.75rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;text-decoration:none;transition:background 0.2s}
+.mobile-cta-bar a:hover{background:var(--gold-light)}
+@media(max-width:768px){.mobile-cta-bar{display:block}}
+@media(min-width:769px){.mobile-cta-bar{display:none!important}}
 
 /* ── RESPONSIVE ── */
 @media(max-width:900px){
@@ -270,7 +277,6 @@ t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
 document,"script","https://connect.facebook.net/en_US/fbevents.js");
 fbq("init","821379504055811");
 fbq("track","PageView");
-fbq("track","ViewContent",{content_name:"썸잇 대구",content_category:"daegu"});
 </script>
 <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=821379504055811&ev=PageView&noscript=1"/></noscript>
 <!-- End Meta Pixel -->
@@ -712,6 +718,29 @@ function toggleFaq(el) {
       .catch(function() {});
   }
 })();
+
+// ViewContent 픽셀 — 스크롤 25% 이상 시 1회 발화
+(function(){
+  var f=false;
+  window.addEventListener('scroll',function(){
+    if(f)return;
+    var pct=window.scrollY/(document.body.scrollHeight-window.innerHeight);
+    if(pct>=0.25){f=true;if(typeof fbq!=='undefined') fbq('track','ViewContent',{content_name:'썸잇 대구',content_category:'daegu'});}
+  },{passive:true});
+})();
+
+// 모바일 sticky CTA
+(function(){
+  var bar=document.getElementById('mobileCTABar');
+  if(!bar)return;
+  window.addEventListener('scroll',function(){
+    bar.classList.toggle('visible',window.scrollY>window.innerHeight*0.5);
+  },{passive:true});
+})();
 </script>
+
+<div class="mobile-cta-bar" id="mobileCTABar">
+  <a href="daegu-booking.html">지금 신청하기 →</a>
+</div>
 </body>
 </html>

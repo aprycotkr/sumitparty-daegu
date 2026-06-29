@@ -166,6 +166,11 @@ body{background:var(--black);color:#fff;font-family:var(--font-body);min-height:
   .btn-apply{padding:9px 14px;font-size:0.78rem;}
   .pc-seats{font-size:0.72rem;}
 }
+/* ── TRUST STRIP ── */
+.trust-strip{display:flex;align-items:center;justify-content:center;gap:1.5rem;padding:0.8rem 1.5rem;background:rgba(201,169,110,0.04);border-bottom:1px solid rgba(201,169,110,0.08);flex-wrap:wrap}
+.trust-item{font-size:0.58rem;color:rgba(255,255,255,0.32);letter-spacing:0.07em;display:flex;align-items:center;gap:0.3rem}
+.trust-item em{color:rgba(201,169,110,0.85);font-style:normal;font-weight:600}
+@media(max-width:480px){.trust-strip{gap:0.7rem 1.2rem;padding:0.65rem 1rem}}
 </style>
 </head>
 <body>
@@ -187,6 +192,13 @@ body{background:var(--black);color:#fff;font-family:var(--font-body);min-height:
       <div class="vh-tag">매주 토요일 · 19:00–23:00</div>
     </div>
   </div>
+</div>
+
+<!-- TRUST STRIP -->
+<div class="trust-strip">
+  <span class="trust-item">👫 남20 · 여20 <em>완벽 1:1</em></span>
+  <span class="trust-item">⭐ 만족도 <em>92%</em></span>
+  <span class="trust-item">"혼자 와도 어색함 없어요" — 실제 참가자</span>
 </div>
 
 <!-- PARTY LIST -->
@@ -258,7 +270,7 @@ function renderList(status){
 
     var btn = allClosed
       ? '<span class="btn-closed-label">마감</span>'
-      : '<a class="btn-apply" href="daegu-party.html?date='+key+'">신청하기</a>';
+      : '<a class="btn-apply" href="daegu-party.html?date='+key+'" onclick="if(typeof fbq!==\'undefined\')fbq(\'track\',\'AddToCart\',{content_name:\'파티 날짜 선택\',content_category:\'daegu\'})">신청하기</a>';
 
     var seats = allClosed
       ? '모집 마감'
