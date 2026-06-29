@@ -63,7 +63,13 @@ canvas#starCanvas{position:absolute;inset:0;z-index:2;pointer-events:none}
 @keyframes floatLogo{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 .hero-content{position:relative;z-index:10;width:100%;max-width:520px;display:flex;flex-direction:column;align-items:center}
 .hero-eyebrow{font-size:0.62rem;letter-spacing:0.4em;text-transform:uppercase;color:rgba(201,169,110,0.9);font-weight:600;margin-bottom:1.8rem;opacity:0;animation:fadeUp 0.8s ease forwards 0.2s}
-.hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;opacity:0;animation:fadeUp 0.8s ease forwards 0.9s}
+.hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;opacity:0;animation:fadeUp 0.5s ease forwards 0s}
+.hero-date-pill{font-size:0.68rem;color:rgba(255,255,255,0.65);letter-spacing:0.1em;font-weight:400;margin-bottom:0.9rem;opacity:0;animation:fadeUp 0.8s ease forwards 0.45s}
+.hero-price-pill{display:inline-block;background:rgba(201,169,110,0.13);border:1px solid rgba(201,169,110,0.4);color:var(--gold);font-size:0.7rem;font-weight:600;padding:5px 16px;border-radius:20px;letter-spacing:0.04em;margin-bottom:0.7rem;opacity:0;animation:fadeUp 0.8s ease forwards 0.55s}
+.hero-price-pill strong{font-size:0.92rem;font-weight:700}
+.hero-urgency{display:inline-flex;align-items:center;gap:7px;font-size:0.6rem;color:#f87171;font-weight:600;letter-spacing:0.06em;margin-bottom:1.4rem;opacity:0;animation:fadeUp 0.8s ease forwards 0.65s}
+.hero-urgency-dot{width:6px;height:6px;border-radius:50%;background:#f87171;flex-shrink:0;animation:urgencyBlink 1.4s ease infinite}
+@keyframes urgencyBlink{0%,100%{opacity:1}50%{opacity:0.25}}
 .hero-btn{display:inline-block;padding:0.95rem 2.5rem;border:1px solid var(--gold);color:var(--gold);text-decoration:none;font-size:0.62rem;letter-spacing:0.3em;text-transform:uppercase;font-weight:600;transition:all 0.3s;font-family:var(--font-body)}
 .hero-btn:hover{background:var(--gold);color:var(--black);transform:translateY(-2px)}
 .hero-btn.solid{background:var(--gold);color:var(--black)}
@@ -304,6 +310,9 @@ fbq("track","ViewContent",{content_name:"썸잇 대구",content_category:"daegu"
       <div class="hero-logo-glow"></div>
       <img class="hero-logo" src="logo.png" alt="Sumit Logo">
     </div>
+    <p class="hero-date-pill">📅 7월 11일 (토) · 대구 동성로점</p>
+    <div class="hero-price-pill">여성 <strong>₩39,900</strong> OPEN 특가</div>
+    <div class="hero-urgency"><span class="hero-urgency-dot"></span>여성 선착순 마감 임박</div>
     <div class="hero-btns">
       <a href="daegu-booking.html" class="hero-btn solid">신청하기</a>
       <a href="#about" class="hero-btn">더 알아보기</a>

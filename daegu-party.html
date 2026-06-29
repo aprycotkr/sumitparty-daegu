@@ -85,6 +85,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .deadline-banner strong{font-size:0.75rem;font-weight:600;color:#f87171}
 .deadline-dot{font-size:0.6rem;color:#f87171;font-weight:600;animation:blink 1.5s ease infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0.4}}
+.badge-urgency{display:inline-flex;align-items:center;gap:5px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.28);color:#f87171;font-size:0.58rem;font-weight:700;padding:3px 10px;border-radius:3px;letter-spacing:0.06em}
+.badge-urgency-dot{width:5px;height:5px;border-radius:50%;background:#f87171;flex-shrink:0;animation:blink 1.4s ease infinite}
 .deadline-banner p{font-size:0.65rem;color:rgba(239,68,68,0.6);width:100%;margin-top:0.3rem;font-weight:300}
 .open-banner{background:rgba(201,169,110,0.08);border:1px solid rgba(201,169,110,0.25);border-radius:8px;padding:1rem;margin-bottom:1.2rem}
 .open-banner-title{font-size:0.75rem;font-weight:700;color:var(--gold);margin-bottom:4px}
@@ -165,6 +167,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
       <span class="badge badge-hot" id="deadlineBadge" style="display:none">🔥 마감임박</span>
       <span class="badge badge-type">✦ 썸잇 솔로파티</span>
       <span class="badge-open-event" id="openBadge" style="display:none">🎉 OPEN 할인</span>
+      <span class="badge-urgency"><span class="badge-urgency-dot"></span>여성 선착순 마감 임박</span>
     </div>
 
     <h1 class="party-title" id="mainTitle">썸잇 솔로파티<br>대구 동성로점</h1>

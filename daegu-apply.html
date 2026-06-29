@@ -495,15 +495,27 @@ const DAEGU_CONFIG = {
   CLOUDINARY_UPLOAD_PRESET: 'sumit_apply',
   DAEGU_GAS_URL: 'https://script.google.com/macros/s/AKfycbxnJhftdjyEro7uKUNTfsAKp7U1g7knABAQBeebu5mfIIkonjXcTlgRK8qUanuOZ4prxw/exec',
   OPEN_DATE: '2026-07-11',        // OPEN 할인 적용 날짜
-  PRICES:      { '남성': 59900, '여성': 49900 },
-  OPEN_PRICES: { '남성': 49900, '여성': 39900 }
+  EARLYBIRD_DAYS: 7,              // 파티 N일 전까지 얼리버드
+  PRICES:           { '남성': 59900, '여성': 49900 },
+  OPEN_PRICES:      { '남성': 49900, '여성': 39900 },
+  EARLYBIRD_PRICES: { '남성': 54900, '여성': 44900 }
 };
 
-/* 가격 표시용 */
-const PRICES_DISPLAY = { '남성': '59,900원', '여성': '49,900원' };
+function isEarlybirdDate(dateKey) {
+  if (!dateKey || dateKey === DAEGU_CONFIG.OPEN_DATE) return false;
+  var parts = dateKey.split('-');
+  if (parts.length !== 3) return false;
+  var partyDate = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
+  var today = new Date(); today.setHours(0,0,0,0);
+  var daysUntil = Math.ceil((partyDate - today) / (1000*60*60*24));
+  return daysUntil > DAEGU_CONFIG.EARLYBIRD_DAYS;
+}
 
 function getEffectivePrice(gender) {
-  var map = (fd && fd.date === DAEGU_CONFIG.OPEN_DATE) ? DAEGU_CONFIG.OPEN_PRICES : DAEGU_CONFIG.PRICES;
+  var date = fd && fd.date;
+  var map = date === DAEGU_CONFIG.OPEN_DATE ? DAEGU_CONFIG.OPEN_PRICES
+          : isEarlybirdDate(date)           ? DAEGU_CONFIG.EARLYBIRD_PRICES
+          : DAEGU_CONFIG.PRICES;
   return map[gender] || 0;
 }
 function getEffectivePriceDisplay(gender) {
@@ -655,13 +667,18 @@ function selGender(el, g) {
 function updateTicketPrice() {
   if (!fd.gender) return;
   var isOpenDate = fd.date === DAEGU_CONFIG.OPEN_DATE;
-  var price = isOpenDate ? DAEGU_CONFIG.OPEN_PRICES[fd.gender] : DAEGU_CONFIG.PRICES[fd.gender];
+  var isEarlybird = isEarlybirdDate(fd.date);
+  var price = getEffectivePrice(fd.gender);
   var priceDisp = document.getElementById('ticketPriceDisplay');
   var info = document.getElementById('ticketPriceInfo');
   var badge = document.getElementById('ticketDiscountBadge');
   if (priceDisp) priceDisp.textContent = price.toLocaleString() + '원';
   if (info) info.textContent = fd.gender === '남성' ? '남성 참가비' : '여성 참가비';
-  if (badge) badge.style.display = isOpenDate ? 'block' : 'none';
+  if (badge) {
+    if (isOpenDate) { badge.textContent = 'OPEN 할인'; badge.style.display = 'block'; }
+    else if (isEarlybird) { badge.textContent = '얼리버드 할인'; badge.style.display = 'block'; }
+    else { badge.style.display = 'none'; }
+  }
 }
 
 function formatBdate(el) {

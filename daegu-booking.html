@@ -235,11 +235,13 @@ function renderList(status){
     var allClosed = maleSt==='closed' && femaleSt==='closed';
     var anyAlmost = !allClosed && (maleSt==='almost' || femaleSt==='almost');
     var isOpen = (key === OPEN_DATE);
-    var mRem = st.maleRemaining !== undefined ? st.maleRemaining : 20;
-    var fRem = st.femaleRemaining !== undefined ? st.femaleRemaining : 20;
+    var hasMRem = st.maleRemaining !== undefined;
+    var hasFRem = st.femaleRemaining !== undefined;
+    var mRem = hasMRem ? st.maleRemaining : null;
+    var fRem = hasFRem ? st.femaleRemaining : null;
 
-    // 가장 가까운 날짜만 항상 잔여석 표시, 이후 날짜는 관리자가 직접 설정한 경우에만 표시
-    var showSeats = (idx === 0) || !!st.hasManualRemaining;
+    // 실제 데이터가 있는 경우에만 잔여석 표시 (부산과 동일 방식)
+    var showSeats = (hasMRem || hasFRem) && ((idx === 0) || !!st.hasManualRemaining);
 
     var today = new Date(); today.setHours(0,0,0,0);
     var daysUntil = Math.ceil((d - today) / (1000*60*60*24));
@@ -295,14 +297,18 @@ function goToVenue() {
 
 (function init(){
   var cached = localStorage.getItem('daegu_dateStatus');
-  renderList(cached ? JSON.parse(cached) : {});
+  if (cached) { try { renderList(JSON.parse(cached)); } catch(e) {} }
+  else { renderList({}); }
   if (!DAEGU_GAS_URL) return;
   fetch(DAEGU_GAS_URL+'?action=getDateStatus')
     .then(function(r){return r.json();})
     .then(function(res){
       if (res.result==='success') {
-        localStorage.setItem('daegu_dateStatus', JSON.stringify(res.data||{}));
-        renderList(res.data||{});
+        var newStr = JSON.stringify(res.data||{});
+        if (newStr !== cached) {
+          localStorage.setItem('daegu_dateStatus', newStr);
+          renderList(res.data||{});
+        }
       }
     })
     .catch(function(){});
