@@ -351,6 +351,21 @@ var _statusReady = (function(){
     .catch(function(){});
 })();
 
+_statusReady.then(function() {
+  var date = new URLSearchParams(window.location.search).get('date') || '';
+  if (!date) return;
+  var st = _statusMap[date] || {};
+  var el = document.getElementById('cardTopStatus');
+  if (!el) return;
+  if (st.male === 'closed' && st.female === 'closed') {
+    el.textContent = '🔴 모집 마감';
+  } else if (st.male === 'closed') {
+    el.textContent = '🔴 남성 마감 · 여성 신청 가능';
+  } else if (st.female === 'closed') {
+    el.textContent = '🔴 여성 마감 · 남성 신청 가능';
+  }
+});
+
 (function(){
   var params = new URLSearchParams(window.location.search);
   var dateParam = params.get('date');

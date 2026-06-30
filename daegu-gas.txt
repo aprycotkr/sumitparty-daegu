@@ -656,18 +656,40 @@ function updateRosterSheet() {
       rosterSheet.getRange(startRow + 2, 1, MAX, 4).setValues(emptyRows);
     }
 
-    // 합격자 위에서부터 채움 (나머지 빈 칸 건드리지 않음)
-    const autoStart  = startRow + 2;
-    const writeCount = Math.max(male.length, female.length);
-    if (writeCount > 0) {
-      const rows = [];
-      for (let i = 0; i < writeCount; i++) {
-        const m = male[i]   || ['', ''];
-        const f = female[i] || ['', ''];
-        rows.push([m[0], m[1], f[0], f[1]]);
-      }
-      rosterSheet.getRange(autoStart, 1, writeCount, 4).setValues(rows);
+    // 합격자 + 수동 추가 인원 병합 후 기록
+    const autoStart = startRow + 2;
+
+    // 기존 슬롯 데이터 읽기
+    const existing = rosterSheet.getRange(autoStart, 1, MAX, 4).getValues();
+
+    // 합격자 key set 구성
+    const maleKeySet   = {};
+    const femaleKeySet = {};
+    male.forEach(function(m)   { if (m[0]) maleKeySet[m[0]   + '|' + m[1]] = true; });
+    female.forEach(function(f) { if (f[0]) femaleKeySet[f[0] + '|' + f[1]] = true; });
+
+    // 수동 추가 인원 추출 (합격자 목록에 없는 사람)
+    const manualM = [], manualF = [];
+    existing.forEach(function(r) {
+      const mn = String(r[0] || '').trim(), mp = String(r[1] || '').trim();
+      const fn = String(r[2] || '').trim(), fp = String(r[3] || '').trim();
+      if (mn && !maleKeySet[mn + '|' + mp])   manualM.push([mn, mp]);
+      if (fn && !femaleKeySet[fn + '|' + fp]) manualF.push([fn, fp]);
+    });
+
+    // 합격자 먼저, 수동 추가 뒤에 배치
+    const finalM = male.concat(manualM).slice(0, MAX);
+    const finalF = female.concat(manualF).slice(0, MAX);
+
+    // MAX 전체 행 덮어쓰기 (빈 슬롯 포함)
+    const fullRows = [];
+    for (let i = 0; i < MAX; i++) {
+      fullRows.push([
+        (finalM[i] || ['', ''])[0], (finalM[i] || ['', ''])[1],
+        (finalF[i] || ['', ''])[0], (finalF[i] || ['', ''])[1]
+      ]);
     }
+    rosterSheet.getRange(autoStart, 1, MAX, 4).setValues(fullRows);
 
     // 날짜 헤더 수식 (해당 섹션 25행만 카운트)
     const dataEnd = autoStart + MAX - 1;

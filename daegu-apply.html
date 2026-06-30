@@ -560,6 +560,21 @@ const _statusReady = (async function(){
   } catch(e) {}
 })();
 
+_statusReady.then(function() {
+  if (!fd.date) return;
+  var st = dateStatusMap[fd.date] || {};
+  document.querySelectorAll('.gender-btn').forEach(function(btn) {
+    var isMale = btn.textContent.trim() === '남성';
+    var gKey = isMale ? 'male' : 'female';
+    if (st[gKey] === 'closed') {
+      btn.disabled = true;
+      btn.style.opacity = '0.35';
+      btn.style.cursor = 'not-allowed';
+      btn.textContent = (isMale ? '남성' : '여성') + ' (마감)';
+    }
+  });
+});
+
 /* 스텝 이동 */
 function goStep(n) {
   ['s1','s2','s3','s4','s5','sc'].forEach(s => document.getElementById(s).style.display = 'none');
@@ -659,6 +674,13 @@ function resetPhotoNextBtn() {
 
 /* 성별 선택 */
 function selGender(el, g) {
+  var gKey = g === '남성' ? 'male' : 'female';
+  var st = dateStatusMap[fd.date] || {};
+  if (st[gKey] === 'closed') {
+    document.getElementById('genderErr').textContent = g + (g === '남성' ? '은' : '는') + ' 마감되었습니다.';
+    return;
+  }
+  document.getElementById('genderErr').textContent = '';
   document.querySelectorAll('.gender-btn').forEach(x => x.classList.remove('sel'));
   el.classList.add('sel'); fd.gender = g;
   updateTicketPrice();

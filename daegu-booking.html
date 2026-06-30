@@ -276,15 +276,24 @@ function renderList(status){
       if (isOpen) badges += '<span class="bdg-open">OPEN 할인</span>';
       if (isEarlybird) badges += '<span class="bdg-earlybird">🏷️ 얼리버드</span>';
       if (anyAlmost) badges += '<span class="bdg-almost">마감임박</span>';
+      if (maleSt === 'closed') badges += '<span class="bdg-closed-pill">🔴 남성 마감</span>';
+      if (femaleSt === 'closed') badges += '<span class="bdg-closed-pill">🔴 여성 마감</span>';
     }
 
     var btn = allClosed
       ? '<span class="btn-closed-label">마감</span>'
       : '<a class="btn-apply" href="daegu-party.html?date='+key+'" onclick="if(typeof fbq!==\'undefined\')fbq(\'track\',\'AddToCart\',{content_name:\'파티 날짜 선택\',content_category:\'daegu\'})">신청하기</a>';
 
-    var seats = allClosed
-      ? '모집 마감'
-      : (showSeats ? '남 '+mRem+'석 · 여 '+fRem+'석 남음' : '');
+    var seats;
+    if (allClosed) {
+      seats = '모집 마감';
+    } else if (maleSt === 'closed') {
+      seats = hasFRem ? '남성 마감 · 여 '+fRem+'석 남음' : '남성 마감';
+    } else if (femaleSt === 'closed') {
+      seats = hasMRem ? '남 '+mRem+'석 남음 · 여성 마감' : '여성 마감';
+    } else {
+      seats = showSeats ? '남 '+mRem+'석 · 여 '+fRem+'석 남음' : '';
+    }
 
     var card = document.createElement('div');
     card.className = 'party-card'+(allClosed?' is-closed':'');
