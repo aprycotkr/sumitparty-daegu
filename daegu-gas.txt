@@ -19,6 +19,10 @@ const CONFIG = {
   SENDER_NUMBER: '01064509313',
 };
 
+// ── Meta CAPI 설정 ────────────────────────────────────────────
+const PIXEL_ID          = '821379504055811';
+const CAPI_ACCESS_TOKEN = 'EAAXpalD64TcBRhZCP3lltG3bZAJgos3JnTjRenEh1ZCqZBIERfDlPq1ZAwc4jzZBdEkW4KXDXfzdIY3YsIsveTySCpeHllMjM4ZBDZBgwqiOhQLHxLEis9nRFCrhvJ8g49H0dJtFRO1ikHLxzbbueZBy5pjRy9zjjTFeyFJWDCcj6bXvPfuDcLKX1Wr3QyELcLi0LnQZDZD';
+
 // ── 열 인덱스 (0-based) ───────────────────────────────────────
 const COL = {
   TIMESTAMP:  0,  // A: 제출시간
@@ -31,8 +35,36 @@ const COL = {
   TICKET:     7,  // H: 권종
   PRICE:      8,  // I: 금액
   PHOTO_URL:  9,  // J: 사진URL
-  STATUS:    10,  // K: 심사결과 (검토중/합격/불합격)
+  STATUS:    10,  // K: 심사결과 (검토중/합격/불합격/리마인드)
 };
+
+// ── 스프레드시트 메뉴 ─────────────────────────────────────────
+function onOpen() {
+  SpreadsheetApp.getUi()
+    .createMenu('썸잇 관리')
+    .addItem('📢 입금 리마인드 일괄 발송', 'sendBulkReminder')
+    .addToUi();
+}
+
+// 검토중 상태 전원에게 리마인드 일괄 발송
+function sendBulkReminder() {
+  const ui    = SpreadsheetApp.getUi();
+  const ss    = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
+  const sheet = ss.getSheetByName(CONFIG.SHEET_NAME);
+  if (!sheet) { ui.alert('신청자 시트를 찾을 수 없습니다.'); return; }
+
+  const data  = sheet.getDataRange().getValues();
+  let count = 0;
+  for (let i = 1; i < data.length; i++) {
+    const status = String(data[i][COL.STATUS] || '').trim();
+    if (status !== '검토중') continue;
+    if (!data[i][COL.NAME] || !data[i][COL.PHONE]) continue;
+    sendReminderSMS(sheet, i + 1);
+    count++;
+    Utilities.sleep(300);
+  }
+  ui.alert('리마인드 발송 완료: ' + count + '명에게 발송되었습니다.');
+}
 
 // ── 진입점 ────────────────────────────────────────────────────
 function doGet(e) {
@@ -63,6 +95,19 @@ function doPost(e) {
     }
     if (action === 'updateDateStatus') {
       return jsonResponse(updateDateStatus(payload));
+    }
+    if (action === 'submitGuest') {
+      const guestPayload = {
+        action:  'submitApplication',
+        name:    payload.name,
+        gender:  payload.gender,
+        phone:   payload.phone,
+        date:    payload.date,
+        price:   payload.price,
+        ticket:  payload.ticket || '게스트',
+        refBy:   payload.refBy  || '직접등록',
+      };
+      return jsonResponse(submitApplication(guestPayload));
     }
     return jsonResponse({ result: 'error', message: 'unknown action' });
   } catch (err) {
@@ -230,6 +275,9 @@ function submitApplication(payload) {
     sendSms(phone, buildApplyMsg(payload.name, payload.date || '', priceNum));
   }
 
+  // Meta CAPI: 서버사이드 Lead 이벤트 전송
+  sendMetaCAPI(payload);
+
   return { result: 'success' };
 }
 
@@ -249,31 +297,106 @@ function onEdit(e) {
     if (row <= 1) return;                 // 헤더 제외
 
     const newStatus = String(e.value || '').trim();
-    if (newStatus !== '합격' && newStatus !== '불합격') return;
+    if (newStatus !== '합격' && newStatus !== '불합격' && newStatus !== '리마인드') return;
 
-    const rowData = sheet.getRange(row, 1, 1, 11).getValues()[0];
-    const phone     = String(rowData[COL.PHONE] || '').replace(/\D/g, '');
-    const name      = rowData[COL.NAME]  || '';
-    const gender    = rowData[COL.GENDER] || '';
-    const price     = rowData[COL.PRICE] ? Number(rowData[COL.PRICE]).toLocaleString() : '';
-    const rawDate   = rowData[COL.DATE];
-    const dateObj   = rawDate instanceof Date ? rawDate : new Date(rawDate);
-    const dow       = ['일','월','화','수','목','금','토'][dateObj.getDay()];
-    const dateStr   = (dateObj.getMonth()+1) + '/' + dateObj.getDate() + '(' + dow + ')';
-
-    if (!phone) return;
-
-    if (newStatus === '합격') {
-      const msg = buildPassMsg(name, gender, dateStr, price);
-      sendSms(phone, msg);
-      updateRosterSheet();
-    } else {
-      const msg = buildFailMsg(name);
-      sendSms(phone, msg);
-    }
+    if (newStatus === '합격')    { sendApprovalSMS(sheet, row); }
+    else if (newStatus === '리마인드') { sendReminderSMS(sheet, row); }
+    else if (newStatus === '불합격')  { sendRejectionSMS(sheet, row); }
   } catch (err) {
     console.error('onEdit error:', err);
   }
+}
+
+// ── 심사결과별 SMS 함수 ───────────────────────────────────────
+
+function sendApprovalSMS(sheet, row) {
+  const rowData = sheet.getRange(row, 1, 1, 11).getValues()[0];
+  const phone   = String(rowData[COL.PHONE] || '').replace(/\D/g, '');
+  const name    = rowData[COL.NAME]   || '';
+  const gender  = rowData[COL.GENDER] || '';
+  const price   = rowData[COL.PRICE]  ? Number(rowData[COL.PRICE]).toLocaleString() : '';
+  const rawDate = rowData[COL.DATE];
+  if (!phone || !name) return;
+
+  const dateObj = rawDate instanceof Date ? rawDate : new Date(rawDate);
+  const dow     = ['일','월','화','수','목','금','토'][dateObj.getDay()];
+  const dateStr = (dateObj.getMonth()+1) + '/' + dateObj.getDate() + '(' + dow + ')';
+
+  sendSms(phone, buildPassMsg(name, gender, dateStr, price));
+  sheet.getRange(row, COL.STATUS + 1).setValue('합격✓발송');
+
+  // 합격 = 입금 확인 완료 → Purchase CAPI 전송
+  const priceNum = rowData[COL.PRICE] ? parseInt(String(rowData[COL.PRICE]).replace(/[^0-9]/g, '')) || 0 : 0;
+  sendMetaCAPIPurchase({ phone: phone, name: name, gender: gender, price: priceNum });
+
+  updateRosterSheet();
+}
+
+// ── Meta CAPI Purchase 전송 ───────────────────────────────────
+function sendMetaCAPIPurchase(data) {
+  try {
+    function sha256(value) {
+      if (!value) return null;
+      const bytes = Utilities.computeDigest(
+        Utilities.DigestAlgorithm.SHA_256,
+        value.toString().trim().toLowerCase()
+      );
+      return bytes.map(function(b){ return ('0' + (b & 0xFF).toString(16)).slice(-2); }).join('');
+    }
+    function normalizePhone(phone) {
+      let p = String(phone).replace(/\D/g, '');
+      if (p.startsWith('0')) p = '82' + p.slice(1);
+      return p;
+    }
+
+    const genderCode = data.gender === '여성' ? 'f' : 'm';
+    const ud = {
+      ph: data.phone ? sha256(normalizePhone(data.phone)) : null,
+      fn: (data.name && data.name.length > 1) ? sha256(data.name.slice(1)) : null,
+      ln: data.name ? sha256(data.name.slice(0, 1)) : null,
+      ge: sha256(genderCode)
+    };
+    Object.keys(ud).forEach(function(k){ if (ud[k] === null) delete ud[k]; });
+
+    const payload = {
+      data: [{
+        event_name:       'Purchase',
+        event_time:       Math.floor(new Date().getTime() / 1000),
+        event_id:         'daegu_purchase_' + Date.now(),
+        action_source:    'website',
+        event_source_url: 'https://daegu.sumitparty.com/daegu-apply.html',
+        user_data:        ud,
+        custom_data:      { value: data.price || 0, currency: 'KRW' }
+      }]
+    };
+
+    UrlFetchApp.fetch(
+      'https://graph.facebook.com/v21.0/' + PIXEL_ID + '/events?access_token=' + CAPI_ACCESS_TOKEN,
+      { method: 'POST', contentType: 'application/json', payload: JSON.stringify(payload), muteHttpExceptions: true }
+    );
+  } catch(err) {}
+}
+
+function sendRejectionSMS(sheet, row) {
+  const rowData = sheet.getRange(row, 1, 1, 11).getValues()[0];
+  const phone   = String(rowData[COL.PHONE] || '').replace(/\D/g, '');
+  const name    = rowData[COL.NAME] || '';
+  if (!phone || !name) return;
+
+  sendSms(phone, buildFailMsg(name));
+  sheet.getRange(row, COL.STATUS + 1).setValue('불합격✓발송');
+}
+
+function sendReminderSMS(sheet, row) {
+  const rowData = sheet.getRange(row, 1, 1, 11).getValues()[0];
+  const phone   = String(rowData[COL.PHONE] || '').replace(/\D/g, '');
+  const name    = rowData[COL.NAME]   || '';
+  const ticket  = rowData[COL.TICKET] || '';
+  const price   = rowData[COL.PRICE]  || '';
+  if (!phone || !name) return;
+
+  sendSms(phone, buildRemindMsg(name, ticket, price));
+  sheet.getRange(row, COL.STATUS + 1).setValue('리마인드✓발송');
 }
 
 // ── SMS 메시지 템플릿 ─────────────────────────────────────────
@@ -320,9 +443,31 @@ function buildPassMsg(name, gender, dateStr, price) {
 
 function buildFailMsg(name) {
   return (
-    '[썸잇 대구점] ' + name + '님,\n' +
-    '아쉽게도 이번 파티 참가가 어렵게 되었습니다.\n\n' +
-    '다음 기회에 다시 신청해 주세요.\n' +
+    '[썸잇 심사 결과 안내]\n\n' +
+    name + '님, 이번 파티 참가 신청에 감사드립니다.\n\n' +
+    '아쉽게도 이번에는 함께하기 어려울 것 같습니다.\n\n' +
+    '입금하신 금액은 환불 처리 도와드리겠습니다.\n' +
+    '환불받으실 계좌번호를 아래로 보내주시면\n' +
+    '신속하게 처리해드리겠습니다.\n\n' +
+    '문의 : 인스타 DM @sum_it.official'
+  );
+}
+
+// 입금 리마인드 — 검토중(미입금) 고객 대상
+function buildRemindMsg(name, ticket, price) {
+  return (
+    '[썸잇 입금 안내]\n\n' +
+    name + '님, 아직 입금이 확인되지 않았습니다.\n\n' +
+    '현재 신청자가 계속 접수되고 있어\n' +
+    '참여는 입금 순으로 최종 확정되고 있습니다.\n\n' +
+    '입금 전까지는 자리가 확보되지 않으며,\n' +
+    '마감 시 대기자로 전환될 수 있습니다.\n\n' +
+    '참석을 원하신다면 빠른 입금을 부탁드립니다 :)\n\n' +
+    '[입금 계좌]\n' +
+    '토스뱅크 1000-3571-5174 김경민\n\n' +
+    (ticket ? '권종 : ' + ticket + '\n' : '') +
+    (price  ? '입금 금액 : ' + price + '\n' : '') +
+    '\n입금자명은 신청하신 이름으로 부탁드립니다.\n\n' +
     '문의 : 인스타 DM @sum_it.official'
   );
 }
@@ -383,80 +528,172 @@ function toDateKey(val) {
 }
 
 // ── 합격자 명단 자동 정리 (시트1) ────────────────────────────
+// 날짜별 고정 54행 구조:
+//   +0  날짜 헤더 수식  |  E열: __DATE__:yyyy-MM-dd 마커
+//   +1  열 헤더 [이름|연락처|이름|연락처]
+//   +2~+26  AUTO 영역 25행 — GAS 자동 입력 (합격자 반영)
+//   +27 수동 추가 구분선
+//   +28~+52 MANUAL 영역 25행 — 관리자 직접 입력 (GAS 절대 미접촉)
+//   +53 빈 구분 행
 function updateRosterSheet() {
   const ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
   const applySheet = ss.getSheetByName(CONFIG.SHEET_NAME);
   if (!applySheet) return;
 
-  // 시트1 가져오기 (없으면 첫 번째 시트)
   const rosterSheet = ss.getSheetByName('시트1') || ss.getSheets()[0];
-  if (rosterSheet.getName() === CONFIG.SHEET_NAME) return; // 안전장치
+  if (!rosterSheet || rosterSheet.getName() === CONFIG.SHEET_NAME) return;
 
-  // 합격자 날짜별 분류
-  const data = applySheet.getDataRange().getValues();
-  const dateMap = {};
+  const MAX = 25;
   const DOW = ['일','월','화','수','목','금','토'];
 
-  for (let i = 1; i < data.length; i++) {
-    const row    = data[i];
+  // 합격자 날짜별 수집
+  const applyData = applySheet.getDataRange().getValues();
+  const dateMap = {};
+  for (let i = 1; i < applyData.length; i++) {
+    const row    = applyData[i];
     const status = String(row[COL.STATUS] || '').trim();
     if (status.indexOf('합격') === -1) continue;
-
     const dateKey = toDateKey(row[COL.DATE]);
     if (!dateKey) continue;
     if (!dateMap[dateKey]) dateMap[dateKey] = { male: [], female: [] };
-
     const gender = String(row[COL.GENDER] || '').trim();
     const entry  = [String(row[COL.NAME] || ''), String(row[COL.PHONE] || '')];
     if (gender === '남성') dateMap[dateKey].male.push(entry);
     else                   dateMap[dateKey].female.push(entry);
   }
 
-  // 시트1 초기화
-  rosterSheet.clearContents();
-  rosterSheet.clearFormats();
+  // 기존 날짜 섹션 탐색 (E열 __DATE__: 마커 기반)
+  const sheetLastRow = rosterSheet.getLastRow();
+  const sectionMap = {};
+  if (sheetLastRow > 0) {
+    const markerVals = rosterSheet.getRange(1, 5, sheetLastRow, 1).getValues();
+    for (let r = 0; r < markerVals.length; r++) {
+      const m = String(markerVals[r][0] || '');
+      if (m.startsWith('__DATE__:')) sectionMap[m.slice(9)] = r + 1;
+    }
+  }
 
-  const dates = Object.keys(dateMap).sort();
-  let r = 1;
+  // 열 너비 최초 1회 설정 (이후 관리자가 조절해도 GAS가 건드리지 않음)
+  const props = PropertiesService.getScriptProperties();
+  if (!props.getProperty('rosterColsInit')) {
+    rosterSheet.setColumnWidth(1, 130);  // A: 이름 (남)
+    rosterSheet.setColumnWidth(2, 175);  // B: 연락처 (남)
+    rosterSheet.setColumnWidth(3, 130);  // C: 이름 (여)
+    rosterSheet.setColumnWidth(4, 175);  // D: 연락처 (여)
+    rosterSheet.hideColumns(5);          // E: 날짜 마커 (숨김)
+    props.setProperty('rosterColsInit', '1');
+  }
 
-  dates.forEach(function(dateStr) {
-    const male   = dateMap[dateStr].male;
-    const female = dateMap[dateStr].female;
+  // 날짜별 섹션 생성 또는 AUTO 영역 업데이트
+  Object.keys(dateMap).sort().forEach(function(dateStr) {
+    const male   = dateMap[dateStr].male.slice(0, MAX);
+    const female = dateMap[dateStr].female.slice(0, MAX);
     const d      = new Date(dateStr + 'T00:00:00+09:00');
     const label  = (d.getMonth()+1) + '월 ' + d.getDate() + '일 (' + DOW[d.getDay()] + ')';
 
-    // 날짜 헤더 — COUNTA 수식으로 인원수 자동 계산
-    const dataStart = r + 2; // 열 헤더 다음 행부터 데이터
-    const maxLen = Math.max(male.length, female.length);
-    const dataEnd = dataStart + maxLen + 5;
-    const headerFormula =
-      '="📅 ' + label + '  —  남성 "&COUNTA(A' + dataStart + ':A' + dataEnd + ')&"명 · 여성 "&COUNTA(C' + dataStart + ':C' + dataEnd + ')&"명"';
+    let startRow = sectionMap[dateStr];
 
-    rosterSheet.getRange(r, 1, 1, 4).merge()
-      .setFormula(headerFormula)
-      .setBackground('#1a1a1a').setFontColor('#C9A96E')
-      .setFontWeight('bold').setFontSize(12)
-      .setHorizontalAlignment('center');
-    r++;
+    if (!startRow) {
+      // 새 날짜 섹션 생성
+      const lr = rosterSheet.getLastRow();
+      startRow = lr === 0 ? 1 : lr + 2;
+      sectionMap[dateStr] = startRow;
 
-    // 열 헤더
-    rosterSheet.getRange(r, 1, 1, 2).setValues([['이름', '연락처']])
-      .setBackground('#0d1020').setFontColor('#8899ff').setFontWeight('bold');
-    rosterSheet.getRange(r, 3, 1, 2).setValues([['이름', '연락처']])
-      .setBackground('#200d0d').setFontColor('#ff8888').setFontWeight('bold');
-    r++;
+      // 날짜 헤더
+      rosterSheet.getRange(startRow, 1, 1, 4).merge()
+        .setBackground('#1a1a1a').setFontColor('#C9A96E')
+        .setFontWeight('bold').setFontSize(12).setHorizontalAlignment('center');
+      rosterSheet.getRange(startRow, 5).setValue('__DATE__:' + dateStr);
 
-    // 데이터 행
-    for (let i = 0; i < maxLen; i++) {
+      // 열 헤더 (남성/여성)
+      rosterSheet.getRange(startRow + 1, 1, 1, 2)
+        .setValues([['이름', '연락처']])
+        .setBackground('#0d1020').setFontColor('#8899ff').setFontWeight('bold').setFontSize(10);
+      rosterSheet.getRange(startRow + 1, 3, 1, 2)
+        .setValues([['이름', '연락처']])
+        .setBackground('#200d0d').setFontColor('#ff8888').setFontWeight('bold').setFontSize(10);
+
+      // 수동 추가 구분선 (startRow+27)
+      rosterSheet.getRange(startRow + 27, 1, 1, 4).merge()
+        .setValue('✍️  수동 추가 — 직접 연락 온 분은 이 아래에 입력하세요')
+        .setBackground('#1c1a00').setFontColor('#ccaa00')
+        .setFontWeight('bold').setFontSize(9).setHorizontalAlignment('center');
+    }
+
+    // AUTO 영역만 덮어씀 (startRow+2 ~ startRow+26, 총 25행)
+    const autoStart = startRow + 2;
+    const autoRows  = [];
+    for (let i = 0; i < MAX; i++) {
       const m = male[i]   || ['', ''];
       const f = female[i] || ['', ''];
-      rosterSheet.getRange(r, 1, 1, 4).setValues([[m[0], m[1], f[0], f[1]]]);
-      r++;
+      autoRows.push([m[0], m[1], f[0], f[1]]);
     }
-    r++; // 날짜 구분 빈 행
-  });
+    rosterSheet.getRange(autoStart, 1, MAX, 4).setValues(autoRows);
 
-  rosterSheet.autoResizeColumns(1, 4);
+    // 날짜 헤더 수식 업데이트 (AUTO + MANUAL 합산 카운트)
+    const manualEnd = startRow + 52;
+    rosterSheet.getRange(startRow, 1).setFormula(
+      '="📅 ' + label + '  남성 "&COUNTA(A' + autoStart + ':A' + manualEnd + ')&"/' + MAX + '명  ·  여성 "&COUNTA(C' + autoStart + ':C' + manualEnd + ')&"/' + MAX + '명"'
+    );
+  });
+}
+
+// ── Meta CAPI Lead 전송 ───────────────────────────────────────
+function sendMetaCAPI(payload) {
+  try {
+    function sha256(value) {
+      if (!value) return null;
+      const bytes = Utilities.computeDigest(
+        Utilities.DigestAlgorithm.SHA_256,
+        value.toString().trim().toLowerCase()
+      );
+      return bytes.map(function(b){ return ('0' + (b & 0xFF).toString(16)).slice(-2); }).join('');
+    }
+    function normalizePhone(phone) {
+      let p = phone.replace(/\D/g, '');
+      if (p.startsWith('0')) p = '82' + p.slice(1);
+      return p;
+    }
+
+    const genderCode = payload.gender === '여성' ? 'f' : 'm';
+    const birth = String(payload.birth || payload.bdate || '').replace(/[^0-9]/g, '');
+    const dob = birth.length >= 8 ? birth.slice(0, 8) : null;
+
+    const ud = {
+      ph:  payload.phone ? sha256(normalizePhone(String(payload.phone))) : null,
+      fn:  (payload.name && payload.name.length > 1) ? sha256(payload.name.slice(1)) : null,
+      ln:  payload.name  ? sha256(payload.name.slice(0, 1)) : null,
+      ge:  sha256(genderCode),
+      db:  dob ? sha256(dob) : null,
+      fbc: payload.fbc || null,
+      fbp: payload.fbp || null,
+      client_user_agent: payload.userAgent || null
+    };
+    Object.keys(ud).forEach(function(k){ if (ud[k] === null) delete ud[k]; });
+
+    const apiPayload = {
+      data: [{
+        event_name:       'Lead',
+        event_time:       Math.floor(new Date().getTime() / 1000),
+        event_id:         payload.eventId || ('daegu_gas_' + Date.now()),
+        action_source:    'website',
+        event_source_url: 'https://daegu.sumitparty.com/daegu-apply.html',
+        user_data:        ud
+      }]
+    };
+
+    UrlFetchApp.fetch(
+      'https://graph.facebook.com/v21.0/' + PIXEL_ID + '/events?access_token=' + CAPI_ACCESS_TOKEN,
+      {
+        method:             'POST',
+        contentType:        'application/json',
+        payload:            JSON.stringify(apiPayload),
+        muteHttpExceptions: true
+      }
+    );
+  } catch(err) {
+    // 조용히 실패 — 신청 처리는 막지 않음
+  }
 }
 
 // ── 공통 응답 헬퍼 ────────────────────────────────────────────

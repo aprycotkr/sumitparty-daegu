@@ -308,19 +308,21 @@ function goToVenue() {
 }
 
 (function init(){
-  var cached = localStorage.getItem('daegu_dateStatus');
-  if (cached) { try { renderList(JSON.parse(cached)); } catch(e) {} }
-  else { renderList({}); }
+  var cached   = localStorage.getItem('daegu_dateStatus');
+  var cachedTs = Number(localStorage.getItem('daegu_dateStatus_ts') || 0);
+  if (cached && Date.now() - cachedTs < 60000) { // 1분 이내 캐시만 사용
+    try { renderList(JSON.parse(cached)); } catch(e) { renderList({}); }
+  } else {
+    renderList({});
+  }
   if (!DAEGU_GAS_URL) return;
-  fetch(DAEGU_GAS_URL+'?action=getDateStatus')
+  fetch(DAEGU_GAS_URL+'?action=getDateStatus&_t='+Date.now())
     .then(function(r){return r.json();})
     .then(function(res){
       if (res.result==='success') {
-        var newStr = JSON.stringify(res.data||{});
-        if (newStr !== cached) {
-          localStorage.setItem('daegu_dateStatus', newStr);
-          renderList(res.data||{});
-        }
+        localStorage.setItem('daegu_dateStatus', JSON.stringify(res.data||{}));
+        localStorage.setItem('daegu_dateStatus_ts', String(Date.now()));
+        renderList(res.data||{});
       }
     })
     .catch(function(){});

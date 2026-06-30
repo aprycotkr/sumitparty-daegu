@@ -332,7 +332,7 @@ var OPEN_DATE = '2026-07-11';
 var _statusMap = {};
 var _statusReady = (function(){
   if (!DAEGU_GAS_URL) return Promise.resolve();
-  return fetch(DAEGU_GAS_URL + '?action=getDateStatus')
+  return fetch(DAEGU_GAS_URL + '?action=getDateStatus&_t=' + Date.now())
     .then(function(r){ return r.json(); })
     .then(function(json){ if (json.result==='success') _statusMap = json.data||{}; })
     .catch(function(){});

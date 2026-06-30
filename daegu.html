@@ -704,14 +704,20 @@ function toggleFaq(el) {
     });
   }
 
-  var cached = localStorage.getItem('daegu_dateStatus');
-  renderDates(cached ? JSON.parse(cached) : {});
+  var cached   = localStorage.getItem('daegu_dateStatus');
+  var cachedTs = Number(localStorage.getItem('daegu_dateStatus_ts') || 0);
+  if (cached && Date.now() - cachedTs < 60000) { // 1분 이내 캐시만 사용
+    try { renderDates(JSON.parse(cached)); } catch(e) { renderDates({}); }
+  } else {
+    renderDates({});
+  }
   if (DAEGU_GAS_URL) {
-    fetch(DAEGU_GAS_URL + '?action=getDateStatus')
+    fetch(DAEGU_GAS_URL + '?action=getDateStatus&_t=' + Date.now())
       .then(function(r) { return r.json(); })
       .then(function(json) {
         if (json.result === 'success') {
           localStorage.setItem('daegu_dateStatus', JSON.stringify(json.data || {}));
+          localStorage.setItem('daegu_dateStatus_ts', String(Date.now()));
           renderDates(json.data || {});
         }
       })

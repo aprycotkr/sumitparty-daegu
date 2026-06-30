@@ -90,7 +90,7 @@ let statusMap = {};
 
 async function loadDashboard() {
   try {
-    const res = await fetch(DAEGU_GAS_URL + '?action=getDateStatus');
+    const res = await fetch(DAEGU_GAS_URL + '?action=getDateStatus&_t=' + Date.now());
     const json = await res.json();
     if (json.result === 'success') statusMap = json.data || {};
   } catch (e) {}
@@ -207,6 +207,9 @@ async function saveToGAS(dateStr, data) {
     const res  = await fetch(url);
     const json = await res.json();
     if (json.result !== 'success') throw new Error();
+    // 방문자 페이지의 localStorage 캐시 즉시 무효화
+    localStorage.removeItem('daegu_dateStatus');
+    localStorage.removeItem('daegu_dateStatus_ts');
     setCardState(dateStr, 'saved', '저장 완료 ✓');
     setTimeout(() => setCardState(dateStr, '', ''), 2000);
   } catch {

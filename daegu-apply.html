@@ -554,7 +554,7 @@ let dateStatusMap = {};
 const _statusReady = (async function(){
   if (!DAEGU_CONFIG.DAEGU_GAS_URL) return;
   try {
-    const res = await fetch(DAEGU_CONFIG.DAEGU_GAS_URL + '?action=getDateStatus');
+    const res = await fetch(DAEGU_CONFIG.DAEGU_GAS_URL + '?action=getDateStatus&_t=' + Date.now());
     const json = await res.json();
     if (json.result === 'success') dateStatusMap = json.data || {};
   } catch(e) {}
