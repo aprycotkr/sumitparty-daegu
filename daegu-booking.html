@@ -171,6 +171,11 @@ body{background:var(--black);color:#fff;font-family:var(--font-body);min-height:
 .trust-item{font-size:0.58rem;color:rgba(255,255,255,0.32);letter-spacing:0.07em;display:flex;align-items:center;gap:0.3rem}
 .trust-item em{color:rgba(201,169,110,0.85);font-style:normal;font-weight:600}
 @media(max-width:480px){.trust-strip{gap:0.7rem 1.2rem;padding:0.65rem 1rem}}
+
+/* ── VIEWER BADGE ── */
+.viewer-badge{display:flex;align-items:center;justify-content:center;gap:6px;padding:7px 16px;background:rgba(255,255,255,0.04);border-bottom:1px solid rgba(255,255,255,0.06);font-size:0.72rem;color:rgba(255,255,255,0.55);font-weight:500;letter-spacing:0.02em}
+.viewer-dot{width:6px;height:6px;border-radius:50%;background:#f87171;flex-shrink:0;animation:vblink 1.8s ease infinite}
+@keyframes vblink{0%,100%{opacity:1}50%{opacity:0.35}}
 </style>
 </head>
 <body>
@@ -199,6 +204,12 @@ body{background:var(--black);color:#fff;font-family:var(--font-body);min-height:
   <span class="trust-item">👫 남20 · 여20 <em>완벽 1:1</em></span>
   <span class="trust-item">⭐ 만족도 <em>92%</em></span>
   <span class="trust-item">"혼자 와도 어색함 없어요" — 실제 참가자</span>
+</div>
+
+<!-- VIEWER BADGE -->
+<div class="viewer-badge" id="viewerBadge">
+  <span class="viewer-dot"></span>
+  <span id="viewerCount">5</span>명이 보고 있어요!
 </div>
 
 <!-- PARTY LIST -->
@@ -326,6 +337,19 @@ function goToVenue() {
       }
     })
     .catch(function(){});
+})();
+
+(function(){
+  var el = document.getElementById('viewerCount');
+  var cur = Math.floor(Math.random() * 7) + 3; // 3–9
+  el.textContent = cur;
+  function tick(){
+    var delta = Math.random() < 0.5 ? 1 : -1;
+    cur = Math.max(3, Math.min(9, cur + delta));
+    el.textContent = cur;
+    setTimeout(tick, 30000 + Math.random() * 30000); // 30–60초
+  }
+  setTimeout(tick, 30000 + Math.random() * 30000);
 })();
 </script>
 </body>
