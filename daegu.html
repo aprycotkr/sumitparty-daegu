@@ -712,8 +712,11 @@ function toggleFaq(el) {
       .then(function(r) { return r.json(); })
       .then(function(json) {
         if (json.result === 'success') {
-          localStorage.setItem('daegu_dateStatus', JSON.stringify(json.data || {}));
-          renderDates(json.data || {});
+          var newStr = JSON.stringify(json.data || {});
+          if (newStr !== cached) {
+            localStorage.setItem('daegu_dateStatus', newStr);
+            renderDates(json.data || {});
+          }
         }
       })
       .catch(function() {});

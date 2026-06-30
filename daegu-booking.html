@@ -328,8 +328,11 @@ function goToVenue() {
     .then(function(r){return r.json();})
     .then(function(res){
       if (res.result==='success') {
-        localStorage.setItem('daegu_dateStatus', JSON.stringify(res.data||{}));
-        renderList(res.data||{});
+        var newStr = JSON.stringify(res.data||{});
+        if (newStr !== cached) {
+          localStorage.setItem('daegu_dateStatus', newStr);
+          renderList(res.data||{});
+        }
       }
     })
     .catch(function(){});
