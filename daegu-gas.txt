@@ -43,7 +43,40 @@ function onOpen() {
   SpreadsheetApp.getUi()
     .createMenu('썸잇 관리')
     .addItem('📢 입금 리마인드 일괄 발송', 'sendBulkReminder')
+    .addSeparator()
+    .addItem('🔄 합격자 명단 초기화 후 재생성', 'resetAndRebuildRoster')
     .addToUi();
+}
+
+// 시트1 완전 초기화 후 합격자 명단 재생성
+function resetAndRebuildRoster() {
+  const ui = SpreadsheetApp.getUi();
+  const confirm = ui.alert(
+    '명단 초기화 확인',
+    '시트1의 내용을 모두 지우고 합격자 명단을 새로 생성합니다.\n수동으로 추가한 분들의 정보도 삭제됩니다.\n\n계속하시겠습니까?',
+    ui.ButtonSet.YES_NO
+  );
+  if (confirm !== ui.Button.YES) return;
+
+  const ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
+  const rosterSheet = ss.getSheetByName('시트1') || ss.getSheets()[0];
+  if (!rosterSheet || rosterSheet.getName() === CONFIG.SHEET_NAME) {
+    ui.alert('시트1을 찾을 수 없습니다.');
+    return;
+  }
+
+  // 완전 초기화
+  rosterSheet.clearContents();
+  rosterSheet.clearFormats();
+
+  // 열 숨김 해제 후 너비 초기화 (다시 설정되도록)
+  try { rosterSheet.showColumns(5); } catch(e) {}
+  const props = PropertiesService.getScriptProperties();
+  props.deleteProperty('rosterColsInit');
+
+  // 재생성
+  updateRosterSheet();
+  ui.alert('명단 재생성 완료!');
 }
 
 // 검토중 상태 전원에게 리마인드 일괄 발송
