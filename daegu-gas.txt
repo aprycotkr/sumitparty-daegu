@@ -561,7 +561,7 @@ function toDateKey(val) {
 }
 
 // ── 합격자 명단 자동 정리 (시트1) ────────────────────────────
-// 날짜별 고정 28행 구조:
+// 날짜별 고정 28행 구조 (getLastRow 대신 nextRow로 직접 위치 추적):
 //   +0  날짜 헤더 수식  |  E열: __DATE__:yyyy-MM-dd 마커
 //   +1  열 헤더 [이름|연락처|이름|연락처]
 //   +2~+26  25슬롯 — 합격자 위에서 자동 채움, 빈 칸에 직접 입력 가능
@@ -575,6 +575,7 @@ function updateRosterSheet() {
   if (!rosterSheet || rosterSheet.getName() === CONFIG.SHEET_NAME) return;
 
   const MAX = 25;
+  const SEC = 2 + MAX + 1; // 섹션 1개 = 헤더(1) + 열헤더(1) + 데이터(25) + 빈행(1) = 28
   const DOW = ['일','월','화','수','목','금','토'];
 
   // 합격자 날짜별 수집
@@ -604,18 +605,25 @@ function updateRosterSheet() {
     }
   }
 
-  // 열 너비 최초 1회 설정 (이후 관리자가 조절해도 GAS가 건드리지 않음)
+  // 열 너비 최초 1회 설정
   const props = PropertiesService.getScriptProperties();
   if (!props.getProperty('rosterColsInit')) {
-    rosterSheet.setColumnWidth(1, 130);  // A: 이름 (남)
-    rosterSheet.setColumnWidth(2, 175);  // B: 연락처 (남)
-    rosterSheet.setColumnWidth(3, 130);  // C: 이름 (여)
-    rosterSheet.setColumnWidth(4, 175);  // D: 연락처 (여)
-    rosterSheet.hideColumns(5);          // E: 날짜 마커 (숨김)
+    rosterSheet.setColumnWidth(1, 130);
+    rosterSheet.setColumnWidth(2, 175);
+    rosterSheet.setColumnWidth(3, 130);
+    rosterSheet.setColumnWidth(4, 175);
+    rosterSheet.hideColumns(5);
     props.setProperty('rosterColsInit', '1');
   }
 
-  // 날짜별 섹션 생성 또는 업데이트
+  // 새 섹션 시작 위치를 getLastRow 대신 직접 계산
+  // (빈 문자열 setValues는 getLastRow에 반영 안 됨)
+  let nextRow = 1;
+  Object.keys(sectionMap).forEach(function(key) {
+    nextRow = Math.max(nextRow, sectionMap[key] + SEC);
+  });
+
+  // 날짜별 섹션 생성/업데이트
   Object.keys(dateMap).sort().forEach(function(dateStr) {
     const male   = dateMap[dateStr].male.slice(0, MAX);
     const female = dateMap[dateStr].female.slice(0, MAX);
@@ -625,9 +633,8 @@ function updateRosterSheet() {
     let startRow = sectionMap[dateStr];
 
     if (!startRow) {
-      // 새 날짜 섹션 생성
-      const lr = rosterSheet.getLastRow();
-      startRow = lr === 0 ? 1 : lr + 2;
+      startRow = nextRow;
+      nextRow  = startRow + SEC;
       sectionMap[dateStr] = startRow;
 
       // 날짜 헤더
@@ -636,7 +643,7 @@ function updateRosterSheet() {
         .setFontWeight('bold').setFontSize(12).setHorizontalAlignment('center');
       rosterSheet.getRange(startRow, 5).setValue('__DATE__:' + dateStr);
 
-      // 열 헤더 (남성/여성)
+      // 열 헤더
       rosterSheet.getRange(startRow + 1, 1, 1, 2)
         .setValues([['이름', '연락처']])
         .setBackground('#0d1020').setFontColor('#8899ff').setFontWeight('bold').setFontSize(10);
@@ -649,11 +656,9 @@ function updateRosterSheet() {
       rosterSheet.getRange(startRow + 2, 1, MAX, 4).setValues(emptyRows);
     }
 
-    // 합격자 수만큼만 위에서 채우고, 나머지 빈 칸은 건드리지 않음
-    const autoStart = startRow + 2;
-    const mCount = male.length;
-    const fCount = female.length;
-    const writeCount = Math.max(mCount, fCount);
+    // 합격자 위에서부터 채움 (나머지 빈 칸 건드리지 않음)
+    const autoStart  = startRow + 2;
+    const writeCount = Math.max(male.length, female.length);
     if (writeCount > 0) {
       const rows = [];
       for (let i = 0; i < writeCount; i++) {
@@ -664,7 +669,7 @@ function updateRosterSheet() {
       rosterSheet.getRange(autoStart, 1, writeCount, 4).setValues(rows);
     }
 
-    // 날짜 헤더 수식 (25슬롯 전체 카운트)
+    // 날짜 헤더 수식 (해당 섹션 25행만 카운트)
     const dataEnd = autoStart + MAX - 1;
     rosterSheet.getRange(startRow, 1).setFormula(
       '="📅 ' + label + '  남성 "&COUNTA(A' + autoStart + ':A' + dataEnd + ')&"/' + MAX + '명  ·  여성 "&COUNTA(C' + autoStart + ':C' + dataEnd + ')&"/' + MAX + '명"'
