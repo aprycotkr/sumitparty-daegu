@@ -135,8 +135,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .card-guide{font-size:0.58rem;color:rgba(255,255,255,0.2);text-align:center;margin-top:0.7rem}
 
 /* VIEWER BADGE */
-.viewer-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.2);border-radius:20px;font-size:0.68rem;color:rgba(255,255,255,0.6);font-weight:500;margin-bottom:0.9rem;width:100%;justify-content:center}
-.viewer-dot{width:6px;height:6px;border-radius:50%;background:#f87171;flex-shrink:0;animation:vblink 1.8s ease infinite}
+.viewer-bar{display:flex;align-items:center;justify-content:center;gap:7px;padding:9px 20px;background:#0f0f0f;border-bottom:1px solid rgba(255,255,255,0.08);font-size:0.78rem;color:#fff;font-weight:700;letter-spacing:0.01em;width:100%}
+.viewer-badge{display:flex;align-items:center;justify-content:center;gap:7px;padding:8px 14px;background:#0f0f0f;border-radius:8px;font-size:0.75rem;color:#fff;font-weight:700;margin-bottom:0.9rem;width:100%}
+.viewer-badge .vb-flame,.viewer-bar .vb-flame{font-size:1rem;line-height:1}
 @keyframes vblink{0%,100%{opacity:1}50%{opacity:0.35}}
 
 /* FLOATING BTN (mobile) */
@@ -162,6 +163,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
   <a href="daegu-booking.html" class="nav-back">← 날짜 선택으로</a>
   <a href="daegu.html" class="nav-logo">Sumit</a>
 </nav>
+
+<!-- VIEWER TOP BAR -->
+<div class="viewer-bar">
+  <span class="vb-flame">🔥</span><span class="viewer-count-num">5</span>명이 보고 있어요!
+</div>
 
 <div class="page-wrap">
 
@@ -283,7 +289,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
         <div class="info-row"><span>참가 연령</span><span class="iv">90~07년생 (남녀 동일)</span></div>
         <div class="info-row"><span>정원</span><span class="iv">남녀 각 20명</span></div>
         <div class="info-row"><span>심사 방식</span><span class="iv gold">외모 승인제</span></div>
-        <div class="viewer-badge" style="margin-top:0.4rem"><span class="viewer-dot"></span><span class="viewer-count-num">5</span>명이 보고 있어요!</div>
+        <div class="viewer-badge" style="margin-top:0.4rem"><span class="vb-flame">🔥</span><span class="viewer-count-num">5</span>명이 보고 있어요!</div>
         <button class="apply-btn-main" onclick="goApply()">파티 참가 신청</button>
         <p class="price-guide">신청 후 운영진 검토를 거쳐 개별 합격 안내가 발송됩니다.</p>
       </div>
@@ -313,7 +319,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
         ✔ 조기 마감 가능<br>
         ✔ 선착순 진행
       </div>
-      <div class="viewer-badge"><span class="viewer-dot"></span><span class="viewer-count-num">5</span>명이 보고 있어요!</div>
+      <div class="viewer-badge"><span class="vb-flame">🔥</span><span class="viewer-count-num">5</span>명이 보고 있어요!</div>
       <button class="card-apply-btn" onclick="goApply()">파티 참가 신청</button>
       <p class="card-guide">신청 후 순차적으로 확정 안내됩니다.</p>
     </div>

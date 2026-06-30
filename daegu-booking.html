@@ -173,8 +173,8 @@ body{background:var(--black);color:#fff;font-family:var(--font-body);min-height:
 @media(max-width:480px){.trust-strip{gap:0.7rem 1.2rem;padding:0.65rem 1rem}}
 
 /* ── VIEWER BADGE ── */
-.viewer-badge{display:flex;align-items:center;justify-content:center;gap:6px;padding:7px 16px;background:rgba(255,255,255,0.04);border-bottom:1px solid rgba(255,255,255,0.06);font-size:0.72rem;color:rgba(255,255,255,0.55);font-weight:500;letter-spacing:0.02em}
-.viewer-dot{width:6px;height:6px;border-radius:50%;background:#f87171;flex-shrink:0;animation:vblink 1.8s ease infinite}
+.viewer-badge{display:flex;align-items:center;justify-content:center;gap:7px;padding:9px 20px;background:#0f0f0f;border-bottom:1px solid rgba(255,255,255,0.08);font-size:0.78rem;color:#fff;font-weight:700;letter-spacing:0.01em}
+.viewer-badge .vb-flame{font-size:1rem;line-height:1}
 @keyframes vblink{0%,100%{opacity:1}50%{opacity:0.35}}
 </style>
 </head>
@@ -207,9 +207,8 @@ body{background:var(--black);color:#fff;font-family:var(--font-body);min-height:
 </div>
 
 <!-- VIEWER BADGE -->
-<div class="viewer-badge" id="viewerBadge">
-  <span class="viewer-dot"></span>
-  <span id="viewerCount">5</span>명이 보고 있어요!
+<div class="viewer-badge">
+  <span class="vb-flame">🔥</span><span id="viewerCount">5</span>명이 보고 있어요!
 </div>
 
 <!-- PARTY LIST -->
