@@ -207,9 +207,17 @@ async function saveToGAS(dateStr, data) {
     const res  = await fetch(url);
     const json = await res.json();
     if (json.result !== 'success') throw new Error();
-    // 방문자 페이지의 localStorage 캐시 즉시 무효화
-    localStorage.removeItem('daegu_dateStatus');
-    localStorage.removeItem('daegu_dateStatus_ts');
+    // 방문자 캐시를 삭제 대신 최신값으로 즉시 업데이트 (booking 페이지 딜레이 방지)
+    try {
+      const cache = JSON.parse(localStorage.getItem('daegu_dateStatus') || '{}');
+      const entry = cache[dateStr] || {};
+      entry.male   = data.male   || 'open';
+      entry.female = data.female || 'open';
+      if (mL !== '') { entry.maleRemaining   = Number(mL); entry.hasManualRemaining = true; }
+      if (fL !== '') { entry.femaleRemaining  = Number(fL); entry.hasManualRemaining = true; }
+      cache[dateStr] = entry;
+      localStorage.setItem('daegu_dateStatus', JSON.stringify(cache));
+    } catch(e) {}
     setCardState(dateStr, 'saved', '저장 완료 ✓');
     setTimeout(() => setCardState(dateStr, '', ''), 2000);
   } catch {
