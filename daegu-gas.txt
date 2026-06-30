@@ -561,13 +561,11 @@ function toDateKey(val) {
 }
 
 // ── 합격자 명단 자동 정리 (시트1) ────────────────────────────
-// 날짜별 고정 54행 구조:
+// 날짜별 고정 28행 구조:
 //   +0  날짜 헤더 수식  |  E열: __DATE__:yyyy-MM-dd 마커
 //   +1  열 헤더 [이름|연락처|이름|연락처]
-//   +2~+26  AUTO 영역 25행 — GAS 자동 입력 (합격자 반영)
-//   +27 수동 추가 구분선
-//   +28~+52 MANUAL 영역 25행 — 관리자 직접 입력 (GAS 절대 미접촉)
-//   +53 빈 구분 행
+//   +2~+26  25슬롯 — 합격자 위에서 자동 채움, 빈 칸에 직접 입력 가능
+//   +27 빈 구분 행
 function updateRosterSheet() {
   const ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
   const applySheet = ss.getSheetByName(CONFIG.SHEET_NAME);
@@ -617,7 +615,7 @@ function updateRosterSheet() {
     props.setProperty('rosterColsInit', '1');
   }
 
-  // 날짜별 섹션 생성 또는 AUTO 영역 업데이트
+  // 날짜별 섹션 생성 또는 업데이트
   Object.keys(dateMap).sort().forEach(function(dateStr) {
     const male   = dateMap[dateStr].male.slice(0, MAX);
     const female = dateMap[dateStr].female.slice(0, MAX);
@@ -645,28 +643,27 @@ function updateRosterSheet() {
       rosterSheet.getRange(startRow + 1, 3, 1, 2)
         .setValues([['이름', '연락처']])
         .setBackground('#200d0d').setFontColor('#ff8888').setFontWeight('bold').setFontSize(10);
-
-      // 수동 추가 구분선 (startRow+27)
-      rosterSheet.getRange(startRow + 27, 1, 1, 4).merge()
-        .setValue('✍️  수동 추가 — 직접 연락 온 분은 이 아래에 입력하세요')
-        .setBackground('#1c1a00').setFontColor('#ccaa00')
-        .setFontWeight('bold').setFontSize(9).setHorizontalAlignment('center');
     }
 
-    // AUTO 영역만 덮어씀 (startRow+2 ~ startRow+26, 총 25행)
+    // 합격자 수만큼만 위에서 채우고, 나머지 빈 칸은 건드리지 않음
     const autoStart = startRow + 2;
-    const autoRows  = [];
-    for (let i = 0; i < MAX; i++) {
-      const m = male[i]   || ['', ''];
-      const f = female[i] || ['', ''];
-      autoRows.push([m[0], m[1], f[0], f[1]]);
+    const mCount = male.length;
+    const fCount = female.length;
+    const writeCount = Math.max(mCount, fCount);
+    if (writeCount > 0) {
+      const rows = [];
+      for (let i = 0; i < writeCount; i++) {
+        const m = male[i]   || ['', ''];
+        const f = female[i] || ['', ''];
+        rows.push([m[0], m[1], f[0], f[1]]);
+      }
+      rosterSheet.getRange(autoStart, 1, writeCount, 4).setValues(rows);
     }
-    rosterSheet.getRange(autoStart, 1, MAX, 4).setValues(autoRows);
 
-    // 날짜 헤더 수식 업데이트 (AUTO + MANUAL 합산 카운트)
-    const manualEnd = startRow + 52;
+    // 날짜 헤더 수식 (25슬롯 전체 카운트)
+    const dataEnd = autoStart + MAX - 1;
     rosterSheet.getRange(startRow, 1).setFormula(
-      '="📅 ' + label + '  남성 "&COUNTA(A' + autoStart + ':A' + manualEnd + ')&"/' + MAX + '명  ·  여성 "&COUNTA(C' + autoStart + ':C' + manualEnd + ')&"/' + MAX + '명"'
+      '="📅 ' + label + '  남성 "&COUNTA(A' + autoStart + ':A' + dataEnd + ')&"/' + MAX + '명  ·  여성 "&COUNTA(C' + autoStart + ':C' + dataEnd + ')&"/' + MAX + '명"'
     );
   });
 }
