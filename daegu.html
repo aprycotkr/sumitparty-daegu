@@ -280,6 +280,9 @@ fbq("track","PageView");
 </script>
 <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=821379504055811&ev=PageView&noscript=1"/></noscript>
 <!-- End Meta Pixel -->
+<script>
+window._dgStatusPromise = fetch('https://script.google.com/macros/s/AKfycbxnJhftdjyEro7uKUNTfsAKp7U1g7knABAQBeebu5mfIIkonjXcTlgRK8qUanuOZ4prxw/exec?action=getDateStatus&_t=' + Date.now()).then(function(r){return r.json();});
+</script>
 </head>
 <body>
 
@@ -707,28 +710,19 @@ function toggleFaq(el) {
 
   var cached = localStorage.getItem('daegu_dateStatus');
 
-  // 로딩 중 표시 (서버 응답 전까지)
-  var list = document.getElementById('dgDateList');
-  if (list) list.innerHTML = '<div style="text-align:center;padding:2rem;color:rgba(255,255,255,0.35);font-size:0.75rem;letter-spacing:0.1em">잔여석 확인 중...</div>';
-
-  if (DAEGU_GAS_URL) {
-    fetch(DAEGU_GAS_URL + '?action=getDateStatus&_t=' + Date.now())
-      .then(function(r) { return r.json(); })
-      .then(function(json) {
-        if (json.result === 'success') {
-          var data = json.data || {};
-          localStorage.setItem('daegu_dateStatus', JSON.stringify(data));
-          renderDates(data);
-        } else {
-          try { renderDates(cached ? JSON.parse(cached) : {}); } catch(e) { renderDates({}); }
-        }
-      })
-      .catch(function() {
+  (window._dgStatusPromise || Promise.reject())
+    .then(function(json) {
+      if (json.result === 'success') {
+        var data = json.data || {};
+        localStorage.setItem('daegu_dateStatus', JSON.stringify(data));
+        renderDates(data);
+      } else {
         try { renderDates(cached ? JSON.parse(cached) : {}); } catch(e) { renderDates({}); }
-      });
-  } else {
-    try { renderDates(cached ? JSON.parse(cached) : {}); } catch(e) { renderDates({}); }
-  }
+      }
+    })
+    .catch(function() {
+      try { renderDates(cached ? JSON.parse(cached) : {}); } catch(e) { renderDates({}); }
+    });
 })();
 
 // ViewContent 픽셀 — 스크롤 25% 이상 시 1회 발화
