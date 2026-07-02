@@ -672,12 +672,7 @@ function toggleFaq(el) {
       else if (maleSt === 'almost' || femSt === 'almost') { statusText = '마감임박'; badgeClass = 'dg-badge dg-badge-almost'; }
       else { statusText = '신청가능'; badgeClass = 'dg-badge dg-badge-open'; }
 
-      // 잔여석 — 첫번째 날짜 또는 수동 설정된 경우만
-      var showSeats = (idx === 0) || !!st.hasManualRemaining;
       var seatsHtml = '';
-      if (!allClosed && showSeats && st.maleRemaining !== undefined) {
-        seatsHtml = '<div class="dg-date-seats">남 ' + st.maleRemaining + '석 · 여 ' + st.femaleRemaining + '석 남음</div>';
-      }
 
       // 서브 배지 (OPEN 할인 or 얼리버드)
       var subBadgeHtml = '';
