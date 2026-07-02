@@ -706,20 +706,28 @@ function toggleFaq(el) {
   }
 
   var cached = localStorage.getItem('daegu_dateStatus');
-  try { renderDates(cached ? JSON.parse(cached) : {}); } catch(e) { renderDates({}); }
+
+  // 로딩 중 표시 (서버 응답 전까지)
+  var list = document.getElementById('dgDateList');
+  if (list) list.innerHTML = '<div style="text-align:center;padding:2rem;color:rgba(255,255,255,0.35);font-size:0.75rem;letter-spacing:0.1em">잔여석 확인 중...</div>';
+
   if (DAEGU_GAS_URL) {
     fetch(DAEGU_GAS_URL + '?action=getDateStatus&_t=' + Date.now())
       .then(function(r) { return r.json(); })
       .then(function(json) {
         if (json.result === 'success') {
-          var newStr = JSON.stringify(json.data || {});
-          if (newStr !== cached) {
-            localStorage.setItem('daegu_dateStatus', newStr);
-            renderDates(json.data || {});
-          }
+          var data = json.data || {};
+          localStorage.setItem('daegu_dateStatus', JSON.stringify(data));
+          renderDates(data);
+        } else {
+          try { renderDates(cached ? JSON.parse(cached) : {}); } catch(e) { renderDates({}); }
         }
       })
-      .catch(function() {});
+      .catch(function() {
+        try { renderDates(cached ? JSON.parse(cached) : {}); } catch(e) { renderDates({}); }
+      });
+  } else {
+    try { renderDates(cached ? JSON.parse(cached) : {}); } catch(e) { renderDates({}); }
   }
 })();
 
