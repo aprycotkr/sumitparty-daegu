@@ -100,6 +100,8 @@ canvas#starCanvas{position:absolute;inset:0;z-index:2;pointer-events:none}
 .dg-badge-open{background:rgba(201,169,110,0.12);border:1px solid rgba(201,169,110,0.4);color:var(--gold)}
 .dg-badge-almost{background:rgba(255,140,0,0.12);border:1px solid rgba(255,140,0,0.4);color:#FF8C00}
 .dg-badge-closed{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.28)}
+.dg-badge-earlyclosed{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.5);color:#f87171;}
+.dg-date-row.earlyclosed{opacity:0.9;pointer-events:none;}
 .dg-apply-arrow{font-size:0.62rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);padding:0.45rem 1rem;border:1px solid rgba(201,169,110,0.35);white-space:nowrap}
 .dg-capacity{font-size:0.58rem;color:rgba(255,255,255,0.32);letter-spacing:0.05em;white-space:nowrap}
 .dg-open-badge{font-size:0.48rem;font-weight:700;padding:3px 7px;background:rgba(201,169,110,0.12);border:1px solid rgba(201,169,110,0.35);color:var(--gold);letter-spacing:0.08em;white-space:nowrap}
@@ -319,10 +321,9 @@ window._dgStatusPromise = fetch('https://script.google.com/macros/s/AKfycbxnJhft
       <div class="hero-logo-glow"></div>
       <img class="hero-logo" src="logo.png" alt="Sumit Logo">
     </div>
-    <p class="hero-date-pill">📅 7월 11일 (토) · 대구 동성로점</p>
-    <div class="hero-urgency" style="margin-bottom:0.6rem;color:#fb923c"><span class="hero-urgency-dot" style="background:#fb923c"></span>남자 마감 &nbsp;|&nbsp; 여자 잔여 2석</div>
-    <div class="hero-price-pill">남자 <strong>마감</strong> &nbsp;·&nbsp; 여자 <strong>₩39,900</strong> OPEN 특가</div>
-    <div class="hero-urgency"><span class="hero-urgency-dot"></span>마감 임박 — 지금 신청하세요</div>
+    <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.4);color:#f87171;font-size:0.58rem;font-weight:700;padding:5px 14px;letter-spacing:0.08em;margin-bottom:1rem;opacity:0;animation:fadeUp 0.8s ease forwards 0.3s">🔥 7월 11일 (토) — 남 25 · 여 25 전석 조기마감</div>
+    <p class="hero-date-pill">📅 다음 파티 · 7월 18일 (토) · 대구 동성로점</p>
+    <div class="hero-urgency"><span class="hero-urgency-dot"></span>7/18도 빠른 마감 예상</div>
     <div class="hero-btns">
       <a href="daegu-booking.html" class="hero-btn solid">신청하기</a>
       <a href="#about" class="hero-btn">더 알아보기</a>
@@ -666,18 +667,24 @@ function toggleFaq(el) {
       var st = statusData[key] || {};
       var maleSt = st.male || 'open';
       var femSt  = st.female || 'open';
+
+      // 7/11 강제 조기마감
+      var isEarlyClosed = (key === '2026-07-11');
+      if (isEarlyClosed) { maleSt = 'closed'; femSt = 'closed'; }
+
       var allClosed = maleSt === 'closed' && femSt === 'closed';
       var statusText, badgeClass;
-      if (allClosed) { statusText = '마감'; badgeClass = 'dg-badge dg-badge-closed'; }
+      if (isEarlyClosed) { statusText = '조기마감'; badgeClass = 'dg-badge dg-badge-earlyclosed'; }
+      else if (allClosed) { statusText = '마감'; badgeClass = 'dg-badge dg-badge-closed'; }
       else if (maleSt === 'almost' || femSt === 'almost') { statusText = '마감임박'; badgeClass = 'dg-badge dg-badge-almost'; }
       else { statusText = '신청가능'; badgeClass = 'dg-badge dg-badge-open'; }
 
       var seatsHtml = '';
 
-      // 서브 배지 (OPEN 할인 or 얼리버드)
+      // 서브 배지
       var subBadgeHtml = '';
-      if (key === '2026-07-11' && !allClosed) {
-        subBadgeHtml = '<div style="margin-top:5px"><span class="dg-open-badge">OPEN 할인</span></div>';
+      if (isEarlyClosed) {
+        subBadgeHtml = '<div style="margin-top:5px"><span style="font-size:0.48rem;font-weight:700;padding:3px 8px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#f87171;letter-spacing:0.06em;">남 25 · 여 25 전석 마감</span></div>';
       } else if (!allClosed) {
         var daysUntil = Math.ceil((d - today) / (1000*60*60*24));
         if (daysUntil > 7) {
@@ -686,8 +693,8 @@ function toggleFaq(el) {
       }
 
       var row = document.createElement('a');
-      row.className = 'dg-date-row' + (allClosed ? ' closed' : '');
-      row.href = allClosed ? '#' : ('daegu-party.html?date=' + key);
+      row.className = 'dg-date-row' + (isEarlyClosed ? ' earlyclosed' : (allClosed ? ' closed' : ''));
+      row.href = (isEarlyClosed || allClosed) ? '#' : ('daegu-party.html?date=' + key);
       row.innerHTML =
         '<div class="dg-date-left">' +
           '<div class="dg-date-label">' + label + '</div>' +
@@ -697,7 +704,7 @@ function toggleFaq(el) {
         '</div>' +
         '<div class="dg-date-right">' +
           '<span class="' + badgeClass + '">' + statusText + '</span>' +
-          (!allClosed ? '<span class="dg-apply-arrow">신청하기 →</span>' : '') +
+          (!allClosed && !isEarlyClosed ? '<span class="dg-apply-arrow">신청하기 →</span>' : '') +
         '</div>';
       list.appendChild(row);
     });
