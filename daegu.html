@@ -329,12 +329,12 @@ window._dgStatusPromise = fetch('https://script.google.com/macros/s/AKfycbxnJhft
       <div class="hero-logo-glow"></div>
       <img class="hero-logo" src="logo.png" alt="Sumit Logo">
     </div>
-    <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.4);color:#f87171;font-size:0.58rem;font-weight:700;padding:5px 14px;letter-spacing:0.08em;margin-bottom:1rem;opacity:0;animation:fadeUp 0.8s ease forwards 0.3s">🔥 7/18 (토) · 남자 마감 완료 · 여자 잔여 1석</div>
-    <p class="hero-date-pill">📅 7월 18일 (토) · 대구 동성로점</p>
-    <p class="hero-dday">⏰ 이번 주 토요일 · <span id="hero-dday-count">D-5</span> · 지금 신청하지 않으면 마감</p>
+    <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(100,100,100,0.12);border:1px solid rgba(150,150,150,0.3);color:rgba(180,180,180,0.7);font-size:0.58rem;font-weight:700;padding:5px 14px;letter-spacing:0.08em;margin-bottom:1rem;opacity:0;animation:fadeUp 0.8s ease forwards 0.3s">✓ 7/18 (토) 조기마감</div>
+    <p class="hero-date-pill">📅 7월 25일 (토) · 대구 동성로점</p>
+    <p class="hero-dday">⏰ 다음 주 토요일 · <span id="hero-dday-count">D-10</span> · 지금 신청하지 않으면 마감</p>
     <div class="hero-status-row">
-      <div class="hero-status-badge closed"><span class="hero-status-dot"></span>남자 <strong>마감</strong></div>
-      <div class="hero-status-badge open"><span class="hero-status-dot"></span>여자 <strong>잔여 1석</strong></div>
+      <div id="hero-male-badge" class="hero-status-badge open"><span class="hero-status-dot"></span>남자 <strong>모집 중</strong></div>
+      <div id="hero-female-badge" class="hero-status-badge open"><span class="hero-status-dot"></span>여자 <strong>모집 중</strong></div>
     </div>
     <div class="hero-btns">
       <a href="daegu-booking.html" class="hero-btn solid">신청하기</a>
@@ -609,7 +609,7 @@ window._dgStatusPromise = fetch('https://script.google.com/macros/s/AKfycbxnJhft
 
 <script>
 (function(){
-  var party = new Date('2026-07-18');
+  var party = new Date('2026-07-25');
   var today = new Date();
   today.setHours(0,0,0,0);
   party.setHours(0,0,0,0);
@@ -619,6 +619,46 @@ window._dgStatusPromise = fetch('https://script.google.com/macros/s/AKfycbxnJhft
   if (diff > 0) el.textContent = 'D-' + diff;
   else if (diff === 0) el.textContent = 'D-Day';
   else el.textContent = '마감';
+})();
+
+/* ── Hero 잔여석 동적 업데이트 ── */
+(function(){
+  var TARGET = '2026-07-25';
+
+  function applyHero(statusData) {
+    var st = statusData[TARGET] || {};
+    var maleSt  = st.male   || 'open';
+    var femSt   = st.female || 'open';
+    // GAS 응답은 maleLeft/femaleLeft, admin이 쓴 localStorage는 maleRemaining/femaleRemaining
+    var maleLeft = (st.maleLeft   !== undefined && st.maleLeft   !== '') ? Number(st.maleLeft)
+                 : (st.maleRemaining !== undefined)                       ? Number(st.maleRemaining)
+                 : null;
+    var femLeft  = (st.femaleLeft  !== undefined && st.femaleLeft  !== '') ? Number(st.femaleLeft)
+                 : (st.femaleRemaining !== undefined)                      ? Number(st.femaleRemaining)
+                 : null;
+
+    function badge(status, left) {
+      if (status === 'closed') return { cls: 'closed', text: '마감' };
+      if (left !== null)       return { cls: 'open',   text: '잔여 ' + left + '석' };
+      if (status === 'almost') return { cls: 'open',   text: '마감임박' };
+      return { cls: 'open', text: '모집 중' };
+    }
+
+    var mB = badge(maleSt, maleLeft);
+    var fB = badge(femSt,  femLeft);
+    var mEl = document.getElementById('hero-male-badge');
+    var fEl = document.getElementById('hero-female-badge');
+    if (mEl) { mEl.className = 'hero-status-badge ' + mB.cls; mEl.innerHTML = '<span class="hero-status-dot"></span>남자 <strong>' + mB.text + '</strong>'; }
+    if (fEl) { fEl.className = 'hero-status-badge ' + fB.cls; fEl.innerHTML = '<span class="hero-status-dot"></span>여자 <strong>' + fB.text + '</strong>'; }
+  }
+
+  // localStorage 캐시로 즉시 반영
+  try { var c = localStorage.getItem('daegu_dateStatus'); if (c) applyHero(JSON.parse(c)); } catch(e) {}
+
+  // GAS 응답으로 최신값 덮어쓰기
+  (window._dgStatusPromise || Promise.reject())
+    .then(function(json) { if (json.result === 'success') applyHero(json.data || {}); })
+    .catch(function(){});
 })();
 
 const navbar = document.getElementById('navbar');
@@ -693,8 +733,8 @@ function toggleFaq(el) {
       var maleSt = st.male || 'open';
       var femSt  = st.female || 'open';
 
-      // 7/11 강제 조기마감
-      var isEarlyClosed = (key === '2026-07-11');
+      // 7/11, 7/18 강제 조기마감
+      var isEarlyClosed = (key === '2026-07-11' || key === '2026-07-18');
       if (isEarlyClosed) { maleSt = 'closed'; femSt = 'closed'; }
 
       var allClosed = maleSt === 'closed' && femSt === 'closed';
