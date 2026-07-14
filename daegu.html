@@ -61,14 +61,20 @@ nav.scrolled{background:rgba(10,10,10,0.97);border-bottom:1px solid rgba(201,169
 .hero-aurora{position:absolute;inset:0;background:radial-gradient(ellipse 65% 50% at 50% 52%,rgba(201,169,110,0.12) 0%,rgba(150,100,60,0.05) 45%,transparent 70%);animation:aurora 6s ease-in-out infinite alternate;z-index:1}
 @keyframes aurora{0%{opacity:0.5}100%{opacity:1}}
 canvas#starCanvas{position:absolute;inset:0;z-index:2;pointer-events:none}
-.hero-logo-wrap{position:relative;width:100%;min-height:90px;display:flex;align-items:center;justify-content:center;margin-bottom:2rem;opacity:0;animation:fadeUp 1s ease forwards 0.5s}
+.hero-logo-wrap{position:relative;width:100%;min-height:90px;display:flex;align-items:center;justify-content:center;margin-bottom:2.8rem;opacity:0;animation:fadeUp 1s ease forwards 0.45s}
 .hero-logo-glow{position:absolute;width:240px;height:240px;background:radial-gradient(circle at center,rgba(201,169,110,0.2) 0%,transparent 65%);animation:logoGlow 3s ease-in-out infinite}
 @keyframes logoGlow{0%,100%{transform:scale(0.9);opacity:0.6}50%{transform:scale(1.1);opacity:1}}
 .hero-logo{width:260px;max-width:85vw;height:auto;display:block;object-fit:contain;filter:drop-shadow(0 0 24px rgba(201,169,110,0.5)) brightness(1.1);animation:floatLogo 4s ease-in-out infinite}
 @keyframes floatLogo{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-.hero-content{position:relative;z-index:10;width:100%;max-width:520px;display:flex;flex-direction:column;align-items:center}
+.hero-content{position:relative;z-index:10;width:100%;max-width:600px;display:flex;flex-direction:column;align-items:center}
 .hero-eyebrow{font-size:0.62rem;letter-spacing:0.4em;text-transform:uppercase;color:rgba(201,169,110,0.9);font-weight:600;margin-bottom:1.8rem;opacity:0;animation:fadeUp 0.8s ease forwards 0.2s}
-.hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;opacity:0;animation:fadeUp 0.5s ease forwards 0s}
+.hero-cta-wrap{opacity:0;animation:fadeUp 0.8s ease forwards 1.2s}
+.hero-cta{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:0.8rem;background:linear-gradient(135deg,var(--gold-light) 0%,var(--gold) 45%,var(--gold-dark) 100%);color:var(--black);text-decoration:none;padding:1.2rem 3.4rem;font-family:var(--font-body);font-size:0.8rem;font-weight:700;letter-spacing:0.16em;overflow:hidden;transition:transform 0.3s ease,box-shadow 0.3s ease;box-shadow:0 8px 32px rgba(201,169,110,0.22)}
+.hero-cta:hover{transform:translateY(-2px);box-shadow:0 14px 44px rgba(201,169,110,0.38)}
+.hero-cta::after{content:'';position:absolute;top:0;left:-80%;width:45%;height:100%;background:linear-gradient(105deg,transparent,rgba(255,255,255,0.55),transparent);transform:skewX(-20deg);animation:ctaShine 3.4s ease-in-out infinite}
+@keyframes ctaShine{0%,100%{left:-80%}50%{left:120%}}
+.hero-cta .cta-arrow{font-size:0.95rem;line-height:1;transition:transform 0.3s ease}
+.hero-cta:hover .cta-arrow{transform:translateX(4px)}
 .hero-date-pill{font-size:0.68rem;color:rgba(255,255,255,0.65);letter-spacing:0.1em;font-weight:400;margin-bottom:0.9rem;opacity:0;animation:fadeUp 0.8s ease forwards 0.45s}
 .hero-price-pill{display:inline-block;background:rgba(201,169,110,0.13);border:1px solid rgba(201,169,110,0.4);color:var(--gold);font-size:0.7rem;font-weight:600;padding:5px 16px;border-radius:20px;letter-spacing:0.04em;margin-bottom:0.7rem;opacity:0;animation:fadeUp 0.8s ease forwards 0.55s}
 .hero-price-pill strong{font-size:0.92rem;font-weight:700}
@@ -346,9 +352,8 @@ window._dgStatusPromise = fetch('https://script.google.com/macros/s/AKfycbxnJhft
       <div id="hero-male-badge" class="hero-status-badge open"><span class="hero-status-dot"></span>남자 <strong>모집 중</strong></div>
       <div id="hero-female-badge" class="hero-status-badge open"><span class="hero-status-dot"></span>여자 <strong>모집 중</strong></div>
     </div>
-    <div class="hero-btns">
-      <a href="daegu-booking.html" class="hero-btn solid">신청하기</a>
-      <a href="#about" class="hero-btn">더 알아보기</a>
+    <div class="hero-cta-wrap">
+      <a href="daegu-booking.html" class="hero-cta">지금 신청하기<span class="cta-arrow" aria-hidden="true">→</span></a>
     </div>
   </div>
   <div class="hero-scroll">
