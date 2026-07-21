@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /daegu-guest.html
+Disallow: /daeguadmin.html
+
+Sitemap: https://daegu.sumitparty.com/sitemap.xml

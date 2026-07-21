@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>게스트 등록 — 썸잇 대구점</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
+<link rel="canonical" href="https://daegu.sumitparty.com/daegu-guest.html">
+<meta name="robots" content="noindex,nofollow">
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,
+'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','821379504055811');fbq('track','PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=821379504055811&ev=PageView&noscript=1"/></noscript>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#C9A96E;--gold-light:#E8D4A8;--gold-dark:#8A6B3A;
+  --black:#0A0A0A;--dark:#111111;--dark2:#1A1A1A;--dark3:#2A2A2A;
+  --white:#FFFFFF;--gray:#6B7280;
+  --font-display:'Cormorant Garamond',serif;
+  --font-body:'Montserrat',sans-serif;
+}
+html,body{width:100%;min-height:100%;-webkit-text-size-adjust:none}
+body{background:var(--black);font-family:var(--font-body);font-weight:300;color:var(--white);padding-bottom:40px}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--black)}::-webkit-scrollbar-thumb{background:var(--gold-dark);border-radius:2px}
+
+.page-header{text-align:center;padding:3rem 1.5rem 2rem;border-bottom:1px solid rgba(201,169,110,0.1)}
+.header-logo{font-family:var(--font-display);font-size:1.6rem;font-weight:500;color:var(--gold);letter-spacing:0.15em;text-decoration:none;display:inline-block;margin-bottom:0.8rem}
+.header-title{font-family:var(--font-display);font-size:1.6rem;font-weight:300;margin-bottom:0.3rem}
+.header-sub{font-size:0.68rem;color:rgba(255,255,255,0.35);letter-spacing:0.1em;font-weight:300}
+.header-inviter{color:var(--gold);font-size:0.72rem;font-weight:500;margin-top:0.4rem;letter-spacing:0.05em}
+
+.card{background:var(--dark);border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:2rem 1.5rem;max-width:480px;margin:2rem auto 0;position:relative}
+
+.field{margin-bottom:1.3rem}
+.field label{display:block;font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;font-weight:600;color:rgba(255,255,255,0.5);margin-bottom:0.5rem}
+.field label .req{color:var(--gold)}
+.field input[type=text],.field input[type=tel]{
+  width:100%;padding:0.85rem 1rem;
+  background:var(--dark2);border:1px solid rgba(255,255,255,0.1);
+  border-radius:8px;font-size:0.85rem;color:var(--white);
+  outline:none;font-family:var(--font-body);font-weight:300;
+  transition:border-color 0.2s
+}
+.field input:focus{border-color:var(--gold)}
+.field input::placeholder{color:rgba(255,255,255,0.2)}
+.field select{
+  width:100%;padding:0.85rem 1rem;
+  background:var(--dark2);border:1px solid rgba(255,255,255,0.1);
+  border-radius:8px;font-size:0.85rem;color:var(--white);
+  outline:none;font-family:var(--font-body);font-weight:300;
+  appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23C9A96E' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 14px center;
+  transition:border-color 0.2s
+}
+.field select:focus{border-color:var(--gold)}
+.field select option{background:var(--dark2);color:var(--white)}
+
+.price-wrap{display:flex;align-items:center;border:1px solid rgba(255,255,255,0.1);border-radius:8px;overflow:hidden;background:var(--dark2);transition:border-color 0.2s}
+.price-wrap:focus-within{border-color:var(--gold)}
+.price-unit{padding:0.85rem 0.8rem 0.85rem 1rem;font-size:0.85rem;color:var(--gold);font-weight:600;background:rgba(201,169,110,0.07);border-right:1px solid rgba(201,169,110,0.15)}
+.price-wrap input{border:none!important;flex:1;padding:0.85rem 1rem;font-size:0.85rem;background:transparent;color:var(--white);outline:none;font-family:var(--font-body);font-weight:300}
+.price-wrap input::placeholder{color:rgba(255,255,255,0.2)}
+.price-hint{font-size:0.62rem;color:rgba(255,255,255,0.2);margin-top:5px;font-weight:300}
+
+.btn-primary{
+  width:100%;padding:0.95rem;background:var(--gold);color:var(--black);
+  border:none;border-radius:10px;font-size:0.75rem;font-weight:700;
+  letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;
+  font-family:var(--font-body);transition:all 0.2s;margin-top:1.5rem;
+  display:block;text-align:center;text-decoration:none
+}
+.btn-primary:hover{background:var(--gold-light);transform:translateY(-1px)}
+.btn-primary:disabled{background:rgba(201,169,110,0.3);cursor:not-allowed;transform:none}
+
+.err{font-size:0.65rem;color:#f87171;margin-top:5px;font-weight:300}
+
+.complete-wrap{text-align:center;padding:1rem 0}
+.complete-icon{width:64px;height:64px;background:rgba(201,169,110,0.1);border:1px solid rgba(201,169,110,0.3);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.2rem;font-size:1.6rem}
+.complete-title{font-family:var(--font-display);font-size:1.8rem;font-weight:300;margin-bottom:0.6rem}
+.complete-desc{font-size:0.72rem;color:rgba(255,255,255,0.35);line-height:1.8;margin-bottom:0.3rem;font-weight:300}
+.complete-info{background:rgba(201,169,110,0.06);border:1px solid rgba(201,169,110,0.15);border-radius:10px;padding:1.2rem;margin-top:1.5rem;text-align:left}
+.complete-info-title{font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:0.8rem}
+.complete-info-row{display:flex;justify-content:space-between;padding:0.5rem 0;font-size:0.75rem;border-bottom:1px solid rgba(255,255,255,0.05)}
+.complete-info-row:last-child{border-bottom:none}
+.complete-info-row span:first-child{color:rgba(255,255,255,0.35);font-weight:300}
+.complete-info-row span:last-child{color:var(--white);font-weight:500}
+
+.loading-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99999;align-items:center;justify-content:center}
+.loading-overlay.show{display:flex}
+.loading-box{background:var(--dark);border:1px solid rgba(201,169,110,0.2);border-radius:16px;padding:2.5rem 3rem;text-align:center;min-width:260px}
+.loading-spinner{width:48px;height:48px;border:3px solid rgba(201,169,110,0.2);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 1.2rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-title{font-size:0.85rem;font-weight:600;color:var(--white);letter-spacing:0.05em}
+
+.guest-badge{display:inline-block;background:rgba(201,169,110,0.1);border:1px solid rgba(201,169,110,0.3);border-radius:6px;padding:0.35rem 0.9rem;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:1.5rem}
+.gender-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.gender-btn{padding:0.85rem;border:1px solid rgba(255,255,255,0.1);border-radius:8px;background:var(--dark2);font-size:0.82rem;font-weight:500;color:rgba(255,255,255,0.5);cursor:pointer;font-family:var(--font-body);transition:all 0.2s}
+.gender-btn.sel{border-color:var(--gold);background:rgba(201,169,110,0.08);color:var(--gold)}
+
+@media(max-width:520px){
+  .card{border-radius:0;border-left:none;border-right:none;margin-top:0}
+}
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-box">
+    <div class="loading-spinner"></div>
+    <div class="loading-title">등록 중...</div>
+  </div>
+</div>
+
+<div class="page-header">
+  <a href="daegu.html" class="header-logo">Sumit</a>
+  <div class="header-title">게스트 등록</div>
+  <div class="header-sub">썸잇 솔로파티 — 대구 동성로점</div>
+  <div class="header-inviter" id="inviterBadge"></div>
+</div>
+
+<div style="max-width:480px;margin:0 auto;padding:0 1rem">
+
+<!-- FORM -->
+<div id="formCard" class="card">
+  <div class="guest-badge">Guest Invitation</div>
+
+  <div class="field">
+    <label>이름 (실명) <span class="req">*</span></label>
+    <input type="text" id="name" placeholder="홍길동">
+    <div class="err" id="nameErr"></div>
+  </div>
+
+  <div class="field">
+    <label>성별 <span class="req">*</span></label>
+    <div class="gender-grid">
+      <button class="gender-btn" type="button" onclick="selGender(this,'남성')">남성</button>
+      <button class="gender-btn" type="button" onclick="selGender(this,'여성')">여성</button>
+    </div>
+    <div class="err" id="genderErr"></div>
+  </div>
+
+  <div class="field">
+    <label>휴대폰 번호 <span class="req">*</span></label>
+    <input type="tel" id="phone" placeholder="01012345678" maxlength="11">
+    <div class="err" id="phoneErr"></div>
+  </div>
+
+  <div class="field">
+    <label>파티 날짜 <span class="req">*</span></label>
+    <select id="partyDate">
+      <option value="">날짜를 선택해주세요</option>
+    </select>
+    <div class="err" id="dateErr"></div>
+  </div>
+
+  <div class="field">
+    <label>참가비 <span class="req">*</span></label>
+    <div class="price-wrap">
+      <span class="price-unit">₩</span>
+      <input type="number" id="price" placeholder="초대자에게 안내받은 참가비 입력" min="0" inputmode="numeric">
+    </div>
+    <div class="price-hint">숫자만 입력해주세요 (예: 35000)</div>
+    <div class="err" id="priceErr"></div>
+  </div>
+
+  <button class="btn-primary" onclick="submitGuest()">등록하기 →</button>
+</div>
+
+<!-- COMPLETE -->
+<div id="completeCard" class="card" style="display:none">
+  <div class="complete-wrap">
+    <div class="complete-icon">✅</div>
+    <h2 class="complete-title">등록이 완료되었습니다</h2>
+    <p class="complete-desc">아래 계좌로 입금하시면 참가가 확정됩니다.</p>
+    <div class="complete-info">
+      <div class="complete-info-title">등록 정보</div>
+      <div class="complete-info-row"><span>이름</span><span id="cName">-</span></div>
+      <div class="complete-info-row"><span>파티 날짜</span><span id="cDate">-</span></div>
+      <div class="complete-info-row"><span>참가비</span><span id="cPrice" style="color:var(--gold);font-weight:600">-</span></div>
+    </div>
+    <div class="complete-info" style="margin-top:1rem">
+      <div class="complete-info-title">🏦 입금 계좌 안내</div>
+      <div class="complete-info-row"><span>은행</span><span>토스뱅크</span></div>
+      <div class="complete-info-row"><span>계좌번호</span><span style="font-weight:600;letter-spacing:0.05em">1000-3571-5174</span></div>
+      <div class="complete-info-row"><span>예금주</span><span>김경민</span></div>
+      <div class="complete-info-row"><span>입금자명</span><span style="color:var(--gold)">신청하신 이름으로</span></div>
+    </div>
+    <button type="button" onclick="copyAccount()" style="width:100%;background:var(--gold);color:var(--black);border:none;border-radius:10px;padding:0.95rem;font-family:var(--font-body);font-size:0.82rem;font-weight:600;cursor:pointer;margin-top:1rem;transition:background 0.2s" id="copyBtn">계좌번호 복사하기</button>
+    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:1rem 1.1rem;margin-top:1rem;font-size:0.68rem;color:rgba(255,255,255,0.4);line-height:1.9;text-align:left">
+      ✅ 입금자명은 신청하신 이름으로 보내주세요.<br>
+      입금 후 초대해주신 분께 입금 완료 사실을 꼭 알려주세요.<br>
+      확인 후 참가 확정 안내가 발송됩니다.
+    </div>
+    <a href="daegu.html" class="btn-primary" style="text-decoration:none;margin-top:1rem;background:transparent;border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.4)">홈으로 돌아가기</a>
+  </div>
+</div>
+
+</div>
+
+<script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxnJhftdjyEro7uKUNTfsAKp7U1g7knABAQBeebu5mfIIkonjXcTlgRK8qUanuOZ4prxw/exec';
+
+let refBy = '';
+let selectedGender = '';
+
+function selGender(el, g) {
+  document.querySelectorAll('.gender-btn').forEach(x => x.classList.remove('sel'));
+  el.classList.add('sel');
+  selectedGender = g;
+}
+
+// URL에서 ref(초대자) 파라미터 읽기
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  refBy = params.get('ref') || '';
+  if (refBy) {
+    document.getElementById('inviterBadge').textContent = refBy + '님의 초대';
+  }
+})();
+
+// 앞으로 12주간 토요일 날짜 생성
+(function() {
+  const select = document.getElementById('partyDate');
+  const FIRST_PARTY = new Date('2026-07-11T00:00:00+09:00');
+  const today = new Date(); today.setHours(0,0,0,0);
+  const start = today < FIRST_PARTY ? FIRST_PARTY : today;
+  const dayNames = ['일','월','화','수','목','금','토'];
+  const dates = [];
+  const cursor = new Date(start);
+  while (dates.length < 12) {
+    if (cursor.getDay() === 6) dates.push(new Date(cursor));
+    cursor.setDate(cursor.getDate() + 1);
+  }
+  dates.forEach(d => {
+    const val = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    const label = `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 (${dayNames[d.getDay()]})`;
+    const opt = document.createElement('option');
+    opt.value = val;
+    opt.textContent = label;
+    select.appendChild(opt);
+  });
+})();
+
+async function submitGuest() {
+  const name  = document.getElementById('name').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const date  = document.getElementById('partyDate').value;
+  const price = document.getElementById('price').value.trim();
+
+  let ok = true;
+  if (!name)  { document.getElementById('nameErr').textContent  = '이름을 입력해주세요.'; ok = false; }
+  else          document.getElementById('nameErr').textContent  = '';
+
+  if (!selectedGender) { document.getElementById('genderErr').textContent = '성별을 선택해주세요.'; ok = false; }
+  else                   document.getElementById('genderErr').textContent = '';
+
+  if (!/^01[0-9]{8,9}$/.test(phone)) { document.getElementById('phoneErr').textContent = '올바른 휴대폰 번호를 입력해주세요.'; ok = false; }
+  else                                  document.getElementById('phoneErr').textContent = '';
+
+  if (!date)  { document.getElementById('dateErr').textContent  = '파티 날짜를 선택해주세요.'; ok = false; }
+  else          document.getElementById('dateErr').textContent  = '';
+
+  if (!price || Number(price) <= 0) { document.getElementById('priceErr').textContent = '참가비를 입력해주세요.'; ok = false; }
+  else                                document.getElementById('priceErr').textContent = '';
+
+  if (!ok) return;
+
+  document.getElementById('loadingOverlay').classList.add('show');
+
+  const payload = {
+    action: 'submitGuest',
+    name,
+    gender: selectedGender,
+    phone,
+    date,
+    price: Number(price),
+    refBy: refBy || '직접등록',
+    submitTime: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })
+  };
+
+  try {
+    await fetch(SCRIPT_URL, {
+      method: 'POST', mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(payload)
+    });
+  } catch(e) {}
+
+  document.getElementById('loadingOverlay').classList.remove('show');
+
+  document.getElementById('cName').textContent  = name;
+  document.getElementById('cDate').textContent  = document.getElementById('partyDate').options[document.getElementById('partyDate').selectedIndex].text;
+  document.getElementById('cPrice').textContent = Number(price).toLocaleString() + '원';
+  document.getElementById('formCard').style.display   = 'none';
+  document.getElementById('completeCard').style.display = 'block';
+  if (typeof fbq !== 'undefined') fbq('track', 'Lead', {content_name: '게스트 등록', content_category: 'daegu_guest'});
+  window.scrollTo(0, 0);
+}
+
+function copyAccount() {
+  const btn = document.getElementById('copyBtn');
+  const done = () => {
+    btn.textContent = '✓ 복사되었습니다';
+    btn.style.background = '#4CAF50';
+    btn.style.color = '#fff';
+    setTimeout(() => {
+      btn.textContent = '계좌번호 복사하기';
+      btn.style.background = 'var(--gold)';
+      btn.style.color = 'var(--black)';
+    }, 2000);
+  };
+  const num = '100035715174';
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(num).then(done).catch(() => fallbackCopy(num, done));
+  } else {
+    fallbackCopy(num, done);
+  }
+}
+function fallbackCopy(text, cb) {
+  const ta = document.createElement('textarea');
+  ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.focus(); ta.select();
+  try { document.execCommand('copy'); cb(); } catch(e) {}
+  document.body.removeChild(ta);
+}
+</script>
+</body>
+</html>
