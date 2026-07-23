@@ -375,8 +375,8 @@ window._dgStatusPromise = fetch('https://script.google.com/macros/s/AKfycbxnJhft
       <div class="hero-logo-glow"></div>
       <img class="hero-logo" src="logo.png" alt="Sumit Logo">
     </div>
-    <div id="hero-prev-badge" style="display:inline-flex;align-items:center;gap:7px;background:rgba(80,10,10,0.75);border:1px solid rgba(239,68,68,0.7);color:#fca5a5;font-size:0.6rem;font-weight:700;padding:6px 16px;letter-spacing:0.08em;border-radius:20px;margin-bottom:0.6rem;opacity:0;animation:fadeUp 0.8s ease forwards 0.3s;box-shadow:0 0 16px rgba(239,68,68,0.35);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)"><span style="width:6px;height:6px;border-radius:50%;background:#f87171;flex-shrink:0;display:inline-block;animation:urgencyBlink 1.2s ease infinite"></span><span id="hero-prev-badge-text">🔥 7/18 (토) 전석 조기마감</span></div>
-    <p class="hero-date-pill" id="hero-date-pill">📅 7월 25일 (토) · 대구 동성로점</p>
+    <div id="hero-prev-badge" style="display:inline-flex;align-items:center;gap:7px;background:rgba(80,10,10,0.75);border:1px solid rgba(239,68,68,0.7);color:#fca5a5;font-size:0.6rem;font-weight:700;padding:6px 16px;letter-spacing:0.08em;border-radius:20px;margin-bottom:0.6rem;opacity:0;animation:fadeUp 0.8s ease forwards 0.3s;box-shadow:0 0 16px rgba(239,68,68,0.35);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)"><span style="width:6px;height:6px;border-radius:50%;background:#f87171;flex-shrink:0;display:inline-block;animation:urgencyBlink 1.2s ease infinite"></span><span id="hero-prev-badge-text">🔥 7/25 (토) 전석 조기마감</span></div>
+    <p class="hero-date-pill" id="hero-date-pill">📅 8월 1일 (토) · 대구 동성로점</p>
     <p class="hero-dday">⏰ <span id="hero-dday-count">D-10</span> · 지금 신청하지 않으면 마감</p>
     <div class="hero-status-row">
       <div id="hero-male-badge" class="hero-status-badge open"><span class="hero-status-dot"></span>남자 <strong>모집 중</strong></div>
@@ -656,11 +656,14 @@ window._dgStatusPromise = fetch('https://script.google.com/macros/s/AKfycbxnJhft
 /* ── 다음 파티일 자동 계산 ── */
 (function(){
   var FIRST = new Date('2026-07-11T00:00:00+09:00');
+  var CLOSED_DATES = ['2026-07-11','2026-07-18','2026-07-25'];
   var today = new Date(); today.setHours(0,0,0,0);
   var d = new Date(today);
   var day = d.getDay();
   d.setDate(d.getDate() + (day === 6 ? 7 : (6 - day)));
   if (d < FIRST) d = new Date(FIRST);
+  function toKeyStr(dt) { return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0'); }
+  while (CLOSED_DATES.indexOf(toKeyStr(d)) !== -1) { d.setDate(d.getDate()+7); }
   var m = d.getMonth()+1, dt = d.getDate();
   window._nextPartyKey = d.getFullYear()+'-'+String(m).padStart(2,'0')+'-'+String(dt).padStart(2,'0');
   window._nextPartyDate = new Date(d);
@@ -816,8 +819,8 @@ function toggleFaq(el) {
       var maleSt = st.male || 'open';
       var femSt  = st.female || 'open';
 
-      // 7/11, 7/18 강제 조기마감
-      var isEarlyClosed = (key === '2026-07-11' || key === '2026-07-18');
+      // 7/11, 7/18, 7/25 강제 조기마감
+      var isEarlyClosed = (key === '2026-07-11' || key === '2026-07-18' || key === '2026-07-25');
       if (isEarlyClosed) { maleSt = 'closed'; femSt = 'closed'; }
 
       var allClosed = maleSt === 'closed' && femSt === 'closed';
