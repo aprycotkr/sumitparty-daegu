@@ -162,7 +162,7 @@ function getDateStatus() {
   if (dateSheet) {
     dateSheet.getDataRange().getValues().forEach(function(row) {
       const dateKey = toDateKey(row[0]);
-      if (!dateKey) return;
+      if (!dateKey || !/^\d{4}-\d{2}-\d{2}$/.test(dateKey)) return;
       const entry = { male: row[1] || 'open', female: row[2] || 'open' };
       // D컬럼(row[3]), E컬럼(row[4]) — 관리자가 직접 입력한 잔여석
       const mL = row[3];
@@ -189,7 +189,7 @@ function getDateStatus() {
       const dateKey = toDateKey(row[COL.DATE]);
       const gender  = String(row[COL.GENDER] || '').trim();
       const status  = String(row[COL.STATUS] || '').trim();
-      if (!dateKey || !gender || status === '불합격') return;
+      if (!dateKey || !gender || status.startsWith('불합격')) return;
       if (!counts[dateKey]) counts[dateKey] = { male: 0, female: 0 };
       if (gender === '남성') counts[dateKey].male++;
       else if (gender === '여성') counts[dateKey].female++;
