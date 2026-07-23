@@ -161,7 +161,7 @@ function getDateStatus() {
   const dateSheet = ss.getSheetByName(CONFIG.DATE_SHEET_NAME);
   if (dateSheet) {
     dateSheet.getDataRange().getValues().forEach(function(row) {
-      const dateKey = row[0] ? Utilities.formatDate(new Date(row[0]), 'Asia/Seoul', 'yyyy-MM-dd') : null;
+      const dateKey = toDateKey(row[0]);
       if (!dateKey) return;
       const entry = { male: row[1] || 'open', female: row[2] || 'open' };
       // D컬럼(row[3]), E컬럼(row[4]) — 관리자가 직접 입력한 잔여석
