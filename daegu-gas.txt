@@ -456,11 +456,10 @@ function buildApplyMsg(name, dateStr, priceText) {
 function buildPassMsg(name, gender, dateStr, price) {
   return (
     '[썸잇 파티 참가 확정 안내]\n\n' +
-    '[썸잇 대구 동성로점 ' + dateStr + '] 참가가 확정되었습니다 🎉\n' +
+    '[썸잇 대구점 ' + dateStr + '] 참가가 확정되었습니다 🎉\n' +
     '드디어 기다리던 순간, 설레는 밤이 시작됩니다!\n\n' +
     '[위치]\n' +
-    '대구 중구 국채보상로 532 4층\n' +
-    '(1층 모나코 옷가게 건물)\n\n' +
+    '대구광역시 중구 동덕로8길 34-15, 2층\n\n' +
     '[시간]\n' +
     '오후 7시 시작 예정입니다.\n' +
     '* 18:50부터 입장 가능\n' +
