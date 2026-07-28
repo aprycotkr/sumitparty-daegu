@@ -711,14 +711,8 @@ window._dgStatusPromise = fetch('https://script.google.com/macros/s/AKfycbxnJhft
 (function(){
   var TARGET = window._nextPartyKey || '2026-08-01';
 
-  // GAS 날짜관리 시트 미작동 시 수동 오버라이드
-  var MANUAL = {
-    '2026-08-01': { male: 'almost', female: 'almost', maleRemaining: 4, femaleRemaining: 3 }
-  };
-
   function applyHero(statusData) {
-    var override = MANUAL[TARGET] || {};
-    var st = Object.assign({}, statusData[TARGET] || {}, override);
+    var st = statusData[TARGET] || {};
     var maleSt  = st.male   || 'open';
     var femSt   = st.female || 'open';
     // GAS 응답은 maleLeft/femaleLeft, admin이 쓴 localStorage는 maleRemaining/femaleRemaining
