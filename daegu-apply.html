@@ -320,10 +320,10 @@ fbq("track","PageView");
   <h2 class="step-title">상세 정보</h2>
   <p class="step-desc">합격 후 연락 및 프로필 확인에 사용됩니다.</p>
   <div class="field">
-    <label for="insta">인스타그램 아이디 <span class="req">*</span></label>
+    <label for="insta">인스타그램 아이디 <span style="font-size:0.75em;color:rgba(255,255,255,0.45);font-weight:400">(선택)</span></label>
     <div class="insta-wrap">
       <span class="insta-at">@</span>
-      <input type="text" id="insta" placeholder="instagram_id" oninput="this.value=this.value.replace(/[^a-zA-Z0-9._]/g,'')">
+      <input type="text" id="insta" placeholder="없으면 비워두세요" oninput="this.value=this.value.replace(/[^a-zA-Z0-9._]/g,'')">
     </div>
     <div class="field-hint">영문, 숫자, 밑줄(_), 마침표(.)만 입력 가능합니다.</div>
     <div class="err" id="instaErr"></div>
@@ -650,9 +650,8 @@ async function step2Next() {
 /* STEP 3 */
 function step3Next() {
   const v = document.getElementById('insta').value.trim();
-  if (!v) { document.getElementById('instaErr').textContent = '인스타그램 아이디를 입력해주세요.'; return; }
   document.getElementById('instaErr').textContent = '';
-  fd.insta = v; goStep(4);
+  fd.insta = v || ''; goStep(4);
 }
 
 /* STEP 4 */

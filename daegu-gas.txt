@@ -584,7 +584,7 @@ function updateRosterSheet() {
   for (let i = 1; i < applyData.length; i++) {
     const row    = applyData[i];
     const status = String(row[COL.STATUS] || '').trim();
-    if (status.indexOf('합격') === -1) continue;
+    if (!status.startsWith('합격')) continue;
     const dateKey = toDateKey(row[COL.DATE]);
     if (!dateKey) continue;
     if (!dateMap[dateKey]) dateMap[dateKey] = { male: [], female: [] };

@@ -499,8 +499,7 @@ window._dgStatusPromise = fetch('https://script.google.com/macros/s/AKfycbxnJhft
   <div class="section container">
     <p class="section-label">Schedule</p>
     <h2 class="section-title">파티 일정</h2>
-    <div class="sc-date-badge">✦ 첫 파티 · 2026년 7월 11일 (토)</div>
-    <div class="sc-info-grid">
+<div class="sc-info-grid">
       <div class="sc-info-col">
         <div class="sc-info-label">운영 요일</div>
         <div class="sc-info-val">매주 토요일</div>
@@ -612,7 +611,7 @@ window._dgStatusPromise = fetch('https://script.google.com/macros/s/AKfycbxnJhft
     <div class="cta-content">
       <h2 class="cta-title">낯선 만남이<br><em>가장 설레는 순간</em>이 되는 곳</h2>
       <p class="cta-sub">썸잇 대구 · 매주 토요일</p>
-      <p class="cta-detail">첫 파티 2026년 7월 11일 (토) · 남20 여20</p>
+
       <a href="daegu-booking.html" class="cta-btn">지금 신청하기</a>
     </div>
   </div>
@@ -861,21 +860,20 @@ function toggleFaq(el) {
     });
   }
 
+  // 즉시 렌더 (캐시 또는 빈 데이터)
   var cached = localStorage.getItem('daegu_dateStatus');
+  try { renderDates(cached ? JSON.parse(cached) : {}); } catch(e) { renderDates({}); }
 
+  // GAS 응답 오면 상태 업데이트
   (window._dgStatusPromise || Promise.reject())
     .then(function(json) {
       if (json.result === 'success') {
         var data = json.data || {};
         localStorage.setItem('daegu_dateStatus', JSON.stringify(data));
         renderDates(data);
-      } else {
-        try { renderDates(cached ? JSON.parse(cached) : {}); } catch(e) { renderDates({}); }
       }
     })
-    .catch(function() {
-      try { renderDates(cached ? JSON.parse(cached) : {}); } catch(e) { renderDates({}); }
-    });
+    .catch(function() {});
 })();
 
 // ViewContent 픽셀 — 스크롤 25% 이상 시 1회 발화
