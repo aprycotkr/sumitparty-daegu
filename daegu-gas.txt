@@ -330,11 +330,12 @@ function onEdit(e) {
     if (row <= 1) return;                 // 헤더 제외
 
     const newStatus = String(e.value || '').trim();
-    if (newStatus !== '합격' && newStatus !== '불합격' && newStatus !== '리마인드') return;
+    if (newStatus !== '합격' && newStatus !== '불합격' && newStatus !== '리마인드' && newStatus !== '취소') return;
 
-    if (newStatus === '합격')    { sendApprovalSMS(sheet, row); }
+    if (newStatus === '합격')         { sendApprovalSMS(sheet, row); }
     else if (newStatus === '리마인드') { sendReminderSMS(sheet, row); }
-    else if (newStatus === '불합격')  { sendRejectionSMS(sheet, row); }
+    else if (newStatus === '불합격')   { sendRejectionSMS(sheet, row); }
+    else if (newStatus === '취소')     { updateRosterSheet(); }
   } catch (err) {
     console.error('onEdit error:', err);
   }
