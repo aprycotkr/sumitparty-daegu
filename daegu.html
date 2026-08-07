@@ -362,7 +362,7 @@ window._dgStatusPromise = fetch('https://script.google.com/macros/s/AKfycbxnJhft
 <!-- HERO -->
 <section id="home">
   <div class="hero-bg"></div>
-  <video class="hero-video" id="heroVideo" autoplay muted loop playsinline>
+  <video class="hero-video" id="heroVideo" autoplay muted loop playsinline onerror="this.style.display='none'">
     <source src="hero-video.mp4" type="video/mp4">
   </video>
   <div class="hero-video-overlay"></div>
@@ -508,7 +508,7 @@ window._dgStatusPromise = fetch('https://script.google.com/macros/s/AKfycbxnJhft
 
       var row = document.createElement('a');
       row.className = 'dg-date-row' + (isEarlyClosed ? ' earlyclosed' : (allClosed ? ' closed' : ''));
-      row.href = (isEarlyClosed || allClosed) ? '#' : ('daegu-party.html?date=' + key);
+      if (!isEarlyClosed && !allClosed) row.href = 'daegu-party.html?date=' + key;
       if (!isEarlyClosed && !allClosed) {
         row.addEventListener('click', function() {
           if (typeof fbq !== 'undefined') fbq('track', 'Lead', {content_name: '썸잇 대구', content_category: 'daegu'});
@@ -786,7 +786,7 @@ window._dgStatusPromise = fetch('https://script.google.com/macros/s/AKfycbxnJhft
   }
   // JSON-LD 날짜 동적 업데이트
   var ld = document.querySelector('script[type="application/ld+json"]');
-  if (ld) {
+  if (ld && window._nextPartyKey) {
     try {
       var data = JSON.parse(ld.textContent);
       data.startDate = window._nextPartyKey + 'T19:00:00+09:00';
@@ -825,7 +825,7 @@ window._dgStatusPromise = fetch('https://script.google.com/macros/s/AKfycbxnJhft
     var st = statusData[TARGET] || {};
     var maleSt  = st.male   || 'open';
     var femSt   = st.female || 'open';
-    // GAS 응답은 maleLeft/femaleLeft, admin이 쓴 localStorage는 maleRemaining/femaleRemaining
+    // GAS 응답: maleRemaining/femaleRemaining. maleLeft/femaleLeft는 하위호환 폴백.
     var maleLeft = (st.maleLeft   !== undefined && st.maleLeft   !== '') ? Number(st.maleLeft)
                  : (st.maleRemaining !== undefined)                       ? Number(st.maleRemaining)
                  : null;
