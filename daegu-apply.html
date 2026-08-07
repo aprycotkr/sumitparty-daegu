@@ -846,6 +846,7 @@ async function submitForm() {
   document.getElementById('cPrice2').textContent = priceText;
 
   fbq('track', 'Lead', { currency: 'KRW', value: submitPrice || 0 }, { eventID: fd.eventId });
+  fbq('track', 'Purchase', { currency: 'KRW', value: submitPrice || 0 }, { eventID: fd.eventId });
   goStep(6);
 }
 

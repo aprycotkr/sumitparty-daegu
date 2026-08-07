@@ -452,6 +452,7 @@ function goApply() {
     alert('죄송합니다. 해당 날짜는 마감되었습니다.');
     return;
   }
+  if (typeof fbq !== 'undefined') fbq('track', 'InitiateCheckout', {content_name: '썸잇 대구', content_category: 'daegu'});
   window.location.href = 'daegu-apply.html' + (date ? '?date='+date : '');
 }
 </script>
