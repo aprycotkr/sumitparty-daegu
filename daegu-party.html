@@ -346,10 +346,16 @@ var OPEN_DATE = '2026-07-11';
 var _statusMap = {};
 var _statusReady = (function(){
   if (!DAEGU_GAS_URL) return Promise.resolve();
-  return fetch(DAEGU_GAS_URL + '?action=getDateStatus&_t=' + Date.now())
-    .then(function(r){ return r.json(); })
-    .then(function(json){ if (json.result==='success') _statusMap = json.data||{}; })
-    .catch(function(){});
+  var req = fetch(DAEGU_GAS_URL + '?action=getDateStatus&_t=' + Date.now()).then(function(r){ return r.json(); });
+  var timeout = new Promise(function(_,rej){ setTimeout(rej, 5000); });
+  return Promise.race([req, timeout])
+    .then(function(json){
+      if (json.result==='success') _statusMap = json.data||{};
+    })
+    .catch(function(){
+      var cached = localStorage.getItem('daegu_dateStatus');
+      if (cached) try { _statusMap = JSON.parse(cached); } catch(e) {}
+    });
 })();
 
 _statusReady.then(function() {

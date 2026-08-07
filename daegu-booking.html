@@ -284,7 +284,7 @@ function renderList(status){
 
     var btn = allClosed
       ? '<span class="btn-closed-label">마감</span>'
-      : '<a class="btn-apply" href="daegu-party.html?date='+key+'" onclick="if(typeof fbq!==\'undefined\')fbq(\'track\',\'AddToCart\',{content_name:\'파티 날짜 선택\',content_category:\'daegu\'})">신청하기</a>';
+      : '<a class="btn-apply" href="daegu-party.html?date='+key+'" onclick="if(typeof fbq!==\'undefined\')fbq(\'track\',\'InitiateCheckout\',{content_name:\'파티 날짜 선택\',content_category:\'daegu\'})">신청하기</a>';
 
     var seats;
     if (allClosed) {
@@ -335,8 +335,9 @@ function goToVenue() {
 
   // 항상 백그라운드에서 최신 데이터 가져와 갱신
   if (!DAEGU_GAS_URL) return;
-  fetch(DAEGU_GAS_URL+'?action=getDateStatus&_t='+Date.now())
-    .then(function(r){return r.json();})
+  var gasReq = fetch(DAEGU_GAS_URL+'?action=getDateStatus&_t='+Date.now()).then(function(r){return r.json();});
+  var gasTimeout = new Promise(function(_,rej){setTimeout(rej,5000);});
+  Promise.race([gasReq, gasTimeout])
     .then(function(res){
       if (res.result==='success') {
         var newStr = JSON.stringify(res.data||{});
@@ -351,15 +352,7 @@ function goToVenue() {
 
 (function(){
   var el = document.getElementById('viewerCount');
-  var cur = Math.floor(Math.random() * 7) + 3; // 3–9
-  el.textContent = cur;
-  function tick(){
-    var delta = Math.random() < 0.5 ? 1 : -1;
-    cur = Math.max(3, Math.min(9, cur + delta));
-    el.textContent = cur;
-    setTimeout(tick, 30000 + Math.random() * 30000); // 30–60초
-  }
-  setTimeout(tick, 30000 + Math.random() * 30000);
+  if (el) el.textContent = '7';
 })();
 </script>
 </body>

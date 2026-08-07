@@ -113,7 +113,8 @@ footer{background:var(--dark);border-top:1px solid rgba(255,255,255,0.05);paddin
   padding:0.85rem;border:1px solid rgba(255,255,255,0.1);
   border-radius:8px;background:var(--dark2);
   font-size:0.82rem;font-weight:500;color:rgba(255,255,255,0.5);
-  cursor:pointer;font-family:var(--font-body);transition:all 0.2s
+  cursor:pointer;font-family:var(--font-body);transition:all 0.2s;
+  min-height:44px
 }
 .gender-btn.sel{border-color:var(--gold);background:rgba(201,169,110,0.08);color:var(--gold)}
 
@@ -639,7 +640,7 @@ async function step2Next() {
   if (bdateRaw.length !== 8) { document.getElementById('bdayErr').textContent = '생년월일 8자리를 입력해주세요. (예: 19980523)'; return; }
   const by = bdateRaw.slice(0,4), bm = bdateRaw.slice(4,6), bd = bdateRaw.slice(6,8);
   const yr = parseInt(by), mo = parseInt(bm), dy = parseInt(bd);
-  if (yr < 1990 || yr > 2007 || mo < 1 || mo > 12 || dy < 1 || dy > 31) {
+  if (yr < 1990 || yr > 2007 || mo < 1 || mo > 12 || dy < 1 || dy > 31 || new Date(yr, mo-1, dy).getDate() !== dy) {
     document.getElementById('bdayErr').textContent = '올바른 생년월일을 입력해주세요. (90~07년생)'; return;
   }
   document.getElementById('bdayErr').textContent = '';
@@ -754,7 +755,11 @@ function handlePhoto(input) {
         formData.append('upload_preset', DAEGU_CONFIG.CLOUDINARY_UPLOAD_PRESET);
         formData.append('folder', 'sumit_daegu');
         try {
-          const res = await fetch(`https://api.cloudinary.com/v1_1/${DAEGU_CONFIG.CLOUDINARY_CLOUD_NAME}/image/upload`, { method: 'POST', body: formData });
+          const uploadTimeout = new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 30000));
+          const res = await Promise.race([
+            fetch(`https://api.cloudinary.com/v1_1/${DAEGU_CONFIG.CLOUDINARY_CLOUD_NAME}/image/upload`, { method: 'POST', body: formData }),
+            uploadTimeout
+          ]);
           const data = await res.json();
           if (data.secure_url) {
             fd.photoUrl = data.secure_url; fd.uploading = false;

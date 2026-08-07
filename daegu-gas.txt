@@ -564,8 +564,8 @@ function toDateKey(val) {
 // 날짜별 고정 28행 구조 (getLastRow 대신 nextRow로 직접 위치 추적):
 //   +0  날짜 헤더 수식  |  E열: __DATE__:yyyy-MM-dd 마커
 //   +1  열 헤더 [이름|연락처|이름|연락처]
-//   +2~+26  25슬롯 — 합격자 위에서 자동 채움, 빈 칸에 직접 입력 가능
-//   +27 빈 구분 행
+//   +2~+36  35슬롯 — 합격자 위에서 자동 채움, 빈 칸에 직접 입력 가능
+//   +37 빈 구분 행
 function updateRosterSheet() {
   const ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
   const applySheet = ss.getSheetByName(CONFIG.SHEET_NAME);
@@ -574,8 +574,8 @@ function updateRosterSheet() {
   const rosterSheet = ss.getSheetByName('시트1') || ss.getSheets()[0];
   if (!rosterSheet || rosterSheet.getName() === CONFIG.SHEET_NAME) return;
 
-  const MAX = 25;
-  const SEC = 2 + MAX + 1; // 섹션 1개 = 헤더(1) + 열헤더(1) + 데이터(25) + 빈행(1) = 28
+  const MAX = 35;
+  const SEC = 2 + MAX + 1; // 섹션 1개 = 헤더(1) + 열헤더(1) + 데이터(35) + 빈행(1) = 38
   const DOW = ['일','월','화','수','목','금','토'];
 
   // 합격자 날짜별 수집

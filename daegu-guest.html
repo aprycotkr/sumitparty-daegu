@@ -265,7 +265,9 @@ async function submitGuest() {
   if (!selectedGender) { document.getElementById('genderErr').textContent = '성별을 선택해주세요.'; ok = false; }
   else                   document.getElementById('genderErr').textContent = '';
 
-  if (!/^01[0-9]{8,9}$/.test(phone)) { document.getElementById('phoneErr').textContent = '올바른 휴대폰 번호를 입력해주세요.'; ok = false; }
+  var phoneClean = phone.replace(/\D/g, '');
+  if (!/^01[0-9]{8,9}$/.test(phoneClean)) { document.getElementById('phoneErr').textContent = '올바른 휴대폰 번호를 입력해주세요.'; ok = false; }
+  else phone = phoneClean;
   else                                  document.getElementById('phoneErr').textContent = '';
 
   if (!date)  { document.getElementById('dateErr').textContent  = '파티 날짜를 선택해주세요.'; ok = false; }
@@ -302,9 +304,9 @@ async function submitGuest() {
   document.getElementById('cName').textContent  = name;
   document.getElementById('cDate').textContent  = document.getElementById('partyDate').options[document.getElementById('partyDate').selectedIndex].text;
   document.getElementById('cPrice').textContent = Number(price).toLocaleString() + '원';
+  if (typeof fbq !== 'undefined') fbq('track', 'Lead', {content_name: '게스트 등록', content_category: 'daegu_guest'});
   document.getElementById('formCard').style.display   = 'none';
   document.getElementById('completeCard').style.display = 'block';
-  if (typeof fbq !== 'undefined') fbq('track', 'Lead', {content_name: '게스트 등록', content_category: 'daegu_guest'});
   window.scrollTo(0, 0);
 }
 
