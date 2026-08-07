@@ -227,9 +227,12 @@ var FIRST_PARTY = new Date('2026-07-11T00:00:00+09:00');
 
 function getSaturdays(n) {
   var days = [];
-  var d = new Date();
+  var now = new Date();
+  var nowHour = now.getHours();
+  var d = new Date(now);
   d.setHours(0,0,0,0);
-  var diff = (6 - d.getDay() + 7) % 7 || 7;
+  var day = d.getDay();
+  var diff = day === 6 ? (nowHour < 19 ? 0 : 7) : ((6 - day + 7) % 7);
   d.setDate(d.getDate() + diff);
   if (d < FIRST_PARTY) d = new Date(FIRST_PARTY);
   for (var i = 0; i < n; i++) {
