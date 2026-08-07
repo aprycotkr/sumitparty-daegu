@@ -447,7 +447,7 @@ window._dgStatusPromise = fetch('https://script.google.com/macros/s/AKfycbxnJhft
     today.setHours(0,0,0,0);
     var d = new Date(today);
     var day = d.getDay();
-    var daysToSat = day === 6 ? 7 : (6 - day);
+    var daysToSat = day === 6 ? (new Date().getHours() < 19 ? 0 : 7) : (6 - day);
     d.setDate(d.getDate() + daysToSat);
     if (d < FIRST_PARTY) {
       d = new Date(FIRST_PARTY);
@@ -763,7 +763,7 @@ window._dgStatusPromise = fetch('https://script.google.com/macros/s/AKfycbxnJhft
   var today = new Date(); today.setHours(0,0,0,0);
   var d = new Date(today);
   var day = d.getDay();
-  d.setDate(d.getDate() + (day === 6 ? 7 : (6 - day)));
+  d.setDate(d.getDate() + (day === 6 ? (new Date().getHours() < 19 ? 0 : 7) : (6 - day)));
   if (d < FIRST) d = new Date(FIRST);
   function toKeyStr(dt) { return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0'); }
   while (CLOSED_DATES.indexOf(toKeyStr(d)) !== -1) { d.setDate(d.getDate()+7); }
@@ -812,7 +812,7 @@ window._dgStatusPromise = fetch('https://script.google.com/macros/s/AKfycbxnJhft
 
 /* ── Hero 잔여석 동적 업데이트 ── */
 (function(){
-  var TARGET = window._nextPartyKey || '2026-08-01';
+  var TARGET = window._nextPartyKey || '2026-08-08';
 
   function applyHero(statusData) {
     var st = statusData[TARGET] || {};
