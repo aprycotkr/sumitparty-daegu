@@ -113,6 +113,9 @@ function doGet(e) {
       const payload = JSON.parse(e.parameter.data || '{}');
       return jsonResponse(submitApplication(payload));
     }
+    if (action === 'getDateSales') {
+      return jsonResponse(getDateSales(e.parameter));
+    }
     return jsonResponse({ result: 'error', message: 'unknown action' });
   } catch (err) {
     return jsonResponse({ result: 'error', message: err.message });
@@ -756,6 +759,59 @@ function sendMetaCAPI(payload) {
   } catch(err) {
     // 조용히 실패 — 신청 처리는 막지 않음
   }
+}
+
+// ── 날짜별 매출 조회 ──────────────────────────────────────────
+// ?action=getDateSales&date=2026-08-01
+// 합격/합격✓발송 상태만 집계
+function getDateSales(params) {
+  const dateStr = String(params.date || '').trim();
+  if (!dateStr) return { result: 'error', message: 'date required' };
+
+  const ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
+  const sheet = ss.getSheetByName(CONFIG.SHEET_NAME);
+  if (!sheet) return { result: 'error', message: '신청자 시트 없음' };
+
+  const lastRow = sheet.getLastRow();
+  if (lastRow <= 1) return { result: 'success', date: dateStr, total: 0, count: { male: 0, female: 0, total: 0 }, applicants: [] };
+
+  const data = sheet.getRange(2, 1, lastRow - 1, 11).getValues();
+
+  let total = 0;
+  let maleCount = 0;
+  let femaleCount = 0;
+  const applicants = [];
+
+  data.forEach(function(row) {
+    const rowDate = toDateKey(row[COL.DATE]);
+    if (rowDate !== dateStr) return;
+
+    const status = String(row[COL.STATUS] || '').trim();
+    if (!status.startsWith('합격')) return;
+
+    const price  = Number(row[COL.PRICE]) || 0;
+    const gender = String(row[COL.GENDER] || '').trim();
+
+    total += price;
+    if (gender === '남성') maleCount++;
+    else if (gender === '여성') femaleCount++;
+
+    applicants.push({
+      name:   String(row[COL.NAME]   || ''),
+      gender: gender,
+      ticket: String(row[COL.TICKET] || ''),
+      price:  price,
+      status: status
+    });
+  });
+
+  return {
+    result: 'success',
+    date:   dateStr,
+    total:  total,
+    count:  { male: maleCount, female: femaleCount, total: maleCount + femaleCount },
+    applicants: applicants
+  };
 }
 
 // ── 공통 응답 헬퍼 ────────────────────────────────────────────

@@ -178,6 +178,46 @@ body{background:var(--black);color:#fff;font-family:var(--font-body);min-height:
 .viewer-badge{display:flex;align-items:center;justify-content:center;gap:7px;padding:9px 20px;background:#0f0f0f;border-bottom:1px solid rgba(255,255,255,0.08);font-size:0.78rem;color:#fff;font-weight:700;letter-spacing:0.01em}
 .viewer-badge .vb-flame{font-size:1rem;line-height:1}
 @keyframes vblink{0%,100%{opacity:1}50%{opacity:0.35}}
+
+/* ── DATE GRID ── */
+.bk-header{margin-bottom:24px}
+.bk-subtitle{font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:6px}
+.bk-title{font-size:1.5rem;font-weight:700;color:#fff;margin-bottom:8px;letter-spacing:-0.01em}
+.bk-desc{font-size:0.72rem;color:rgba(255,255,255,0.35);line-height:1.6}
+.month-card{background:var(--dark);border:1px solid var(--border);border-radius:16px;padding:18px;margin-bottom:12px}
+.month-label{font-size:0.75rem;font-weight:600;color:rgba(255,255,255,0.45);margin-bottom:12px;letter-spacing:0.04em}
+.date-grid{display:flex;flex-wrap:wrap;gap:8px}
+.date-card{
+  width:calc((100% - 16px) / 3);min-width:80px;
+  background:var(--dark);border:1px solid var(--border);
+  border-radius:12px;padding:14px 8px 10px;cursor:pointer;
+  text-align:center;transition:border-color 0.2s,background 0.2s;
+  position:relative;-webkit-tap-highlight-color:transparent;
+}
+.date-card:not(.is-closed):hover{border-color:#333;background:#181818}
+.date-card.selected{background:#162238;border-color:#2d5fa0}
+.date-card.is-closed{opacity:0.3;pointer-events:none}
+.dc-day{font-size:0.65rem;color:rgba(255,255,255,0.4);margin-bottom:4px;font-weight:500}
+.dc-date{font-size:1.05rem;font-weight:700;color:#fff}
+.dc-badge{font-size:0.55rem;color:var(--gold);margin-top:5px;min-height:14px;font-weight:600}
+.dc-dot{position:absolute;top:8px;right:8px;width:6px;height:6px;border-radius:50%;background:var(--gold)}
+.dc-check{position:absolute;top:7px;right:7px;width:16px;height:16px;background:#2d5fa0;border-radius:50%;display:none;align-items:center;justify-content:center;font-size:0.55rem;font-weight:700;color:#fff}
+.date-card.selected .dc-check{display:flex}
+.date-card.selected .dc-dot{display:none}
+
+/* ── DETAIL PANEL ── */
+.detail-panel{display:none;border-top:1px solid rgba(255,255,255,0.07);margin-top:14px;padding-top:14px}
+.dp-info-row{display:flex;align-items:center;gap:10px;font-size:0.73rem;color:rgba(255,255,255,0.45);margin-bottom:12px;flex-wrap:wrap}
+.dp-almost-badge{background:rgba(255,65,25,0.13);color:#ff6040;border:1px solid rgba(255,65,25,0.28);font-size:0.58rem;font-weight:700;padding:2px 8px;border-radius:4px;margin-left:auto}
+.dp-eb-badge{background:rgba(201,169,110,0.12);border:1px solid rgba(201,169,110,0.35);color:var(--gold);font-size:0.58rem;font-weight:700;padding:2px 8px;border-radius:4px;margin-left:auto}
+.dp-seats{display:flex;gap:8px;margin-bottom:10px}
+.dp-seat-box{flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px 8px;text-align:center}
+.dp-seat-box.almost{background:rgba(255,80,80,0.1);border-color:rgba(255,80,80,0.2)}
+.dp-seat-gender{font-size:0.62rem;color:rgba(255,255,255,0.4);margin-bottom:5px}
+.dp-seat-count{font-size:1.5rem;font-weight:700;color:rgba(255,255,255,0.85)}
+.dp-seat-box.almost .dp-seat-count{color:#e04444}
+.dp-seat-unit{font-size:0.62rem;color:rgba(255,255,255,0.35);font-weight:300;display:inline}
+.dp-price{font-size:0.73rem;color:rgba(255,255,255,0.4);margin-bottom:12px}
 </style>
 </head>
 <body>
@@ -196,7 +236,7 @@ body{background:var(--black);color:#fff;font-family:var(--font-body);min-height:
         <span>📍 대구광역시 중구 동덕로8길 34-15, 2층</span>
       </div>
       <div class="vh-name">대구점</div>
-      <div class="vh-tag">매주 토요일 · 19:00–23:00</div>
+      <div class="vh-tag">매주 금·토 · 금 20:00–23:30 / 토 19:00–23:30</div>
     </div>
   </div>
 </div>
@@ -215,115 +255,209 @@ body{background:var(--black);color:#fff;font-family:var(--font-body);min-height:
 
 <!-- PARTY LIST -->
 <div class="wrap">
-  <div class="sec-label">신청 가능한 파티</div>
-  <div class="party-list" id="partyList"></div>
+  <div class="bk-header">
+    <div class="bk-subtitle">UPCOMING PARTY</div>
+    <h2 class="bk-title">파티 일정</h2>
+    <p class="bk-desc">원하는 날짜를 선택하면 자리를 바로 확인할 수 있습니다. 자리는 입금 순으로 확정됩니다.</p>
+  </div>
+  <div id="monthGroups"></div>
+  <div id="detailPanel" class="detail-panel"></div>
 </div>
 
 <script>
 var DAEGU_GAS_URL = 'https://script.google.com/macros/s/AKfycbxnJhftdjyEro7uKUNTfsAKp7U1g7knABAQBeebu5mfIIkonjXcTlgRK8qUanuOZ4prxw/exec';
 var OPEN_DATE = '2026-07-11';
+var _selectedKey = null;
+var _allParties = [];
 
-var FIRST_PARTY = new Date('2026-07-11T00:00:00+09:00');
-
-function getSaturdays(n) {
-  var days = [];
+function getPartyDates(n) {
+  var results = [];
   var now = new Date();
-  var nowHour = now.getHours();
-  var d = new Date(now);
-  d.setHours(0,0,0,0);
-  var day = d.getDay();
-  var diff = day === 6 ? (nowHour < 19 ? 0 : 7) : ((6 - day + 7) % 7);
-  d.setDate(d.getDate() + diff);
-  if (d < FIRST_PARTY) d = new Date(FIRST_PARTY);
-  for (var i = 0; i < n; i++) {
-    days.push(new Date(d));
-    d.setDate(d.getDate() + 7);
+  var aug15 = new Date('2026-08-15T00:00:00');
+  var aug15Cutoff = new Date('2026-08-15T19:00:00');
+  if (now < aug15Cutoff) results.push({ date: aug15, dayType: 'sat' });
+  var fri = new Date('2026-08-21T00:00:00');
+  while (results.length < n) {
+    var sat = new Date(fri); sat.setDate(sat.getDate() + 1);
+    var friCutoff = new Date(fri); friCutoff.setHours(20,0,0,0);
+    var satCutoff = new Date(sat); satCutoff.setHours(19,0,0,0);
+    if (now < friCutoff) results.push({ date: new Date(fri), dayType: 'fri' });
+    if (results.length < n && now < satCutoff) results.push({ date: new Date(sat), dayType: 'sat' });
+    fri.setDate(fri.getDate() + 7);
   }
-  return days;
+  return results.slice(0, n);
 }
-function toKey(d){
+
+function toKey(d) {
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 }
-function toLabel(d){
-  return (d.getMonth()+1)+'월 '+d.getDate()+'일 (토)';
+function toLabel(d, dayType) {
+  var wd = dayType === 'fri' ? '금' : '토';
+  return (d.getMonth()+1)+'월 '+d.getDate()+'일 ('+wd+')';
+}
+function toTime(dayType) {
+  return dayType === 'fri' ? '20:00–23:30' : '19:00–23:30';
+}
+function getMonthLabel(d) {
+  var now = new Date();
+  var dm = d.getMonth()+1, dy = d.getFullYear();
+  var nm = now.getMonth()+1, ny = now.getFullYear();
+  if (dy === ny && dm === nm) return '이번 달 · ' + dm + '월';
+  var nextM = nm === 12 ? 1 : nm+1, nextY = nm === 12 ? ny+1 : ny;
+  if (dy === nextY && dm === nextM) return '다음 달 · ' + dm + '월';
+  return dm + '월';
 }
 
-function renderList(status){
-  var list = document.getElementById('partyList');
-  var sats = getSaturdays(5);
-  list.innerHTML = '';
-
-  sats.forEach(function(d, idx){
-    var key = toKey(d);
-    var label = toLabel(d);
-    var st = status[key] || {};
-    var maleSt = st.male || 'open';
-    var femaleSt = st.female || 'open';
-    var allClosed = maleSt==='closed' && femaleSt==='closed';
-    var anyAlmost = !allClosed && (maleSt==='almost' || femaleSt==='almost');
-    var isOpen = (key === OPEN_DATE);
-    var hasMRem = st.maleRemaining !== undefined;
-    var hasFRem = st.femaleRemaining !== undefined;
-    var mRem = hasMRem ? st.maleRemaining : null;
-    var fRem = hasFRem ? st.femaleRemaining : null;
-
-    // 실제 데이터가 있는 경우에만 잔여석 표시 (부산과 동일 방식)
-    var showSeats = (hasMRem || hasFRem) && ((idx === 0) || !!st.hasManualRemaining);
-
-    var today = new Date(); today.setHours(0,0,0,0);
-    var daysUntil = Math.ceil((d - today) / (1000*60*60*24));
-    var isEarlybird = !isOpen && !allClosed && daysUntil > 7;
-
-    var badges = '';
-    if (allClosed) {
-      badges = '<span class="bdg-closed-pill">마감</span>';
-    } else {
-      if (isOpen) badges += '<span class="bdg-open">OPEN 할인</span>';
-      if (isEarlybird) badges += '<span class="bdg-earlybird">🏷️ 얼리버드 할인</span>';
-      if (anyAlmost) badges += '<span class="bdg-almost">마감임박</span>';
-      if (maleSt === 'closed') badges += '<span class="bdg-closed-pill">🔴 남성 마감</span>';
-      if (femaleSt === 'closed') badges += '<span class="bdg-closed-pill">🔴 여성 마감</span>';
-    }
-
-    var btn = allClosed
-      ? '<span class="btn-closed-label">마감</span>'
-      : '<a class="btn-apply" href="daegu-party.html?date='+key+'" onclick="if(typeof fbq!==\'undefined\')fbq(\'track\',\'InitiateCheckout\',{content_name:\'파티 날짜 선택\',content_category:\'daegu\'})">신청하기</a>';
-
-    var seats;
-    if (allClosed) {
-      seats = '모집 마감';
-    } else if (maleSt === 'closed') {
-      seats = hasFRem ? '남성 마감 · 여 '+fRem+'석 남음' : '남성 마감';
-    } else if (femaleSt === 'closed') {
-      seats = hasMRem ? '남 '+mRem+'석 남음 · 여성 마감' : '여성 마감';
-    } else {
-      seats = showSeats ? '남 '+mRem+'석 · 여 '+fRem+'석 남음' : '';
-    }
-
-    var card = document.createElement('div');
-    card.className = 'party-card'+(allClosed?' is-closed':'');
-    card.innerHTML =
-      '<div class="pc-top">'+
-        '<div class="pc-date-col">'+
-          '<div class="pc-date">'+label+'</div>'+
-          '<div class="pc-time">19:00–23:00</div>'+
-        '</div>'+
-        '<div class="pc-badges">'+badges+'</div>'+
-      '</div>'+
-      '<div class="pc-bottom">'+
-        '<span class="pc-seats">'+seats+'</span>'+
-        btn+
-      '</div>';
-    list.appendChild(card);
+function renderGroups(status) {
+  _allParties = getPartyDates(12);
+  var groups = [];
+  var groupMap = {};
+  _allParties.forEach(function(p) {
+    var mk = p.date.getFullYear() + '-' + (p.date.getMonth()+1);
+    if (!groupMap[mk]) { groupMap[mk] = []; groups.push({ mk: mk, date: p.date, parties: groupMap[mk] }); }
+    groupMap[mk].push(p);
   });
 
-  // store first available date for venue header click
-  var first = sats.find(function(d){
-    var k = toKey(d);
-    var st2 = status[k] || {};
-    return !(st2.male==='closed' && st2.female==='closed');
+  var container = document.getElementById('monthGroups');
+  container.innerHTML = '';
+
+  groups.forEach(function(g) {
+    var section = document.createElement('div');
+    section.className = 'month-card';
+
+    var ml = document.createElement('div');
+    ml.className = 'month-label';
+    ml.textContent = getMonthLabel(g.date);
+    section.appendChild(ml);
+
+    var grid = document.createElement('div');
+    grid.className = 'date-grid';
+
+    g.parties.forEach(function(p) {
+      var d = p.date;
+      var key = toKey(d);
+      var st = status[key] || {};
+      var maleSt = st.male || 'open';
+      var femaleSt = st.female || 'open';
+      var allClosed = maleSt === 'closed' && femaleSt === 'closed';
+      var anyAlmost = !allClosed && (maleSt === 'almost' || femaleSt === 'almost');
+      var today = new Date(); today.setHours(0,0,0,0);
+      var daysUntil = Math.ceil((d - today) / 86400000);
+      var isEarlybird = !allClosed && key !== OPEN_DATE && daysUntil > 7;
+
+      var card = document.createElement('div');
+      card.className = 'date-card' + (allClosed ? ' is-closed' : '') + (key === _selectedKey ? ' selected' : '');
+      card.dataset.key = key;
+
+      var dayShort = p.dayType === 'fri' ? '금' : '토';
+      var dateShort = (d.getMonth()+1) + '/' + d.getDate();
+
+      var badgeHtml = '';
+      if (allClosed) badgeHtml = '<div class="dc-badge" style="color:rgba(255,255,255,0.25)">마감</div>';
+      else if (isEarlybird) badgeHtml = '<div class="dc-badge">얼리버드</div><span class="dc-dot"></span>';
+      else if (anyAlmost) badgeHtml = '<div class="dc-badge" style="color:#ff6040">마감임박</div>';
+      else badgeHtml = '<div class="dc-badge"></div>';
+
+      card.innerHTML =
+        '<div class="dc-day">'+dayShort+'</div>'+
+        '<div class="dc-date">'+dateShort+'</div>'+
+        badgeHtml+
+        '<div class="dc-check">✓</div>';
+
+      if (!allClosed) {
+        (function(k, party){ card.onclick = function(){ selectDate(k, party, status); }; })(key, p);
+      }
+
+      grid.appendChild(card);
+    });
+
+    section.appendChild(grid);
+    var dp = document.createElement('div');
+    dp.className = 'detail-panel';
+    section.appendChild(dp);
+    container.appendChild(section);
   });
-  window._venuePartyDate = first ? toKey(first) : '';
+
+  if (!_selectedKey) {
+    var first = _allParties.find(function(p) {
+      var k = toKey(p.date);
+      var st2 = status[k] || {};
+      return !((st2.male||'open')==='closed' && (st2.female||'open')==='closed');
+    });
+    if (first) selectDate(toKey(first.date), first, status);
+  }
+
+  window._venuePartyDate = _selectedKey || '';
+}
+
+function selectDate(key, party, status) {
+  _selectedKey = key;
+  document.querySelectorAll('.date-card').forEach(function(c) {
+    c.classList.toggle('selected', c.dataset.key === key);
+  });
+  window._venuePartyDate = key;
+
+  // hide all panels, show the one inside the same month-card
+  document.querySelectorAll('.month-card .detail-panel').forEach(function(p) {
+    p.style.display = 'none';
+    p.innerHTML = '';
+  });
+  var selectedCard = document.querySelector('.date-card[data-key="'+key+'"]');
+  if (selectedCard) {
+    var monthCard = selectedCard.closest('.month-card');
+    if (monthCard) showDetail(monthCard.querySelector('.detail-panel'), key, party, status);
+  }
+}
+
+function showDetail(panel, key, party, status) {
+  if (!panel) return;
+  var d = party.date;
+  var dayType = party.dayType;
+  var st = status[key] || {};
+  var maleSt = st.male || 'open';
+  var femaleSt = st.female || 'open';
+  var anyAlmost = maleSt === 'almost' || femaleSt === 'almost';
+  var timeStr = toTime(dayType);
+  var dayLabel = dayType === 'fri' ? '금요일' : '토요일';
+
+  var today = new Date(); today.setHours(0,0,0,0);
+  var daysUntil = Math.ceil((d - today) / 86400000);
+  var isEarlybird = key !== OPEN_DATE && daysUntil > 7;
+  var origM = 59900, origF = 49900;
+  var priceM = isEarlybird ? 54900 : origM;
+  var priceF = isEarlybird ? 44900 : origF;
+
+  var mSeat = maleSt === 'closed' ? '마감' : (st.maleRemaining !== undefined ? st.maleRemaining + '<span class="dp-seat-unit">석</span>' : '-');
+  var fSeat = femaleSt === 'closed' ? '마감' : (st.femaleRemaining !== undefined ? st.femaleRemaining + '<span class="dp-seat-unit">석</span>' : '-');
+
+  var seatBoxClass = anyAlmost ? 'dp-seat-box almost' : 'dp-seat-box';
+
+  var rowBadge = anyAlmost
+    ? '<span class="dp-almost-badge">마감임박</span>'
+    : (isEarlybird ? '<span class="dp-eb-badge">🏷️ 얼리버드</span>' : '');
+
+  var priceLine = isEarlybird
+    ? '<span style="opacity:0.4;text-decoration:line-through">남 '+origM.toLocaleString()+' / 여 '+origF.toLocaleString()+'원</span> &nbsp;남 <strong style="color:var(--gold)">'+priceM.toLocaleString()+'</strong> / 여 <strong style="color:var(--gold)">'+priceF.toLocaleString()+'원</strong>'
+    : '남 '+origM.toLocaleString()+'원 · 여 '+origF.toLocaleString()+'원';
+
+  panel.innerHTML =
+    '<div class="dp-info-row">'+
+      '<span>🕒 '+timeStr+'</span>'+
+      '<span>📍 대구 중구</span>'+
+      rowBadge+
+    '</div>'+
+    '<div class="dp-seats">'+
+      '<div class="'+seatBoxClass+'"><div class="dp-seat-gender">남성 잔여</div><div class="dp-seat-count">'+mSeat+'</div></div>'+
+      '<div class="'+seatBoxClass+'"><div class="dp-seat-gender">여성 잔여</div><div class="dp-seat-count">'+fSeat+'</div></div>'+
+    '</div>'+
+    '<div class="dp-price">'+priceLine+'</div>'+
+    '<a class="btn-apply" style="width:100%;justify-content:center;display:flex" '+
+      'href="daegu-party.html?date='+key+'" '+
+      'onclick="if(typeof fbq!==\'undefined\')fbq(\'track\',\'InitiateCheckout\',{content_name:\'파티 날짜 선택\',content_category:\'daegu\'})">'+
+      dayLabel+' 파티 신청하기'+
+    '</a>';
+
+  panel.style.display = 'block';
 }
 
 function goToVenue() {
@@ -332,11 +466,9 @@ function goToVenue() {
 }
 
 (function init(){
-  // 캐시 있으면 나이 관계없이 즉시 렌더 (딜레이 없이 표시)
   var cached = localStorage.getItem('daegu_dateStatus');
-  try { renderList(cached ? JSON.parse(cached) : {}); } catch(e) { renderList({}); }
+  try { renderGroups(cached ? JSON.parse(cached) : {}); } catch(e) { renderGroups({}); }
 
-  // 항상 백그라운드에서 최신 데이터 가져와 갱신
   if (!DAEGU_GAS_URL) return;
   var gasReq = fetch(DAEGU_GAS_URL+'?action=getDateStatus&_t='+Date.now()).then(function(r){return r.json();});
   var gasTimeout = new Promise(function(_,rej){setTimeout(rej,5000);});
@@ -346,7 +478,7 @@ function goToVenue() {
         var newStr = JSON.stringify(res.data||{});
         if (newStr !== cached) {
           localStorage.setItem('daegu_dateStatus', newStr);
-          renderList(res.data||{});
+          renderGroups(res.data||{});
         }
       }
     })

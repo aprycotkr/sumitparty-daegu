@@ -288,7 +288,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
         </div>
         <div class="info-divider"></div>
         <div class="info-row"><span>참가 연령</span><span class="iv">90~07년생 (남녀 동일)</span></div>
-        <div class="info-row"><span>정원</span><span class="iv">남녀 각 20명</span></div>
+        <div class="info-row"><span>정원</span><span class="iv">남녀 각 25~30명</span></div>
         <div class="info-row"><span>심사 방식</span><span class="iv gold">외모 승인제</span></div>
         <div class="viewer-badge" style="margin-top:0.4rem"><span class="vb-flame">🔥</span><span class="viewer-count-num">5</span>명이 보고 있어요!</div>
         <button class="apply-btn-main" onclick="goApply()">파티 참가 신청</button>
@@ -312,7 +312,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
       </div>
       <div class="card-divider"></div>
       <div class="card-info-row"><span>참가 연령</span><span>90~07년생</span></div>
-      <div class="card-info-row"><span>정원</span><span>남녀 각 20명</span></div>
+      <div class="card-info-row"><span>정원</span><span>남녀 각 25~30명</span></div>
       <div class="card-info-row"><span>심사 방식</span><span class="gold">외모 승인제</span></div>
       <div class="card-divider"></div>
       <div class="card-checklist">
@@ -390,10 +390,12 @@ _statusReady.then(function() {
   }
 
   if (dateText) {
+    var timeStr = d.getDay() === 5 ? '20:00–23:30' : '19:00–23:30';
     document.getElementById('mainTitle').innerHTML = '썸잇 솔로파티<br>'+dateText+'<br>대구점';
     document.getElementById('metaDate').innerHTML = '📅 '+dateText;
+    document.getElementById('metaTime').innerHTML = '🕒 '+timeStr;
     document.getElementById('floatingTitle').textContent = '썸잇 솔로파티 '+dateText+' — 대구점';
-    document.getElementById('floatingSub').textContent = dateText+' · 19:00–23:00';
+    document.getElementById('floatingSub').textContent = dateText+' · '+timeStr;
   }
 
   // OPEN 할인 (7월 11일)

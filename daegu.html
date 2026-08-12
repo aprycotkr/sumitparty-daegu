@@ -6,9 +6,9 @@
 <title>썸잇 대구 — 프리미엄 솔로파티</title>
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" href="favicon.png">
-<meta name="description" content="대구 프리미엄 솔로파티 썸잇 | 매주 토요일 남20 여20 로테이션 소개팅 파티. 외모 승인제, 대구점 운영.">
+<meta name="description" content="대구 프리미엄 솔로파티 썸잇 | 매주 금·토 남25~30 여25~30 로테이션 소개팅 파티. 외모 승인제, 대구점 운영.">
 <meta property="og:title" content="썸잇 대구 — 프리미엄 솔로파티">
-<meta property="og:description" content="대구 프리미엄 솔로파티 썸잇 | 매주 토요일 남20 여20 소규모 솔로파티">
+<meta property="og:description" content="대구 프리미엄 솔로파티 썸잇 | 매주 금·토 남25~30 여25~30 소규모 솔로파티">
 <meta property="og:image" content="https://daegu.sumitparty.com/대구점.jpg">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://daegu.sumitparty.com/">
@@ -18,7 +18,7 @@
   "@context": "https://schema.org",
   "@type": "Event",
   "name": "썸잇 솔로파티 — 대구점",
-  "description": "대구 프리미엄 로테이션 소개팅 파티. 매주 토요일 남20 여20, 외모 승인제 운영.",
+  "description": "대구 프리미엄 로테이션 소개팅 파티. 매주 금·토 남25~30 여25~30, 외모 승인제 운영.",
   "startDate": "2026-07-25T19:00:00+09:00",
   "endDate": "2026-07-25T23:00:00+09:00",
   "eventStatus": "https://schema.org/EventScheduled",
@@ -344,9 +344,9 @@ window._dgStatusPromise = fetch('https://script.google.com/macros/s/AKfycbxnJhft
     <li><a href="#home">홈</a></li>
     <li><a href="#about">소개</a></li>
     <li><a href="#schedule">일정</a></li>
-    <li><a href="#dates">파티 신청하기</a></li>
+    <li><a href="daegu-booking.html">파티 신청하기</a></li>
   </ul>
-  <a href="#dates" class="nav-cta">신청하기</a>
+  <a href="daegu-booking.html" class="nav-cta">신청하기</a>
   <button class="nav-menu-btn" onclick="toggleMenu()"><span></span><span></span><span></span></button>
 </nav>
 
@@ -355,8 +355,8 @@ window._dgStatusPromise = fetch('https://script.google.com/macros/s/AKfycbxnJhft
   <a href="#home" onclick="toggleMenu()">홈</a>
   <a href="#about" onclick="toggleMenu()">소개</a>
   <a href="#schedule" onclick="toggleMenu()">일정</a>
-  <a href="#dates" onclick="toggleMenu()">파티 신청하기</a>
-  <a href="#dates" class="mobile-cta" onclick="toggleMenu()">지금 신청하기</a>
+  <a href="daegu-booking.html" onclick="toggleMenu()">파티 신청하기</a>
+  <a href="daegu-booking.html" class="mobile-cta" onclick="toggleMenu()">지금 신청하기</a>
 </div>
 
 <!-- HERO -->
@@ -375,7 +375,7 @@ window._dgStatusPromise = fetch('https://script.google.com/macros/s/AKfycbxnJhft
       <div class="hero-logo-glow"></div>
       <img class="hero-logo" src="logo.png" alt="Sumit Logo">
     </div>
-    <div id="hero-prev-badge" style="display:inline-flex;align-items:center;gap:7px;background:rgba(80,10,10,0.75);border:1px solid rgba(239,68,68,0.7);color:#fca5a5;font-size:0.6rem;font-weight:700;padding:6px 16px;letter-spacing:0.08em;border-radius:20px;margin-bottom:0.6rem;opacity:0;animation:fadeUp 0.8s ease forwards 0.3s;box-shadow:0 0 16px rgba(239,68,68,0.35);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)"><span style="width:6px;height:6px;border-radius:50%;background:#f87171;flex-shrink:0;display:inline-block;animation:urgencyBlink 1.2s ease infinite"></span><span id="hero-prev-badge-text">🔥 7/25 (토) 전석 조기마감</span></div>
+    <div id="hero-prev-badge" style="display:none"></div>
     <p class="hero-date-pill" id="hero-date-pill"></p>
     <p class="hero-dday">⏰ <span id="hero-dday-count"></span> · 지금 신청하지 않으면 마감</p>
     <div class="hero-status-row">
@@ -383,7 +383,7 @@ window._dgStatusPromise = fetch('https://script.google.com/macros/s/AKfycbxnJhft
       <div id="hero-female-badge" class="hero-status-badge open"><span class="hero-status-dot"></span>여자 <strong>모집 중</strong></div>
     </div>
     <div class="hero-cta-wrap">
-      <a href="#dates" class="hero-cta">지금 신청하기<span class="cta-arrow" aria-hidden="true">→</span></a>
+      <a href="daegu-booking.html" class="hero-cta">지금 신청하기<span class="cta-arrow" aria-hidden="true">→</span></a>
     </div>
   </div>
   <div class="hero-scroll">
@@ -415,14 +415,14 @@ window._dgStatusPromise = fetch('https://script.google.com/macros/s/AKfycbxnJhft
     <span class="ticker-item">Daegu Premium Solo Party</span><span class="ticker-dot">✦</span>
     <span class="ticker-item">대구 프리미엄 솔로파티</span><span class="ticker-dot">✦</span>
     <span class="ticker-item">로테이션 소개팅 파티</span><span class="ticker-dot">✦</span>
-    <span class="ticker-item">매주 토요일 운영</span><span class="ticker-dot">✦</span>
-    <span class="ticker-item">남 20명 · 여 20명</span><span class="ticker-dot">✦</span>
+    <span class="ticker-item">매주 금·토 운영</span><span class="ticker-dot">✦</span>
+    <span class="ticker-item">남 25~30명 · 여 25~30명</span><span class="ticker-dot">✦</span>
     <span class="ticker-item">외모 승인제</span><span class="ticker-dot">✦</span>
     <span class="ticker-item">Daegu Premium Solo Party</span><span class="ticker-dot">✦</span>
     <span class="ticker-item">대구 프리미엄 솔로파티</span><span class="ticker-dot">✦</span>
     <span class="ticker-item">로테이션 소개팅 파티</span><span class="ticker-dot">✦</span>
-    <span class="ticker-item">매주 토요일 운영</span><span class="ticker-dot">✦</span>
-    <span class="ticker-item">남 20명 · 여 20명</span><span class="ticker-dot">✦</span>
+    <span class="ticker-item">매주 금·토 운영</span><span class="ticker-dot">✦</span>
+    <span class="ticker-item">남 25~30명 · 여 25~30명</span><span class="ticker-dot">✦</span>
     <span class="ticker-item">외모 승인제</span><span class="ticker-dot">✦</span>
   </div>
 </div>
@@ -439,77 +439,68 @@ window._dgStatusPromise = fetch('https://script.google.com/macros/s/AKfycbxnJhft
 /* ── Date List ── */
 (function(){
   const DAEGU_GAS_URL = 'https://script.google.com/macros/s/AKfycbxnJhftdjyEro7uKUNTfsAKp7U1g7knABAQBeebu5mfIIkonjXcTlgRK8qUanuOZ4prxw/exec';
-  const FIRST_PARTY = new Date('2026-07-11T00:00:00+09:00');
 
-  function getUpcomingSaturdays(count) {
-    var result = [];
-    var today = new Date();
-    var nowHour = today.getHours();
-    today.setHours(0,0,0,0);
-    var d = new Date(today);
-    var day = d.getDay();
-    var daysToSat = day === 6 ? (nowHour < 19 ? 0 : 7) : (6 - day);
-    d.setDate(d.getDate() + daysToSat);
-    if (d < FIRST_PARTY) {
-      d = new Date(FIRST_PARTY);
-      var fp = d.getDay();
-      if (fp !== 6) d.setDate(d.getDate() + (6 - fp));
+  function getPartyDates(n) {
+    var results = [];
+    var now = new Date();
+    var aug15 = new Date('2026-08-15T00:00:00');
+    var aug15Cutoff = new Date('2026-08-15T19:00:00');
+    if (now < aug15Cutoff) results.push({ date: aug15, dayType: 'sat' });
+    var fri = new Date('2026-08-21T00:00:00');
+    while (results.length < n) {
+      var sat = new Date(fri); sat.setDate(sat.getDate() + 1);
+      var friCutoff = new Date(fri); friCutoff.setHours(20,0,0,0);
+      var satCutoff = new Date(sat); satCutoff.setHours(19,0,0,0);
+      if (now < friCutoff) results.push({ date: new Date(fri), dayType: 'fri' });
+      if (results.length < n && now < satCutoff) results.push({ date: new Date(sat), dayType: 'sat' });
+      fri.setDate(fri.getDate() + 7);
     }
-    while (result.length < count) { result.push(new Date(d)); d.setDate(d.getDate() + 7); }
-    return result;
+    return results.slice(0, n);
   }
 
   function toKey(d) {
     return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
   }
-
-  function toLabel(d) {
-    var months = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
-    return months[d.getMonth()] + ' ' + d.getDate() + '일 (토)';
+  function toLabel(d, dayType) {
+    var wd = dayType === 'fri' ? '금' : '토';
+    return (d.getMonth()+1) + '월 ' + d.getDate() + '일 (' + wd + ')';
+  }
+  function toTime(dayType) {
+    return dayType === 'fri' ? '금요일 · 20:00 ~ 23:30' : '토요일 · 19:00 ~ 23:30';
   }
 
   function renderDates(statusData) {
     var list = document.getElementById('dgDateList');
     if (!list) return;
-    var dates = getUpcomingSaturdays(5);
+    var parties = getPartyDates(6);
     list.innerHTML = '';
     var today = new Date(); today.setHours(0,0,0,0);
 
-    dates.forEach(function(d, idx) {
+    parties.forEach(function(p) {
+      var d = p.date, dayType = p.dayType;
       var key = toKey(d);
-      var label = toLabel(d);
+      var label = toLabel(d, dayType);
+      var timeStr = toTime(dayType);
       var st = statusData[key] || {};
       var maleSt = st.male || 'open';
       var femSt  = st.female || 'open';
-
-      // 7/11, 7/18, 7/25 강제 조기마감
-      var isEarlyClosed = (key === '2026-07-11' || key === '2026-07-18' || key === '2026-07-25');
-      if (isEarlyClosed) { maleSt = 'closed'; femSt = 'closed'; }
-
       var allClosed = maleSt === 'closed' && femSt === 'closed';
+
       var statusText, badgeClass;
-      if (isEarlyClosed) { statusText = '조기마감'; badgeClass = 'dg-badge dg-badge-earlyclosed'; }
-      else if (allClosed) { statusText = '마감'; badgeClass = 'dg-badge dg-badge-closed'; }
+      if (allClosed) { statusText = '마감'; badgeClass = 'dg-badge dg-badge-closed'; }
       else if (maleSt === 'almost' || femSt === 'almost') { statusText = '마감임박'; badgeClass = 'dg-badge dg-badge-almost'; }
       else { statusText = '신청가능'; badgeClass = 'dg-badge dg-badge-open'; }
 
-      var seatsHtml = '';
-
-      // 서브 배지
       var subBadgeHtml = '';
-      if (isEarlyClosed) {
-        subBadgeHtml = '<div style="margin-top:5px"><span style="font-size:0.48rem;font-weight:700;padding:3px 8px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#f87171;letter-spacing:0.06em;">남 35 · 여 35 전석 마감</span></div>';
-      } else if (!allClosed) {
+      if (!allClosed) {
         var daysUntil = Math.ceil((d - today) / (1000*60*60*24));
-        if (daysUntil > 7) {
-          subBadgeHtml = '<div style="margin-top:5px"><span class="dg-earlybird-badge">🏷️ 얼리버드 할인</span></div>';
-        }
+        if (daysUntil > 7) subBadgeHtml = '<div style="margin-top:5px"><span class="dg-earlybird-badge">🏷️ 얼리버드 할인</span></div>';
       }
 
       var row = document.createElement('a');
-      row.className = 'dg-date-row' + (isEarlyClosed ? ' earlyclosed' : (allClosed ? ' closed' : ''));
-      if (!isEarlyClosed && !allClosed) row.href = 'daegu-party.html?date=' + key;
-      if (!isEarlyClosed && !allClosed) {
+      row.className = 'dg-date-row' + (allClosed ? ' closed' : '');
+      if (!allClosed) {
+        row.href = 'daegu-party.html?date=' + key;
         row.addEventListener('click', function() {
           if (typeof fbq !== 'undefined') fbq('track', 'Lead', {content_name: '썸잇 대구', content_category: 'daegu'});
         });
@@ -517,23 +508,20 @@ window._dgStatusPromise = fetch('https://script.google.com/macros/s/AKfycbxnJhft
       row.innerHTML =
         '<div class="dg-date-left">' +
           '<div class="dg-date-label">' + label + '</div>' +
-          '<div class="dg-date-sub">토요일 · 19:00 ~ 23:00</div>' +
-          seatsHtml +
+          '<div class="dg-date-sub">' + timeStr + '</div>' +
           subBadgeHtml +
         '</div>' +
         '<div class="dg-date-right">' +
           '<span class="' + badgeClass + '">' + statusText + '</span>' +
-          (!allClosed && !isEarlyClosed ? '<span class="dg-apply-arrow">신청하기 →</span>' : '') +
+          (!allClosed ? '<span class="dg-apply-arrow">신청하기 →</span>' : '') +
         '</div>';
       list.appendChild(row);
     });
   }
 
-  // 즉시 렌더 (캐시 또는 빈 데이터)
   var cached = localStorage.getItem('daegu_dateStatus');
   try { renderDates(cached ? JSON.parse(cached) : {}); } catch(e) { renderDates({}); }
 
-  // GAS 응답 오면 상태 업데이트
   (window._dgStatusPromise || Promise.reject())
     .then(function(json) {
       if (json.result === 'success') {
@@ -553,15 +541,15 @@ window._dgStatusPromise = fetch('https://script.google.com/macros/s/AKfycbxnJhft
   <div class="container">
     <div class="highlight-grid">
       <div class="highlight-item">
-        <div class="highlight-num">20 : 20</div>
-        <div class="highlight-label">남녀 인원 구성</div>
+        <div class="highlight-num" style="font-size:clamp(1.3rem,2.8vw,2rem)">남녀 각 25~30명</div>
+        <div class="highlight-label">참가 인원 · 성비 균형 유지</div>
       </div>
       <div class="highlight-item">
-        <div class="highlight-num">매주 토</div>
+        <div class="highlight-num">매주 금·토</div>
         <div class="highlight-label">운영 요일</div>
       </div>
       <div class="highlight-item">
-        <div class="highlight-num">19:00–23:00</div>
+        <div class="highlight-num">19:00~23:30</div>
         <div class="highlight-label">파티 시간</div>
       </div>
     </div>
@@ -575,13 +563,13 @@ window._dgStatusPromise = fetch('https://script.google.com/macros/s/AKfycbxnJhft
       <div>
         <p class="section-label">About Sumit 대구</p>
         <h2 class="section-title">낯선 만남이<br>가장 설레는 순간</h2>
-        <p class="about-desc">썸잇 대구는 남성 20명, 여성 20명이 참가하는 프리미엄 솔로파티입니다. 로테이션 방식으로 자리를 옮기며 자연스럽게 여러 사람을 만날 수 있어, 혼자 오셔도 어색함 없이 즐길 수 있습니다.</p>
-        <p class="about-desc" style="margin-bottom:0">매주 토요일, 대구에서 운영됩니다.</p>
+        <p class="about-desc">썸잇 대구는 남성 25~30명, 여성 25~30명이 참가하는 프리미엄 솔로파티입니다. 로테이션 방식으로 자리를 옮기며 자연스럽게 여러 사람을 만날 수 있어, 혼자 오셔도 어색함 없이 즐길 수 있습니다.</p>
+        <p class="about-desc" style="margin-bottom:0">매주 금·토, 대구에서 운영됩니다.</p>
       </div>
       <div class="about-details">
         <div class="about-detail-item">
           <div class="about-detail-num">①</div>
-          <div><p class="about-detail-key">인원 구성</p><p class="about-detail-val">남성 20명 + 여성 20명 (총 40명)</p></div>
+          <div><p class="about-detail-key">인원 구성</p><p class="about-detail-val">남성 25~30명 + 여성 25~30명</p></div>
         </div>
         <div class="about-detail-item">
           <div class="about-detail-num">②</div>
@@ -612,11 +600,11 @@ window._dgStatusPromise = fetch('https://script.google.com/macros/s/AKfycbxnJhft
 <div class="sc-info-grid">
       <div class="sc-info-col">
         <div class="sc-info-label">운영 요일</div>
-        <div class="sc-info-val">매주 토요일</div>
+        <div class="sc-info-val">매주 금·토</div>
       </div>
       <div class="sc-info-col">
         <div class="sc-info-label">파티 시간</div>
-        <div class="sc-info-val">19:00 – 23:00</div>
+        <div class="sc-info-val" style="font-size:clamp(1rem,2vw,1.4rem)">금 20:00 / 토 19:00 – 23:30</div>
       </div>
     </div>
     <p class="sc-tl-title">Party Timeline</p>
@@ -624,7 +612,7 @@ window._dgStatusPromise = fetch('https://script.google.com/macros/s/AKfycbxnJhft
       <div class="sc-tl-row"><span class="sc-tl-time">19:00</span><span class="sc-tl-desc">입장 · 오리엔테이션</span></div>
       <div class="sc-tl-row"><span class="sc-tl-time">19:30</span><span class="sc-tl-desc">1부 로테이션 소개팅 파티 시작</span></div>
       <div class="sc-tl-row"><span class="sc-tl-time">21:00</span><span class="sc-tl-desc">2부 파티 컨텐츠 시작</span></div>
-      <div class="sc-tl-row"><span class="sc-tl-time">23:00</span><span class="sc-tl-desc">파티 종료</span></div>
+      <div class="sc-tl-row"><span class="sc-tl-time">23:30</span><span class="sc-tl-desc">파티 종료</span></div>
     </div>
   </div>
 </section>
@@ -720,9 +708,9 @@ window._dgStatusPromise = fetch('https://script.google.com/macros/s/AKfycbxnJhft
   <div class="container" style="padding:0 3rem">
     <div class="cta-content">
       <h2 class="cta-title">낯선 만남이<br><em>가장 설레는 순간</em>이 되는 곳</h2>
-      <p class="cta-sub">썸잇 대구 · 매주 토요일</p>
+      <p class="cta-sub">썸잇 대구 · 매주 금·토</p>
 
-      <a href="#dates" class="cta-btn">지금 신청하기</a>
+      <a href="daegu-booking.html" class="cta-btn">지금 신청하기</a>
     </div>
   </div>
 </section>
@@ -739,7 +727,7 @@ window._dgStatusPromise = fetch('https://script.google.com/macros/s/AKfycbxnJhft
       <p class="footer-heading">Navigation</p>
       <ul class="footer-links">
         <li><a href="daegu.html">홈</a></li>
-        <li><a href="#dates">파티 신청하기</a></li>
+        <li><a href="daegu-booking.html">파티 신청하기</a></li>
       </ul>
     </div>
     <div>
@@ -764,33 +752,36 @@ window._dgStatusPromise = fetch('https://script.google.com/macros/s/AKfycbxnJhft
 <script>
 /* ── 다음 파티일 자동 계산 ── */
 (function(){
-  var FIRST = new Date('2026-07-11T00:00:00+09:00');
-  var CLOSED_DATES = ['2026-07-11','2026-07-18','2026-07-25'];
-  var _now = new Date(); var nowHour = _now.getHours();
-  var today = new Date(_now); today.setHours(0,0,0,0);
-  var d = new Date(today);
-  var day = d.getDay();
-  d.setDate(d.getDate() + (day === 6 ? (nowHour < 19 ? 0 : 7) : (6 - day)));
-  if (d < FIRST) d = new Date(FIRST);
-  function toKeyStr(dt) { return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0'); }
-  while (CLOSED_DATES.indexOf(toKeyStr(d)) !== -1) { d.setDate(d.getDate()+7); }
-  var m = d.getMonth()+1, dt = d.getDate();
-  window._nextPartyKey = d.getFullYear()+'-'+String(m).padStart(2,'0')+'-'+String(dt).padStart(2,'0');
-  window._nextPartyDate = new Date(d);
-  var pill = document.getElementById('hero-date-pill');
-  if (pill) pill.textContent = '📅 '+m+'월 '+dt+'일 (토) · 대구점';
-  var prev = new Date(d); prev.setDate(prev.getDate()-7);
-  if (prev >= FIRST) {
-    var bt = document.getElementById('hero-prev-badge-text');
-    if (bt) bt.textContent = '🔥 '+(prev.getMonth()+1)+'/'+prev.getDate()+' (토) 전석 조기마감';
+  var now = new Date();
+  var nextParty = null, nextDayType = 'sat';
+  var aug15 = new Date('2026-08-15T00:00:00');
+  if (now < new Date('2026-08-15T19:00:00')) { nextParty = aug15; nextDayType = 'sat'; }
+  else {
+    var fri = new Date('2026-08-21T00:00:00');
+    while (!nextParty) {
+      var sat = new Date(fri); sat.setDate(sat.getDate() + 1);
+      var friCutoff = new Date(fri); friCutoff.setHours(20,0,0,0);
+      var satCutoff = new Date(sat); satCutoff.setHours(19,0,0,0);
+      if (now < friCutoff) { nextParty = new Date(fri); nextDayType = 'fri'; }
+      else if (now < satCutoff) { nextParty = new Date(sat); nextDayType = 'sat'; }
+      else fri.setDate(fri.getDate() + 7);
+    }
   }
+  function toKeyStr(dt) { return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0'); }
+  var m = nextParty.getMonth()+1, dt2 = nextParty.getDate();
+  var wd = nextDayType === 'fri' ? '금' : '토';
+  window._nextPartyKey = toKeyStr(nextParty);
+  window._nextPartyDate = new Date(nextParty);
+  var pill = document.getElementById('hero-date-pill');
+  if (pill) pill.textContent = '📅 '+m+'월 '+dt2+'일 ('+wd+') · 대구점';
   // JSON-LD 날짜 동적 업데이트
+  var startTime = nextDayType === 'fri' ? 'T20:00:00+09:00' : 'T19:00:00+09:00';
   var ld = document.querySelector('script[type="application/ld+json"]');
   if (ld && window._nextPartyKey) {
     try {
       var data = JSON.parse(ld.textContent);
-      data.startDate = window._nextPartyKey + 'T19:00:00+09:00';
-      data.endDate   = window._nextPartyKey + 'T23:00:00+09:00';
+      data.startDate = window._nextPartyKey + startTime;
+      data.endDate   = window._nextPartyKey + 'T23:30:00+09:00';
       ld.textContent = JSON.stringify(data);
     } catch(e) {}
   }
@@ -908,7 +899,7 @@ function toggleFaq(el) {
 </script>
 
 <div class="mobile-cta-bar" id="mobileCTABar">
-  <a href="#dates">지금 신청하기 →</a>
+  <a href="daegu-booking.html">지금 신청하기 →</a>
 </div>
 </body>
 </html>
