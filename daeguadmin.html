@@ -86,7 +86,6 @@ html,body{min-height:100vh;background:var(--black);color:var(--white);font-famil
 <script>
 const DAEGU_GAS_URL = 'https://script.google.com/macros/s/AKfycbxnJhftdjyEro7uKUNTfsAKp7U1g7knABAQBeebu5mfIIkonjXcTlgRK8qUanuOZ4prxw/exec';
 const ADMIN_KEY = '';
-const PARTY_DAYS = [5, 6]; // 금요일, 토요일
 let statusMap = {};
 
 async function loadDashboard() {
@@ -248,22 +247,24 @@ function rerenderBtns(dateStr) {
   if (fWrap) fWrap.innerHTML = btnHtml(dateStr,'female','open',fem) + btnHtml(dateStr,'female','almost',fem) + btnHtml(dateStr,'female','closed',fem);
 }
 
-function getPartyDates(weeks) {
+function toDateStr(d) {
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+
+function getPartyDates(n) {
   const result = [];
-  const FIRST_PARTY = new Date('2026-07-11T00:00:00+09:00');
-  const today  = new Date(); today.setHours(0,0,0,0);
-  const start  = today < FIRST_PARTY ? FIRST_PARTY : today;
-  const end    = new Date(start); end.setDate(end.getDate() + weeks * 7);
-  const cur    = new Date(start);
-  while (cur <= end) {
-    const dow = cur.getDay();
-    if (PARTY_DAYS.includes(dow)) {
-      const dateStr = `${cur.getFullYear()}-${String(cur.getMonth()+1).padStart(2,'0')}-${String(cur.getDate()).padStart(2,'0')}`;
-      result.push({ dateStr, d: new Date(cur), dow });
-    }
-    cur.setDate(cur.getDate() + 1);
+  // 8/15(토) 단독
+  const aug15 = new Date('2026-08-15T00:00:00');
+  result.push({ dateStr: '2026-08-15', d: aug15, dow: 6 });
+  // 8/21(금)부터 매주 금·토
+  const fri = new Date('2026-08-21T00:00:00');
+  while (result.length < n) {
+    const sat = new Date(fri); sat.setDate(sat.getDate() + 1);
+    result.push({ dateStr: toDateStr(fri), d: new Date(fri), dow: 5 });
+    if (result.length < n) result.push({ dateStr: toDateStr(sat), d: new Date(sat), dow: 6 });
+    fri.setDate(fri.getDate() + 7);
   }
-  return result;
+  return result.slice(0, n);
 }
 
 loadDashboard();
