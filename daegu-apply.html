@@ -635,14 +635,10 @@ async function step2Next() {
   document.getElementById('nameErr').textContent = '';
   if (!fd.gender) { document.getElementById('genderErr').textContent = '성별을 선택해주세요.'; return; }
 
-  // 마감 재확인 — 항상 fresh 조회
+  // 마감 재확인 — 페이지 로드 시 백그라운드 조회 완료 대기 (이미 완료됐으면 즉시)
   const btn = document.getElementById('step2Btn');
   btn.disabled = true; btn.textContent = '확인 중...';
-  try {
-    const _r = await fetch(DAEGU_CONFIG.DAEGU_GAS_URL + '?action=getDateStatus&_t=' + Date.now());
-    const _j = await _r.json();
-    if (_j.result === 'success') { dateStatusMap = _j.data || {}; applyGenderBtnStatus(); }
-  } catch(e) {}
+  await _statusReady;
   btn.textContent = '다음으로'; btn.disabled = false;
 
   const st = dateStatusMap[fd.date] || {};
