@@ -440,8 +440,8 @@ function showDetail(panel, key, party, status) {
   var priceM = isEarlybird ? 54900 : origM;
   var priceF = isEarlybird ? 44900 : origF;
 
-  var mSeat = maleSt === 'closed' ? '마감' : (st.maleRemaining !== undefined ? st.maleRemaining + '<span class="dp-seat-unit">석</span>' : '-');
-  var fSeat = femaleSt === 'closed' ? '마감' : (st.femaleRemaining !== undefined ? st.femaleRemaining + '<span class="dp-seat-unit">석</span>' : '-');
+  var mSeat = maleSt === 'closed' ? '마감' : (st.maleRemaining !== undefined ? st.maleRemaining + '<span class="dp-seat-unit">석</span>' : (maleSt === 'almost' ? '마감임박' : '여석 있음'));
+  var fSeat = femaleSt === 'closed' ? '마감' : (st.femaleRemaining !== undefined ? st.femaleRemaining + '<span class="dp-seat-unit">석</span>' : (femaleSt === 'almost' ? '마감임박' : '여석 있음'));
 
   var seatBoxClass = anyAlmost ? 'dp-seat-box almost' : 'dp-seat-box';
 
@@ -484,14 +484,23 @@ function goToVenue() {
 
   if (!DAEGU_GAS_URL) return;
   var gasReq = fetch(DAEGU_GAS_URL+'?action=getDateStatus&_t='+Date.now()).then(function(r){return r.json();});
-  var gasTimeout = new Promise(function(_,rej){setTimeout(rej,5000);});
+  var gasTimeout = new Promise(function(_,rej){setTimeout(rej,12000);});
   Promise.race([gasReq, gasTimeout])
     .then(function(res){
       if (res.result==='success') {
         var newStr = JSON.stringify(res.data||{});
         if (newStr !== cached) {
           localStorage.setItem('daegu_dateStatus', newStr);
-          renderGroups(res.data||{});
+          var newData = res.data || {};
+          renderGroups(newData);
+          if (_selectedKey) {
+            var sp = _allParties.find(function(x){ return toKey(x.date) === _selectedKey; });
+            var sc = document.querySelector('.date-card[data-key="'+_selectedKey+'"]');
+            if (sp && sc) {
+              var dp = sc.closest('.month-card').querySelector('.detail-panel');
+              showDetail(dp, _selectedKey, sp, newData);
+            }
+          }
         }
       }
     })

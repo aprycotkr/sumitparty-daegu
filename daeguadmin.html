@@ -87,6 +87,8 @@ html,body{min-height:100vh;background:var(--black);color:var(--white);font-famil
 const DAEGU_GAS_URL = 'https://script.google.com/macros/s/AKfycbxnJhftdjyEro7uKUNTfsAKp7U1g7knABAQBeebu5mfIIkonjXcTlgRK8qUanuOZ4prxw/exec';
 const ADMIN_KEY = '';
 let statusMap = {};
+const _saveTimers = {};
+let _saveQueue = Promise.resolve();
 
 async function loadDashboard() {
   try {
@@ -170,26 +172,29 @@ function btnHtml(dateStr, gender, value, current) {
   return `<button class="sbtn ${cls}${active}" onclick="onBtn('${dateStr}','${gender}','${value}')">${STATUS_LABELS[value]}</button>`;
 }
 
-async function onBtn(dateStr, gender, newVal) {
-  const prev = statusMap[dateStr] || { male: 'open', female: 'open' };
-  if (prev[gender] === newVal) return;
-
-  const updated = { ...prev, [gender]: newVal };
-  statusMap[dateStr] = updated;
+function scheduleSave(dateStr) {
+  clearTimeout(_saveTimers[dateStr]);
   setCardState(dateStr, 'saving', '저장 중...');
-  rerenderBtns(dateStr);
-
-  await saveToGAS(dateStr, updated);
+  _saveTimers[dateStr] = setTimeout(() => {
+    const data = statusMap[dateStr] || {};
+    _saveQueue = _saveQueue.then(() => saveToGAS(dateStr, data)).catch(() => {});
+  }, 400);
 }
 
-async function onSeatChange(dateStr) {
+function onBtn(dateStr, gender, newVal) {
+  const prev = statusMap[dateStr] || { male: 'open', female: 'open' };
+  if (prev[gender] === newVal) return;
+  statusMap[dateStr] = { ...prev, [gender]: newVal };
+  rerenderBtns(dateStr);
+  scheduleSave(dateStr);
+}
+
+function onSeatChange(dateStr) {
   const mL = document.getElementById(`maleLeft-${dateStr}`)?.value;
   const fL = document.getElementById(`femaleLeft-${dateStr}`)?.value;
   const prev = statusMap[dateStr] || { male: 'open', female: 'open' };
-  const updated = { ...prev, maleLeft: mL, femaleLeft: fL };
-  statusMap[dateStr] = updated;
-  setCardState(dateStr, 'saving', '저장 중...');
-  await saveToGAS(dateStr, updated);
+  statusMap[dateStr] = { ...prev, maleLeft: mL, femaleLeft: fL };
+  scheduleSave(dateStr);
 }
 
 async function saveToGAS(dateStr, data, attempt = 0) {
@@ -205,7 +210,7 @@ async function saveToGAS(dateStr, data, attempt = 0) {
       + `&femaleLeft=${encodeURIComponent(fL)}`
       + `&key=${encodeURIComponent(ADMIN_KEY)}`;
     const controller = new AbortController();
-    const tid = setTimeout(() => controller.abort(), 9000);
+    const tid = setTimeout(() => controller.abort(), 20000);
     const res = await fetch(url, { signal: controller.signal });
     clearTimeout(tid);
     const text = await res.text();
