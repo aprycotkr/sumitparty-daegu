@@ -243,7 +243,7 @@ body{background:var(--black);color:#fff;font-family:var(--font-body);min-height:
 
 <!-- TRUST STRIP -->
 <div class="trust-strip">
-  <span class="trust-item">👫 남 <em>25~30명</em> · 여 <em>25~30명</em></span>
+  <span class="trust-item">👫 남 <em>25~35명</em> · 여 <em>25~35명</em></span>
   <span class="trust-item">⭐ 만족도 <em>92%</em></span>
   <span class="trust-item">"혼자 와도 어색함 없어요" — 실제 참가자</span>
 </div>
@@ -440,10 +440,15 @@ function showDetail(panel, key, party, status) {
   var priceM = isEarlybird ? 54900 : origM;
   var priceF = isEarlybird ? 44900 : origF;
 
-  var mSeat = maleSt === 'closed' ? '마감' : (st.maleRemaining !== undefined ? st.maleRemaining + '<span class="dp-seat-unit">석</span>' : (maleSt === 'almost' ? '마감임박' : '여석 있음'));
-  var fSeat = femaleSt === 'closed' ? '마감' : (st.femaleRemaining !== undefined ? st.femaleRemaining + '<span class="dp-seat-unit">석</span>' : (femaleSt === 'almost' ? '마감임박' : '여석 있음'));
+  var mSeat = maleSt === 'closed' ? '마감' : (st.maleRemaining !== undefined ? st.maleRemaining + '<span class="dp-seat-unit">석</span>' : (maleSt === 'almost' ? '마감임박' : ''));
+  var fSeat = femaleSt === 'closed' ? '마감' : (st.femaleRemaining !== undefined ? st.femaleRemaining + '<span class="dp-seat-unit">석</span>' : (femaleSt === 'almost' ? '마감임박' : ''));
 
+  var hasManualSeats = st.maleRemaining !== undefined || st.femaleRemaining !== undefined;
+  var showBoxes = hasManualSeats || anyAlmost || maleSt === 'closed' || femaleSt === 'closed';
   var seatBoxClass = anyAlmost ? 'dp-seat-box almost' : 'dp-seat-box';
+  var seatSection = showBoxes
+    ? '<div class="dp-seats"><div class="'+seatBoxClass+'"><div class="dp-seat-gender">남성 잔여</div><div class="dp-seat-count">'+mSeat+'</div></div><div class="'+seatBoxClass+'"><div class="dp-seat-gender">여성 잔여</div><div class="dp-seat-count">'+fSeat+'</div></div></div>'
+    : '<div style="font-size:0.72rem;color:rgba(255,255,255,0.4);padding:4px 0 10px">👥 남녀 각 25~35명 정원</div>';
 
   var rowBadge = anyAlmost
     ? '<span class="dp-almost-badge">마감임박</span>'
@@ -459,10 +464,7 @@ function showDetail(panel, key, party, status) {
       '<span>📍 대구 중구</span>'+
       rowBadge+
     '</div>'+
-    '<div class="dp-seats">'+
-      '<div class="'+seatBoxClass+'"><div class="dp-seat-gender">남성 잔여</div><div class="dp-seat-count">'+mSeat+'</div></div>'+
-      '<div class="'+seatBoxClass+'"><div class="dp-seat-gender">여성 잔여</div><div class="dp-seat-count">'+fSeat+'</div></div>'+
-    '</div>'+
+    seatSection+
     '<div class="dp-price">'+priceLine+'</div>'+
     '<a class="btn-apply" style="width:100%;justify-content:center;display:flex" '+
       'href="daegu-party.html?date='+key+'" '+
