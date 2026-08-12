@@ -16,6 +16,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <script>
 !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
 n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
@@ -265,7 +267,14 @@ body{background:var(--black);color:#fff;font-family:var(--font-body);min-height:
 </div>
 
 <script>
-var DAEGU_GAS_URL = 'https://script.google.com/macros/s/AKfycbxnJhftdjyEro7uKUNTfsAKp7U1g7knABAQBeebu5mfIIkonjXcTlgRK8qUanuOZ4prxw/exec';
+firebase.initializeApp({
+  apiKey: 'AIzaSyBkh-AIqWcLOdUU4uhy9dfbwwPJ_vSgb0',
+  authDomain: 'sumit-admin.firebaseapp.com',
+  databaseURL: 'https://sumit-admin-default-rtdb.asia-southeast1.firebasedatabase.app',
+  projectId: 'sumit-admin',
+  appId: '1:226522660804:web:53212e3dbf6e88a498ae91'
+});
+var _fbStatusRef = firebase.database().ref('/daegu/dateStatus');
 var OPEN_DATE = '2026-07-11';
 var _selectedKey = null;
 var _allParties = [];
@@ -484,29 +493,19 @@ function goToVenue() {
   var cached = localStorage.getItem('daegu_dateStatus');
   try { renderGroups(cached ? JSON.parse(cached) : {}); } catch(e) { renderGroups({}); }
 
-  if (!DAEGU_GAS_URL) return;
-  var gasReq = fetch(DAEGU_GAS_URL+'?action=getDateStatus&_t='+Date.now()).then(function(r){return r.json();});
-  var gasTimeout = new Promise(function(_,rej){setTimeout(rej,12000);});
-  Promise.race([gasReq, gasTimeout])
-    .then(function(res){
-      if (res.result==='success') {
-        var newStr = JSON.stringify(res.data||{});
-        if (newStr !== cached) {
-          localStorage.setItem('daegu_dateStatus', newStr);
-          var newData = res.data || {};
-          renderGroups(newData);
-          if (_selectedKey) {
-            var sp = _allParties.find(function(x){ return toKey(x.date) === _selectedKey; });
-            var sc = document.querySelector('.date-card[data-key="'+_selectedKey+'"]');
-            if (sp && sc) {
-              var dp = sc.closest('.month-card').querySelector('.detail-panel');
-              showDetail(dp, _selectedKey, sp, newData);
-            }
-          }
-        }
+  _fbStatusRef.on('value', function(snap) {
+    var newData = snap.val() || {};
+    localStorage.setItem('daegu_dateStatus', JSON.stringify(newData));
+    renderGroups(newData);
+    if (_selectedKey) {
+      var sp = _allParties.find(function(x){ return toKey(x.date) === _selectedKey; });
+      var sc = document.querySelector('.date-card[data-key="'+_selectedKey+'"]');
+      if (sp && sc) {
+        var dp = sc.closest('.month-card').querySelector('.detail-panel');
+        showDetail(dp, _selectedKey, sp, newData);
       }
-    })
-    .catch(function(){});
+    }
+  });
 })();
 
 (function(){

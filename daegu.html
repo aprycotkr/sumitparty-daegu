@@ -336,8 +336,17 @@ fbq("track","PageView");
 </script>
 <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=821379504055811&ev=PageView&noscript=1"/></noscript>
 <!-- End Meta Pixel -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <script>
-window._dgStatusPromise = fetch('https://script.google.com/macros/s/AKfycbxnJhftdjyEro7uKUNTfsAKp7U1g7knABAQBeebu5mfIIkonjXcTlgRK8qUanuOZ4prxw/exec?action=getDateStatus&_t=' + Date.now()).then(function(r){return r.json();});
+firebase.initializeApp({
+  apiKey: 'AIzaSyBkh-AIqWcLOdUU4uhy9dfbwwPJ_vSgb0',
+  authDomain: 'sumit-admin.firebaseapp.com',
+  databaseURL: 'https://sumit-admin-default-rtdb.asia-southeast1.firebasedatabase.app',
+  projectId: 'sumit-admin',
+  appId: '1:226522660804:web:53212e3dbf6e88a498ae91'
+});
+window._fbStatusRef = firebase.database().ref('/daegu/dateStatus');
 </script>
 </head>
 <body>
@@ -527,15 +536,13 @@ window._dgStatusPromise = fetch('https://script.google.com/macros/s/AKfycbxnJhft
   var cached = localStorage.getItem('daegu_dateStatus');
   try { renderDates(cached ? JSON.parse(cached) : {}); } catch(e) { renderDates({}); }
 
-  (window._dgStatusPromise || Promise.reject())
-    .then(function(json) {
-      if (json.result === 'success') {
-        var data = json.data || {};
-        localStorage.setItem('daegu_dateStatus', JSON.stringify(data));
-        renderDates(data);
-      }
-    })
-    .catch(function() {});
+  if (window._fbStatusRef) {
+    window._fbStatusRef.on('value', function(snap) {
+      var data = snap.val() || {};
+      localStorage.setItem('daegu_dateStatus', JSON.stringify(data));
+      renderDates(data);
+    });
+  }
 })();
     </script>
   </div>
@@ -860,10 +867,9 @@ window._dgStatusPromise = fetch('https://script.google.com/macros/s/AKfycbxnJhft
   // localStorage 캐시로 즉시 반영
   try { var c = localStorage.getItem('daegu_dateStatus'); if (c) applyHero(JSON.parse(c)); } catch(e) {}
 
-  // GAS 응답으로 최신값 덮어쓰기
-  (window._dgStatusPromise || Promise.reject())
-    .then(function(json) { if (json.result === 'success') applyHero(json.data || {}); })
-    .catch(function(){});
+  if (window._fbStatusRef) {
+    window._fbStatusRef.on('value', function(snap) { applyHero(snap.val() || {}); });
+  }
 })();
 
 const navbar = document.getElementById('navbar');

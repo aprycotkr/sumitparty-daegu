@@ -8,6 +8,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -84,18 +86,25 @@ html,body{min-height:100vh;background:var(--black);color:var(--white);font-famil
 </div>
 
 <script>
-const DAEGU_GAS_URL = 'https://script.google.com/macros/s/AKfycbxnJhftdjyEro7uKUNTfsAKp7U1g7knABAQBeebu5mfIIkonjXcTlgRK8qUanuOZ4prxw/exec';
-const ADMIN_KEY = '';
+firebase.initializeApp({
+  apiKey: 'AIzaSyBkh-AIqWcLOdUU4uhy9dfbwwPJ_vSgb0',
+  authDomain: 'sumit-admin.firebaseapp.com',
+  databaseURL: 'https://sumit-admin-default-rtdb.asia-southeast1.firebasedatabase.app',
+  projectId: 'sumit-admin',
+  storageBucket: 'sumit-admin.firebasestorage.app',
+  messagingSenderId: '226522660804',
+  appId: '1:226522660804:web:53212e3dbf6e88a498ae91'
+});
+const _statusRef = firebase.database().ref('/daegu/dateStatus');
+
 let statusMap = {};
 const _saveTimers = {};
-let _saveQueue = Promise.resolve();
 
 async function loadDashboard() {
   try {
-    const res = await fetch(DAEGU_GAS_URL + '?action=getDateStatus&_t=' + Date.now());
-    const json = await res.json();
-    if (json.result === 'success') statusMap = json.data || {};
-  } catch (e) {}
+    const snap = await _statusRef.once('value');
+    statusMap = snap.val() || {};
+  } catch(e) {}
   renderList();
 }
 
@@ -116,8 +125,8 @@ function renderList() {
     const st  = statusMap[dateStr] || {};
     const mal = st.male   || 'open';
     const fem = st.female || 'open';
-    const mL  = st.maleLeft   ?? '';
-    const fL  = st.femaleLeft ?? '';
+    const mL  = st.maleRemaining ?? st.maleLeft ?? '';
+    const fL  = st.femaleRemaining ?? st.femaleLeft ?? '';
 
     html += `
 <div class="date-card" id="card-${dateStr}">
@@ -176,8 +185,7 @@ function scheduleSave(dateStr) {
   clearTimeout(_saveTimers[dateStr]);
   setCardState(dateStr, 'saving', '저장 중...');
   _saveTimers[dateStr] = setTimeout(() => {
-    const data = statusMap[dateStr] || {};
-    _saveQueue = _saveQueue.then(() => saveToGAS(dateStr, data)).catch(() => {});
+    saveToFirebase(dateStr, statusMap[dateStr] || {});
   }, 400);
 }
 
@@ -197,46 +205,20 @@ function onSeatChange(dateStr) {
   scheduleSave(dateStr);
 }
 
-async function saveToGAS(dateStr, data, attempt = 0) {
-  const prev = { ...data };
+async function saveToFirebase(dateStr, data) {
   try {
-    const mL = data.maleLeft   ?? '';
-    const fL = data.femaleLeft ?? '';
-    const url = `${DAEGU_GAS_URL}?action=updateDateStatus`
-      + `&date=${encodeURIComponent(dateStr)}`
-      + `&male=${encodeURIComponent(data.male   || 'open')}`
-      + `&female=${encodeURIComponent(data.female || 'open')}`
-      + `&maleLeft=${encodeURIComponent(mL)}`
-      + `&femaleLeft=${encodeURIComponent(fL)}`
-      + `&key=${encodeURIComponent(ADMIN_KEY)}`;
-    const controller = new AbortController();
-    const tid = setTimeout(() => controller.abort(), 20000);
-    const res = await fetch(url, { signal: controller.signal });
-    clearTimeout(tid);
-    const text = await res.text();
-    const json = JSON.parse(text);
-    if (json.result !== 'success') throw new Error();
-    // 방문자 캐시를 삭제 대신 최신값으로 즉시 업데이트 (booking 페이지 딜레이 방지)
-    try {
-      const cache = JSON.parse(localStorage.getItem('daegu_dateStatus') || '{}');
-      const entry = cache[dateStr] || {};
-      entry.male   = data.male   || 'open';
-      entry.female = data.female || 'open';
-      if (mL !== '') { entry.maleRemaining   = Number(mL); entry.hasManualRemaining = true; }
-      if (fL !== '') { entry.femaleRemaining  = Number(fL); entry.hasManualRemaining = true; }
-      cache[dateStr] = entry;
-      localStorage.setItem('daegu_dateStatus', JSON.stringify(cache));
-    } catch(e) {}
+    const mL = data.maleLeft ?? data.maleRemaining ?? '';
+    const fL = data.femaleLeft ?? data.femaleRemaining ?? '';
+    const entry = {
+      male: data.male || 'open',
+      female: data.female || 'open'
+    };
+    if (mL !== '' && mL !== null && mL !== undefined) entry.maleRemaining = Number(mL);
+    if (fL !== '' && fL !== null && fL !== undefined) entry.femaleRemaining = Number(fL);
+    await _statusRef.child(dateStr).set(entry);
     setCardState(dateStr, 'saved', '저장 완료 ✓');
     setTimeout(() => setCardState(dateStr, '', ''), 2000);
   } catch(e) {
-    if (attempt < 2) {
-      setCardState(dateStr, 'saving', `재시도 중... (${attempt + 1}/2)`);
-      await new Promise(r => setTimeout(r, 1500));
-      return saveToGAS(dateStr, data, attempt + 1);
-    }
-    statusMap[dateStr] = prev;
-    rerenderBtns(dateStr);
     setCardState(dateStr, 'err', '저장 실패 ✕');
     setTimeout(() => setCardState(dateStr, '', ''), 2500);
   }
@@ -267,10 +249,8 @@ function toDateStr(d) {
 
 function getPartyDates(n) {
   const result = [];
-  // 8/15(토) 단독
   const aug15 = new Date('2026-08-15T00:00:00');
   result.push({ dateStr: '2026-08-15', d: aug15, dow: 6 });
-  // 8/21(금)부터 매주 금·토
   const fri = new Date('2026-08-21T00:00:00');
   while (result.length < n) {
     const sat = new Date(fri); sat.setDate(sat.getDate() + 1);

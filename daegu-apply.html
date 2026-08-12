@@ -16,6 +16,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -581,19 +583,19 @@ try {
   if (_cached) { dateStatusMap = JSON.parse(_cached); applyGenderBtnStatus(); }
 } catch(e) {}
 
-// GAS 최신 상태로 업데이트
-const _statusReady = (async function(){
-  if (!DAEGU_CONFIG.DAEGU_GAS_URL) return;
-  try {
-    const res = await fetch(DAEGU_CONFIG.DAEGU_GAS_URL + '?action=getDateStatus&_t=' + Date.now());
-    const json = await res.json();
-    if (json.result === 'success') {
-      dateStatusMap = json.data || {};
-      localStorage.setItem('daegu_dateStatus', JSON.stringify(dateStatusMap));
-      applyGenderBtnStatus();
-    }
-  } catch(e) {}
-})();
+// Firebase 최신 상태로 업데이트
+firebase.initializeApp({
+  apiKey: 'AIzaSyBkh-AIqWcLOdUU4uhy9dfbwwPJ_vSgb0',
+  authDomain: 'sumit-admin.firebaseapp.com',
+  databaseURL: 'https://sumit-admin-default-rtdb.asia-southeast1.firebasedatabase.app',
+  projectId: 'sumit-admin',
+  appId: '1:226522660804:web:53212e3dbf6e88a498ae91'
+});
+const _statusReady = firebase.database().ref('/daegu/dateStatus').once('value').then(function(snap) {
+  dateStatusMap = snap.val() || {};
+  localStorage.setItem('daegu_dateStatus', JSON.stringify(dateStatusMap));
+  applyGenderBtnStatus();
+}).catch(function(){});
 
 /* 스텝 이동 */
 function goStep(n) {

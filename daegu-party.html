@@ -16,6 +16,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <script>
 !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
 n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
@@ -340,23 +342,23 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 </div>
 
 <script>
-var DAEGU_GAS_URL = 'https://script.google.com/macros/s/AKfycbxnJhftdjyEro7uKUNTfsAKp7U1g7knABAQBeebu5mfIIkonjXcTlgRK8qUanuOZ4prxw/exec';
 var OPEN_DATE = '2026-07-11';
 
 var _statusMap = {};
-var _statusReady = (function(){
-  if (!DAEGU_GAS_URL) return Promise.resolve();
-  var req = fetch(DAEGU_GAS_URL + '?action=getDateStatus&_t=' + Date.now()).then(function(r){ return r.json(); });
-  var timeout = new Promise(function(_,rej){ setTimeout(rej, 5000); });
-  return Promise.race([req, timeout])
-    .then(function(json){
-      if (json.result==='success') _statusMap = json.data||{};
-    })
-    .catch(function(){
-      var cached = localStorage.getItem('daegu_dateStatus');
-      if (cached) try { _statusMap = JSON.parse(cached); } catch(e) {}
-    });
-})();
+firebase.initializeApp({
+  apiKey: 'AIzaSyBkh-AIqWcLOdUU4uhy9dfbwwPJ_vSgb0',
+  authDomain: 'sumit-admin.firebaseapp.com',
+  databaseURL: 'https://sumit-admin-default-rtdb.asia-southeast1.firebasedatabase.app',
+  projectId: 'sumit-admin',
+  appId: '1:226522660804:web:53212e3dbf6e88a498ae91'
+});
+var _statusReady = firebase.database().ref('/daegu/dateStatus').once('value').then(function(snap){
+  _statusMap = snap.val() || {};
+  localStorage.setItem('daegu_dateStatus', JSON.stringify(_statusMap));
+}).catch(function(){
+  var cached = localStorage.getItem('daegu_dateStatus');
+  if (cached) try { _statusMap = JSON.parse(cached); } catch(e) {}
+});
 
 _statusReady.then(function() {
   var date = new URLSearchParams(window.location.search).get('date') || '';
