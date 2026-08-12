@@ -195,7 +195,7 @@ body{background:var(--black);color:#fff;font-family:var(--font-body);min-height:
   position:relative;-webkit-tap-highlight-color:transparent;
 }
 .date-card:not(.is-closed):hover{border-color:#333;background:#181818}
-.date-card.selected{background:#162238;border-color:#2d5fa0}
+.date-card.selected{background:#0d1d36;border-color:#3d72c4;box-shadow:0 0 0 1px rgba(61,114,196,0.25)}
 .date-card.is-closed{opacity:0.3;pointer-events:none}
 .dc-day{font-size:0.65rem;color:rgba(255,255,255,0.4);margin-bottom:4px;font-weight:500}
 .dc-date{font-size:1.05rem;font-weight:700;color:#fff}
@@ -243,7 +243,7 @@ body{background:var(--black);color:#fff;font-family:var(--font-body);min-height:
 
 <!-- TRUST STRIP -->
 <div class="trust-strip">
-  <span class="trust-item">👫 남20 · 여20 <em>완벽 1:1</em></span>
+  <span class="trust-item">👫 남 <em>25~30명</em> · 여 <em>25~30명</em></span>
   <span class="trust-item">⭐ 만족도 <em>92%</em></span>
   <span class="trust-item">"혼자 와도 어색함 없어요" — 실제 참가자</span>
 </div>
@@ -363,6 +363,8 @@ function renderGroups(status) {
         '<div class="dc-date">'+dateShort+'</div>'+
         badgeHtml+
         '<div class="dc-check">✓</div>';
+      var _b = card.querySelector('.dc-badge');
+      if (_b) { card.dataset.savedBadgeInner = _b.innerHTML; card.dataset.savedBadgeStyle = _b.getAttribute('style')||''; }
 
       if (!allClosed) {
         (function(k, party){ card.onclick = function(){ selectDate(k, party, status); }; })(key, p);
@@ -393,7 +395,18 @@ function renderGroups(status) {
 function selectDate(key, party, status) {
   _selectedKey = key;
   document.querySelectorAll('.date-card').forEach(function(c) {
-    c.classList.toggle('selected', c.dataset.key === key);
+    var isSel = c.dataset.key === key;
+    c.classList.toggle('selected', isSel);
+    var badge = c.querySelector('.dc-badge');
+    if (badge) {
+      if (isSel) {
+        badge.innerHTML = '✓ 선택';
+        badge.style.cssText = 'color:#7eb5ff;font-weight:700';
+      } else {
+        badge.innerHTML = c.dataset.savedBadgeInner || '';
+        badge.style.cssText = c.dataset.savedBadgeStyle || '';
+      }
+    }
   });
   window._venuePartyDate = key;
 
