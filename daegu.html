@@ -231,7 +231,9 @@ canvas#starCanvas{position:absolute;inset:0;z-index:2;pointer-events:none}
 .sc-info-label{font-size:0.55rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:0.6rem}
 .sc-info-val{font-family:var(--font-display);font-size:clamp(1.4rem,3vw,2rem);font-weight:300;color:var(--white);line-height:1.2}
 .sc-tl-title{font-size:0.58rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:2rem}
-.sc-tl-list{display:flex;flex-direction:column;gap:0;border-top:1px solid rgba(255,255,255,0.06);max-width:420px}
+.sc-tl-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem}
+.sc-tl-col-label{font-size:0.58rem;letter-spacing:0.25em;text-transform:uppercase;color:rgba(255,255,255,0.35);font-weight:600;margin-bottom:1rem}
+.sc-tl-list{display:flex;flex-direction:column;gap:0;border-top:1px solid rgba(255,255,255,0.06)}
 .sc-tl-row{display:flex;align-items:center;gap:1.5rem;padding:1.1rem 0;border-bottom:1px solid rgba(255,255,255,0.06)}
 .sc-tl-time{font-size:0.9rem;font-weight:600;color:var(--gold);min-width:52px;letter-spacing:0.02em}
 .sc-tl-desc{font-size:0.75rem;color:rgba(255,255,255,0.5);line-height:1.5;font-weight:300}
@@ -316,6 +318,7 @@ footer{background:var(--dark);border-top:1px solid rgba(255,255,255,0.05);paddin
   .footer-bottom{flex-direction:column;align-items:flex-start}
   footer{padding:3rem 1.5rem 2rem}
   .sc-info-grid{grid-template-columns:1fr}
+  .sc-tl-grid{grid-template-columns:1fr}
   .pricing-wrap{padding:1.8rem 1.2rem 1.5rem}
   .highlight-strip{padding:2rem 0}
   .highlight-item{padding:1.5rem 1rem}
@@ -602,15 +605,29 @@ window._dgStatusPromise = fetch('https://script.google.com/macros/s/AKfycbxnJhft
       </div>
       <div class="sc-info-col">
         <div class="sc-info-label">파티 시간</div>
-        <div class="sc-info-val" style="font-size:clamp(1rem,2vw,1.4rem)">금 20:00 / 토 19:00 – 23:30</div>
+        <div class="sc-info-val" style="font-size:clamp(0.9rem,1.8vw,1.3rem)">금 20:00~23:30 / 토 19:00~23:30</div>
       </div>
     </div>
     <p class="sc-tl-title">Party Timeline</p>
-    <div class="sc-tl-list">
-      <div class="sc-tl-row"><span class="sc-tl-time" id="tl-time-1">19:00</span><span class="sc-tl-desc">입장 · 오리엔테이션</span></div>
-      <div class="sc-tl-row"><span class="sc-tl-time" id="tl-time-2">19:30</span><span class="sc-tl-desc">1부 로테이션 소개팅 파티 시작</span></div>
-      <div class="sc-tl-row"><span class="sc-tl-time">21:00</span><span class="sc-tl-desc">2부 파티 컨텐츠 시작</span></div>
-      <div class="sc-tl-row"><span class="sc-tl-time">23:30</span><span class="sc-tl-desc">파티 종료</span></div>
+    <div class="sc-tl-grid">
+      <div>
+        <div class="sc-tl-col-label">금요일</div>
+        <div class="sc-tl-list">
+          <div class="sc-tl-row"><span class="sc-tl-time">20:00</span><span class="sc-tl-desc">입장 · 오리엔테이션</span></div>
+          <div class="sc-tl-row"><span class="sc-tl-time">20:30</span><span class="sc-tl-desc">1부 로테이션 소개팅 파티 시작</span></div>
+          <div class="sc-tl-row"><span class="sc-tl-time">21:00</span><span class="sc-tl-desc">2부 파티 컨텐츠 시작</span></div>
+          <div class="sc-tl-row"><span class="sc-tl-time">23:30</span><span class="sc-tl-desc">파티 종료</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="sc-tl-col-label">토요일</div>
+        <div class="sc-tl-list">
+          <div class="sc-tl-row"><span class="sc-tl-time">19:00</span><span class="sc-tl-desc">입장 · 오리엔테이션</span></div>
+          <div class="sc-tl-row"><span class="sc-tl-time">19:30</span><span class="sc-tl-desc">1부 로테이션 소개팅 파티 시작</span></div>
+          <div class="sc-tl-row"><span class="sc-tl-time">21:00</span><span class="sc-tl-desc">2부 파티 컨텐츠 시작</span></div>
+          <div class="sc-tl-row"><span class="sc-tl-time">23:30</span><span class="sc-tl-desc">파티 종료</span></div>
+        </div>
+      </div>
     </div>
   </div>
 </section>

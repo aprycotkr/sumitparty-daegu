@@ -298,8 +298,8 @@ fbq("track","PageView");
   <div class="field">
     <label>성별 <span class="req">*</span></label>
     <div class="gender-grid">
-      <button class="gender-btn" onclick="selGender(this,'남성')">남성</button>
-      <button class="gender-btn" onclick="selGender(this,'여성')">여성</button>
+      <button class="gender-btn" data-gender="남성" onclick="selGender(this,'남성')">남성</button>
+      <button class="gender-btn" data-gender="여성" onclick="selGender(this,'여성')">여성</button>
     </div>
     <div class="err" id="genderErr"></div>
   </div>
@@ -559,20 +559,12 @@ const terms = [false, false, false];
 
 /* 날짜 상태 */
 let dateStatusMap = {};
-const _statusReady = (async function(){
-  if (!DAEGU_CONFIG.DAEGU_GAS_URL) return;
-  try {
-    const res = await fetch(DAEGU_CONFIG.DAEGU_GAS_URL + '?action=getDateStatus&_t=' + Date.now());
-    const json = await res.json();
-    if (json.result === 'success') dateStatusMap = json.data || {};
-  } catch(e) {}
-})();
 
-_statusReady.then(function() {
+function applyGenderBtnStatus() {
   if (!fd.date) return;
   var st = dateStatusMap[fd.date] || {};
   document.querySelectorAll('.gender-btn').forEach(function(btn) {
-    var isMale = btn.textContent.trim() === '남성';
+    var isMale = btn.dataset.gender === '남성';
     var gKey = isMale ? 'male' : 'female';
     if (st[gKey] === 'closed') {
       btn.disabled = true;
@@ -581,7 +573,27 @@ _statusReady.then(function() {
       btn.textContent = (isMale ? '남성' : '여성') + ' (마감)';
     }
   });
-});
+}
+
+// 로컬캐시 즉시 적용 (같은 기기면 booking/admin 캐시 활용)
+try {
+  var _cached = localStorage.getItem('daegu_dateStatus');
+  if (_cached) { dateStatusMap = JSON.parse(_cached); applyGenderBtnStatus(); }
+} catch(e) {}
+
+// GAS 최신 상태로 업데이트
+const _statusReady = (async function(){
+  if (!DAEGU_CONFIG.DAEGU_GAS_URL) return;
+  try {
+    const res = await fetch(DAEGU_CONFIG.DAEGU_GAS_URL + '?action=getDateStatus&_t=' + Date.now());
+    const json = await res.json();
+    if (json.result === 'success') {
+      dateStatusMap = json.data || {};
+      localStorage.setItem('daegu_dateStatus', JSON.stringify(dateStatusMap));
+      applyGenderBtnStatus();
+    }
+  } catch(e) {}
+})();
 
 /* 스텝 이동 */
 function goStep(n) {
@@ -623,10 +635,14 @@ async function step2Next() {
   document.getElementById('nameErr').textContent = '';
   if (!fd.gender) { document.getElementById('genderErr').textContent = '성별을 선택해주세요.'; return; }
 
-  // 마감 재확인
+  // 마감 재확인 — 항상 fresh 조회
   const btn = document.getElementById('step2Btn');
   btn.disabled = true; btn.textContent = '확인 중...';
-  await _statusReady;
+  try {
+    const _r = await fetch(DAEGU_CONFIG.DAEGU_GAS_URL + '?action=getDateStatus&_t=' + Date.now());
+    const _j = await _r.json();
+    if (_j.result === 'success') { dateStatusMap = _j.data || {}; applyGenderBtnStatus(); }
+  } catch(e) {}
   btn.textContent = '다음으로'; btn.disabled = false;
 
   const st = dateStatusMap[fd.date] || {};
