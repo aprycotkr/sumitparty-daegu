@@ -39,6 +39,7 @@ html,body{min-height:100vh;background:var(--black);color:var(--white);font-famil
 .dc-date-text{font-family:var(--font-display);font-size:1.05rem;font-weight:400}
 .dc-dow{display:inline-block;font-size:0.55rem;font-weight:700;letter-spacing:0.08em;padding:2px 7px;border-radius:3px;margin-left:5px;vertical-align:middle}
 .dc-dow.sat{background:rgba(201,169,110,0.15);color:var(--gold)}
+.dc-dow.fri{background:rgba(100,160,255,0.15);color:#7eb5ff}
 .dc-indicator{font-size:0.6rem;letter-spacing:0.05em;transition:color 0.2s;min-width:60px;text-align:right}
 .dc-indicator.saving{color:var(--gold)}
 .dc-indicator.saved{color:var(--green)}
@@ -85,7 +86,7 @@ html,body{min-height:100vh;background:var(--black);color:var(--white);font-famil
 <script>
 const DAEGU_GAS_URL = 'https://script.google.com/macros/s/AKfycbxnJhftdjyEro7uKUNTfsAKp7U1g7knABAQBeebu5mfIIkonjXcTlgRK8qUanuOZ4prxw/exec';
 const ADMIN_KEY = '';
-const PARTY_DAYS = [6]; // 토요일
+const PARTY_DAYS = [5, 6]; // 금요일, 토요일
 let statusMap = {};
 
 async function loadDashboard() {
@@ -122,7 +123,7 @@ function renderList() {
   <div class="dc-top">
     <div>
       <span class="dc-date-text">${m}월 ${d.getDate()}일</span>
-      <span class="dc-dow sat">토</span>
+      <span class="dc-dow ${d.getDay() === 5 ? 'fri' : 'sat'}">${d.getDay() === 5 ? '금' : '토'}</span>
     </div>
     <span class="dc-indicator" id="ind-${dateStr}"></span>
   </div>
