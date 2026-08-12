@@ -192,7 +192,7 @@ async function onSeatChange(dateStr) {
   await saveToGAS(dateStr, updated);
 }
 
-async function saveToGAS(dateStr, data) {
+async function saveToGAS(dateStr, data, attempt = 0) {
   const prev = { ...data };
   try {
     const mL = data.maleLeft   ?? '';
@@ -204,8 +204,12 @@ async function saveToGAS(dateStr, data) {
       + `&maleLeft=${encodeURIComponent(mL)}`
       + `&femaleLeft=${encodeURIComponent(fL)}`
       + `&key=${encodeURIComponent(ADMIN_KEY)}`;
-    const res  = await fetch(url);
-    const json = await res.json();
+    const controller = new AbortController();
+    const tid = setTimeout(() => controller.abort(), 9000);
+    const res = await fetch(url, { signal: controller.signal });
+    clearTimeout(tid);
+    const text = await res.text();
+    const json = JSON.parse(text);
     if (json.result !== 'success') throw new Error();
     // 방문자 캐시를 삭제 대신 최신값으로 즉시 업데이트 (booking 페이지 딜레이 방지)
     try {
@@ -220,7 +224,12 @@ async function saveToGAS(dateStr, data) {
     } catch(e) {}
     setCardState(dateStr, 'saved', '저장 완료 ✓');
     setTimeout(() => setCardState(dateStr, '', ''), 2000);
-  } catch {
+  } catch(e) {
+    if (attempt < 2) {
+      setCardState(dateStr, 'saving', `재시도 중... (${attempt + 1}/2)`);
+      await new Promise(r => setTimeout(r, 1500));
+      return saveToGAS(dateStr, data, attempt + 1);
+    }
     statusMap[dateStr] = prev;
     rerenderBtns(dateStr);
     setCardState(dateStr, 'err', '저장 실패 ✕');
