@@ -516,7 +516,7 @@ window._fbStatusRef = firebase.database().ref('/daegu/dateStatus');
       if (!allClosed) {
         row.href = 'daegu-party.html?date=' + key;
         row.addEventListener('click', function() {
-          if (typeof fbq !== 'undefined') fbq('track', 'Lead', {content_name: '썸잇 대구', content_category: 'daegu'});
+          if (typeof fbq !== 'undefined') fbq('track', 'InitiateCheckout', {content_name: '썸잇 대구', content_category: 'daegu'});
         });
       }
       row.innerHTML =
