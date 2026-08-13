@@ -813,6 +813,15 @@ async function submitForm() {
   }, 300);
 
   const submitPrice = getEffectivePrice(fd.gender);
+  const _timeout = ms => new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), ms));
+  let clientIp = '';
+  try {
+    const ipJson = await Promise.race([
+      fetch('https://api.ipify.org?format=json').then(r => r.json()),
+      _timeout(2000)
+    ]);
+    clientIp = ipJson.ip || '';
+  } catch(e) {}
   const payload = {
     action: 'submitApplication',
     branch: 'daegu',
@@ -829,6 +838,7 @@ async function submitForm() {
     fbp: getCookie('_fbp'),
     fbc: getCookie('_fbc'),
     userAgent: navigator.userAgent,
+    clientIp: clientIp,
   };
 
   let submitOk = true;
