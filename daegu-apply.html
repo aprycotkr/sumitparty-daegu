@@ -620,7 +620,6 @@ function step1Next() {
   document.getElementById('selectedDateDisplay').textContent =
     fd.date ? fd.dateLabel + ' · 19:00–23:00' : '날짜를 선택해주세요';
 
-  fbq('track', 'InitiateCheckout');
   goStep(2);
 }
 
