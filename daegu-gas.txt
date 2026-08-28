@@ -374,7 +374,7 @@ function sendApprovalSMS(sheet, row) {
   const dow     = ['일','월','화','수','목','금','토'][dateObj.getDay()];
   const dateStr = (dateObj.getMonth()+1) + '/' + dateObj.getDate() + '(' + dow + ')';
 
-  sendSms(phone, buildPassMsg(name, gender, dateStr, price, dateObj.getDay()));
+  sendSms(phone, buildPassMsg(name, gender, dateStr, price, dateObj.getDay(), toDateKey(rawDate)));
   sheet.getRange(row, COL.STATUS + 1).setValue('합격✓발송');
 
   // 합격 = 입금 확인 완료 → Purchase CAPI 전송
@@ -482,10 +482,12 @@ function buildApplyMsg(name, dateStr, priceText) {
 }
 
 // 합격 시 발송 — 장소/시간 안내
-function buildPassMsg(name, gender, dateStr, price, dayOfWeek) {
+function buildPassMsg(name, gender, dateStr, price, dayOfWeek, dateKey) {
   var isFri = dayOfWeek === 5;
-  var startTime = isFri ? '오후 8시' : '오후 7시';
-  var entryTime = isFri ? '19:50' : '18:50';
+  var isChuseok = dateKey === '2026-09-24';
+  var isLateStart = isFri || isChuseok;
+  var startTime = isLateStart ? '오후 8시' : '오후 7시';
+  var entryTime = isLateStart ? '19:50' : '18:50';
   return (
     '[썸잇 파티 참가 확정 안내]\n\n' +
     '[썸잇 대구점 ' + dateStr + '] 참가가 확정되었습니다 🎉\n' +
