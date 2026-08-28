@@ -457,10 +457,26 @@ window._fbStatusRef = firebase.database().ref('/daegu/dateStatus');
   function getPartyDates(n) {
     var results = [];
     var now = new Date();
-    var aug15 = new Date('2026-08-15T00:00:00');
-    var aug15Cutoff = new Date('2026-08-15T19:00:00');
-    if (now < aug15Cutoff) results.push({ date: aug15, dayType: 'sat' });
-    var fri = new Date('2026-08-21T00:00:00');
+    var explicit = [
+      { date: new Date('2026-08-15T00:00:00'), cutoff: new Date('2026-08-15T19:00:00'), dayType: 'sat' },
+      { date: new Date('2026-08-21T00:00:00'), cutoff: new Date('2026-08-21T20:00:00'), dayType: 'fri' },
+      { date: new Date('2026-08-22T00:00:00'), cutoff: new Date('2026-08-22T19:00:00'), dayType: 'sat' },
+      { date: new Date('2026-08-28T00:00:00'), cutoff: new Date('2026-08-28T20:00:00'), dayType: 'fri' },
+      { date: new Date('2026-08-29T00:00:00'), cutoff: new Date('2026-08-29T19:00:00'), dayType: 'sat' },
+      { date: new Date('2026-09-04T00:00:00'), cutoff: new Date('2026-09-04T20:00:00'), dayType: 'fri' },
+      { date: new Date('2026-09-05T00:00:00'), cutoff: new Date('2026-09-05T19:00:00'), dayType: 'sat' },
+      { date: new Date('2026-09-11T00:00:00'), cutoff: new Date('2026-09-11T20:00:00'), dayType: 'fri' },
+      { date: new Date('2026-09-12T00:00:00'), cutoff: new Date('2026-09-12T19:00:00'), dayType: 'sat' },
+      { date: new Date('2026-09-18T00:00:00'), cutoff: new Date('2026-09-18T20:00:00'), dayType: 'fri' },
+      { date: new Date('2026-09-19T00:00:00'), cutoff: new Date('2026-09-19T19:00:00'), dayType: 'sat' },
+      { date: new Date('2026-09-24T00:00:00'), cutoff: new Date('2026-09-24T20:00:00'), dayType: 'special' },
+      { date: new Date('2026-09-25T00:00:00'), cutoff: new Date('2026-09-25T20:00:00'), dayType: 'fri' },
+      { date: new Date('2026-09-26T00:00:00'), cutoff: new Date('2026-09-26T19:00:00'), dayType: 'sat' },
+    ];
+    explicit.forEach(function(e) {
+      if (results.length < n && now < e.cutoff) results.push({ date: e.date, dayType: e.dayType });
+    });
+    var fri = new Date('2026-10-02T00:00:00');
     while (results.length < n) {
       var sat = new Date(fri); sat.setDate(sat.getDate() + 1);
       var friCutoff = new Date(fri); friCutoff.setHours(20,0,0,0);
@@ -476,11 +492,13 @@ window._fbStatusRef = firebase.database().ref('/daegu/dateStatus');
     return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
   }
   function toLabel(d, dayType) {
-    var wd = dayType === 'fri' ? '금' : '토';
+    var wd = dayType === 'fri' ? '금' : dayType === 'special' ? '목' : '토';
     return (d.getMonth()+1) + '월 ' + d.getDate() + '일 (' + wd + ')';
   }
   function toTime(dayType) {
-    return dayType === 'fri' ? '금요일 · 20:00 ~ 23:30' : '토요일 · 19:00 ~ 23:30';
+    if (dayType === 'sat') return '토요일 · 19:00 ~ 23:30';
+    if (dayType === 'special') return '목요일 · 20:00 ~ 23:30';
+    return '금요일 · 20:00 ~ 23:30';
   }
 
   function renderDates(statusData) {
@@ -773,10 +791,27 @@ window._fbStatusRef = firebase.database().ref('/daegu/dateStatus');
 (function(){
   var now = new Date();
   var nextParty = null, nextDayType = 'sat';
-  var aug15 = new Date('2026-08-15T00:00:00');
-  if (now < new Date('2026-08-15T19:00:00')) { nextParty = aug15; nextDayType = 'sat'; }
-  else {
-    var fri = new Date('2026-08-21T00:00:00');
+  var heroExplicit = [
+    { date: new Date('2026-08-15T00:00:00'), cutoff: new Date('2026-08-15T19:00:00'), dayType: 'sat' },
+    { date: new Date('2026-08-21T00:00:00'), cutoff: new Date('2026-08-21T20:00:00'), dayType: 'fri' },
+    { date: new Date('2026-08-22T00:00:00'), cutoff: new Date('2026-08-22T19:00:00'), dayType: 'sat' },
+    { date: new Date('2026-08-28T00:00:00'), cutoff: new Date('2026-08-28T20:00:00'), dayType: 'fri' },
+    { date: new Date('2026-08-29T00:00:00'), cutoff: new Date('2026-08-29T19:00:00'), dayType: 'sat' },
+    { date: new Date('2026-09-04T00:00:00'), cutoff: new Date('2026-09-04T20:00:00'), dayType: 'fri' },
+    { date: new Date('2026-09-05T00:00:00'), cutoff: new Date('2026-09-05T19:00:00'), dayType: 'sat' },
+    { date: new Date('2026-09-11T00:00:00'), cutoff: new Date('2026-09-11T20:00:00'), dayType: 'fri' },
+    { date: new Date('2026-09-12T00:00:00'), cutoff: new Date('2026-09-12T19:00:00'), dayType: 'sat' },
+    { date: new Date('2026-09-18T00:00:00'), cutoff: new Date('2026-09-18T20:00:00'), dayType: 'fri' },
+    { date: new Date('2026-09-19T00:00:00'), cutoff: new Date('2026-09-19T19:00:00'), dayType: 'sat' },
+    { date: new Date('2026-09-24T00:00:00'), cutoff: new Date('2026-09-24T20:00:00'), dayType: 'special' },
+    { date: new Date('2026-09-25T00:00:00'), cutoff: new Date('2026-09-25T20:00:00'), dayType: 'fri' },
+    { date: new Date('2026-09-26T00:00:00'), cutoff: new Date('2026-09-26T19:00:00'), dayType: 'sat' },
+  ];
+  for (var hi = 0; hi < heroExplicit.length; hi++) {
+    if (now < heroExplicit[hi].cutoff) { nextParty = heroExplicit[hi].date; nextDayType = heroExplicit[hi].dayType; break; }
+  }
+  if (!nextParty) {
+    var fri = new Date('2026-10-02T00:00:00');
     while (!nextParty) {
       var sat = new Date(fri); sat.setDate(sat.getDate() + 1);
       var friCutoff = new Date(fri); friCutoff.setHours(20,0,0,0);
@@ -788,16 +823,16 @@ window._fbStatusRef = firebase.database().ref('/daegu/dateStatus');
   }
   function toKeyStr(dt) { return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0'); }
   var m = nextParty.getMonth()+1, dt2 = nextParty.getDate();
-  var wd = nextDayType === 'fri' ? '금' : '토';
+  var wd = nextDayType === 'fri' ? '금' : nextDayType === 'special' ? '목' : '토';
   window._nextPartyKey = toKeyStr(nextParty);
   window._nextPartyDate = new Date(nextParty);
   var pill = document.getElementById('hero-date-pill');
   if (pill) pill.textContent = '📅 '+m+'월 '+dt2+'일 ('+wd+') · 대구점';
-  var _startH = nextDayType === 'fri' ? '20' : '19';
+  var _startH = nextDayType === 'sat' ? '19' : '20';
   var _tl1 = document.getElementById('tl-time-1'); if (_tl1) _tl1.textContent = _startH+':00';
   var _tl2 = document.getElementById('tl-time-2'); if (_tl2) _tl2.textContent = _startH+':30';
   // JSON-LD 날짜 동적 업데이트
-  var startTime = nextDayType === 'fri' ? 'T20:00:00+09:00' : 'T19:00:00+09:00';
+  var startTime = nextDayType === 'sat' ? 'T19:00:00+09:00' : 'T20:00:00+09:00';
   var ld = document.querySelector('script[type="application/ld+json"]');
   if (ld && window._nextPartyKey) {
     try {

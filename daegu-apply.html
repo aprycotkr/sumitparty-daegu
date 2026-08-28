@@ -506,9 +506,12 @@ const DAEGU_CONFIG = {
   DAEGU_GAS_URL: 'https://script.google.com/macros/s/AKfycbxnJhftdjyEro7uKUNTfsAKp7U1g7knABAQBeebu5mfIIkonjXcTlgRK8qUanuOZ4prxw/exec',
   OPEN_DATE: '2026-07-11',        // OPEN 할인 적용 날짜
   EARLYBIRD_DAYS: 7,              // 파티 N일 전까지 얼리버드
-  PRICES:           { '남성': 59900, '여성': 49900 },
-  OPEN_PRICES:      { '남성': 49900, '여성': 39900 },
-  EARLYBIRD_PRICES: { '남성': 54900, '여성': 44900 }
+  PRICES:                   { '남성': 61000, '여성': 45000 },
+  OPEN_PRICES:              { '남성': 49900, '여성': 39900 },
+  EARLYBIRD_PRICES:         { '남성': 56000, '여성': 40000 },
+  CHUSEOK_DATE:             '2026-09-24',
+  CHUSEOK_PRICES:           { '남성': 55000, '여성': 40000 },
+  CHUSEOK_EARLYBIRD_PRICES: { '남성': 50000, '여성': 35000 }
 };
 
 function isEarlybirdDate(dateKey) {
@@ -523,9 +526,14 @@ function isEarlybirdDate(dateKey) {
 
 function getEffectivePrice(gender) {
   var date = fd && fd.date;
-  var map = date === DAEGU_CONFIG.OPEN_DATE ? DAEGU_CONFIG.OPEN_PRICES
-          : isEarlybirdDate(date)           ? DAEGU_CONFIG.EARLYBIRD_PRICES
-          : DAEGU_CONFIG.PRICES;
+  var map;
+  if (date === DAEGU_CONFIG.OPEN_DATE) {
+    map = DAEGU_CONFIG.OPEN_PRICES;
+  } else if (date === DAEGU_CONFIG.CHUSEOK_DATE) {
+    map = isEarlybirdDate(date) ? DAEGU_CONFIG.CHUSEOK_EARLYBIRD_PRICES : DAEGU_CONFIG.CHUSEOK_PRICES;
+  } else {
+    map = isEarlybirdDate(date) ? DAEGU_CONFIG.EARLYBIRD_PRICES : DAEGU_CONFIG.PRICES;
+  }
   return map[gender] || 0;
 }
 function getEffectivePriceDisplay(gender) {

@@ -273,20 +273,20 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
           <div class="eb-price-grid">
             <div class="eb-price-cell">
               <div class="ep-label">남성</div>
-              <div class="ep-original">59,900원</div>
-              <div class="ep-discounted">54,900원</div>
+              <div class="ep-original">61,000원</div>
+              <div class="ep-discounted">56,000원</div>
             </div>
             <div class="eb-price-cell">
               <div class="ep-label">여성</div>
-              <div class="ep-original">49,900원</div>
-              <div class="ep-discounted">44,900원</div>
+              <div class="ep-original">45,000원</div>
+              <div class="ep-discounted">40,000원</div>
             </div>
           </div>
         </div>
         <div class="price-section-label">권종 참가비</div>
         <div class="price-row highlight">
           <span>1+2부 <span class="inki-badge">추천</span></span>
-          <span class="val" id="leftPriceMain">남 59,900원 / 여 49,900원</span>
+          <span class="val" id="leftPriceMain">남 61,000원 / 여 45,000원</span>
         </div>
         <div class="info-divider"></div>
         <div class="info-row"><span>참가 연령</span><span class="iv">90~07년생 (남녀 동일)</span></div>
@@ -310,7 +310,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
       </div>
       <div class="card-price-row hl">
         <span>1+2부 <span class="inki-badge">추천</span></span>
-        <strong id="rightPriceMain">남 59,900 / 여 49,900원</strong>
+        <strong id="rightPriceMain">남 61,000 / 여 45,000원</strong>
       </div>
       <div class="card-divider"></div>
       <div class="card-info-row"><span>참가 연령</span><span>90~07년생</span></div>
@@ -343,6 +343,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 
 <script>
 var OPEN_DATE = '2026-07-11';
+var CHUSEOK_DATE = '2026-09-24';
 
 var _statusMap = {};
 firebase.initializeApp({
@@ -392,12 +393,14 @@ _statusReady.then(function() {
   }
 
   if (dateText) {
-    var timeStr = d.getDay() === 5 ? '20:00–23:30' : '19:00–23:30';
+    var isChuseok = dateParam === CHUSEOK_DATE;
+    var timeStr = (d.getDay() === 5 || isChuseok) ? '20:00–23:30' : '19:00–23:30';
+    var timeDisplay = isChuseok ? '19:50 입장 · 20:00–23:30' : timeStr;
     document.getElementById('mainTitle').innerHTML = '썸잇 솔로파티<br>'+dateText+'<br>대구점';
     document.getElementById('metaDate').innerHTML = '📅 '+dateText;
-    document.getElementById('metaTime').innerHTML = '🕒 '+timeStr;
+    document.getElementById('metaTime').innerHTML = '🕒 '+timeDisplay;
     document.getElementById('floatingTitle').textContent = '썸잇 솔로파티 '+dateText+' — 대구점';
-    document.getElementById('floatingSub').textContent = dateText+' · '+timeStr;
+    document.getElementById('floatingSub').textContent = dateText+' · '+timeDisplay;
   }
 
   // OPEN 할인 (7월 11일)
@@ -407,11 +410,39 @@ _statusReady.then(function() {
     var el = document.getElementById('leftPriceMain');
     el.style.cssText = 'display:flex;flex-direction:column;align-items:flex-end;gap:2px';
     el.innerHTML =
-      '<span style="text-decoration:line-through;opacity:0.45;font-size:0.65rem;white-space:nowrap">59,900원/49,900원</span>' +
+      '<span style="text-decoration:line-through;opacity:0.45;font-size:0.65rem;white-space:nowrap">61,000원/45,000원</span>' +
       '<span style="white-space:nowrap">남 49,900원 / 여 39,900원</span>';
     document.getElementById('rightPriceMain').innerHTML =
-      '<span class="price-original" style="font-size:0.65rem;text-decoration:line-through;opacity:0.5">59,900/49,900원</span><br>남 49,900 / 여 39,900원';
+      '<span class="price-original" style="font-size:0.65rem;text-decoration:line-through;opacity:0.5">61,000/45,000원</span><br>남 49,900 / 여 39,900원';
     document.getElementById('cardTopStatus').textContent = '✦ OPEN 할인 적용 중';
+
+  // 추석 스페셜 (9월 24일)
+  } else if (dateParam === CHUSEOK_DATE) {
+    var cPartyDate = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
+    var cToday = new Date(); cToday.setHours(0,0,0,0);
+    var ebDaysLeftC = Math.ceil((cPartyDate - cToday) / (1000*60*60*24)) - 7;
+    var cEl = document.getElementById('leftPriceMain');
+    cEl.style.cssText = 'display:flex;flex-direction:column;align-items:flex-end;gap:2px';
+    if (ebDaysLeftC > 0) {
+      document.getElementById('earlybirdBannerLeft').style.display = '';
+      document.getElementById('earlybirdBannerRight').style.display = '';
+      document.getElementById('earlybirdCountdown').textContent = '얼리버드 마감까지 ' + ebDaysLeftC + '일 남았습니다.';
+      var epOrigs = document.querySelectorAll('.ep-original');
+      var epDiscs = document.querySelectorAll('.ep-discounted');
+      if (epOrigs[0]) epOrigs[0].textContent = '55,000원';
+      if (epOrigs[1]) epOrigs[1].textContent = '40,000원';
+      if (epDiscs[0]) epDiscs[0].textContent = '50,000원';
+      if (epDiscs[1]) epDiscs[1].textContent = '35,000원';
+      cEl.innerHTML =
+        '<span style="text-decoration:line-through;opacity:0.45;font-size:0.65rem;white-space:nowrap">55,000원/40,000원</span>' +
+        '<span style="white-space:nowrap">남 50,000원 / 여 35,000원</span>';
+      document.getElementById('rightPriceMain').innerHTML =
+        '<span style="font-size:0.65rem;text-decoration:line-through;opacity:0.5">55,000/40,000원</span><br>남 50,000 / 여 35,000원';
+      document.getElementById('cardTopStatus').textContent = '🏷️ 얼리버드 할인 적용 중';
+    } else {
+      cEl.innerHTML = '<span style="white-space:nowrap">남 55,000원 / 여 40,000원</span>';
+      document.getElementById('rightPriceMain').innerHTML = '남 55,000 / 여 40,000원';
+    }
 
   // 얼리버드 할인 (OPEN 날짜 제외, 파티 7일 이전 신청 시)
   } else if (dateParam && parts.length === 3) {
@@ -426,10 +457,10 @@ _statusReady.then(function() {
       var el2 = document.getElementById('leftPriceMain');
       el2.style.cssText = 'display:flex;flex-direction:column;align-items:flex-end;gap:2px';
       el2.innerHTML =
-        '<span style="text-decoration:line-through;opacity:0.45;font-size:0.65rem;white-space:nowrap">59,900원/49,900원</span>' +
-        '<span style="white-space:nowrap">남 54,900원 / 여 44,900원</span>';
+        '<span style="text-decoration:line-through;opacity:0.45;font-size:0.65rem;white-space:nowrap">61,000원/45,000원</span>' +
+        '<span style="white-space:nowrap">남 56,000원 / 여 40,000원</span>';
       document.getElementById('rightPriceMain').innerHTML =
-        '<span style="font-size:0.65rem;text-decoration:line-through;opacity:0.5">59,900/49,900원</span><br>남 54,900 / 여 44,900원';
+        '<span style="font-size:0.65rem;text-decoration:line-through;opacity:0.5">61,000/45,000원</span><br>남 56,000 / 여 40,000원';
       document.getElementById('cardTopStatus').textContent = '🏷️ 얼리버드 할인 적용 중';
     }
   }

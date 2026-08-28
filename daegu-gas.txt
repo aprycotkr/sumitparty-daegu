@@ -36,6 +36,10 @@ const COL = {
   PRICE:      8,  // I: 금액
   PHOTO_URL:  9,  // J: 사진URL
   STATUS:    10,  // K: 심사결과 (검토중/합격/불합격/리마인드)
+  FBP:       11,  // L: fbp
+  FBC:       12,  // M: fbc
+  UA:        13,  // N: userAgent
+  CLIENT_IP: 14,  // O: clientIp
 };
 
 // ── 스프레드시트 메뉴 ─────────────────────────────────────────
@@ -44,8 +48,15 @@ function onOpen() {
     .createMenu('썸잇 관리')
     .addItem('📢 입금 리마인드 일괄 발송', 'sendBulkReminder')
     .addSeparator()
+    .addItem('✅ 합격자 명단 업데이트 (기존 유지)', 'runUpdateRosterOnly')
     .addItem('🔄 합격자 명단 초기화 후 재생성', 'resetAndRebuildRoster')
     .addToUi();
+}
+
+// 시트1 유지하면서 합격자 명단 업데이트 (새 날짜 섹션 추가)
+function runUpdateRosterOnly() {
+  updateRosterSheet();
+  SpreadsheetApp.getUi().alert('명단 업데이트 완료!');
 }
 
 // 시트1 완전 초기화 후 합격자 명단 재생성
@@ -273,7 +284,7 @@ function submitApplication(payload) {
   let sheet = ss.getSheetByName(CONFIG.SHEET_NAME);
   if (!sheet) {
     sheet = ss.insertSheet(CONFIG.SHEET_NAME);
-    sheet.appendRow(['제출시간','파티날짜','이름','성별','생년월일','인스타그램','연락처','권종','금액','사진URL','심사결과']);
+    sheet.appendRow(['제출시간','파티날짜','이름','성별','생년월일','인스타그램','연락처','권종','금액','사진URL','심사결과','fbp','fbc','ua','clientIp']);
     sheet.setFrozenRows(1);
   }
 
@@ -289,7 +300,7 @@ function submitApplication(payload) {
   }
 
   const now = new Date();
-  const row = new Array(11).fill('');
+  const row = new Array(15).fill('');
   row[COL.TIMESTAMP]  = Utilities.formatDate(now, 'Asia/Seoul', 'yyyy-MM-dd HH:mm:ss');
   row[COL.DATE]       = payload.date || '';
   row[COL.NAME]       = payload.name || '';
@@ -301,6 +312,10 @@ function submitApplication(payload) {
   row[COL.PRICE]      = payload.price || '';
   row[COL.PHOTO_URL]  = payload.photoUrl || '';
   row[COL.STATUS]     = '검토중';
+  row[COL.FBP]        = payload.fbp       || '';
+  row[COL.FBC]        = payload.fbc       || '';
+  row[COL.UA]         = payload.userAgent || '';
+  row[COL.CLIENT_IP]  = payload.clientIp  || '';
 
   sheet.appendRow(row);
 
@@ -338,7 +353,7 @@ function onEdit(e) {
     if (newStatus === '합격')         { sendApprovalSMS(sheet, row); }
     else if (newStatus === '리마인드') { sendReminderSMS(sheet, row); }
     else if (newStatus === '불합격')   { sendRejectionSMS(sheet, row); }
-    else if (newStatus === '취소')     { updateRosterSheet(); }
+    if (newStatus === '합격' || newStatus === '취소') { updateRosterSheet(); }
   } catch (err) {
     console.error('onEdit error:', err);
   }
@@ -347,7 +362,7 @@ function onEdit(e) {
 // ── 심사결과별 SMS 함수 ───────────────────────────────────────
 
 function sendApprovalSMS(sheet, row) {
-  const rowData = sheet.getRange(row, 1, 1, 11).getValues()[0];
+  const rowData = sheet.getRange(row, 1, 1, 15).getValues()[0];
   const phone   = String(rowData[COL.PHONE] || '').replace(/\D/g, '');
   const name    = rowData[COL.NAME]   || '';
   const gender  = rowData[COL.GENDER] || '';
@@ -364,9 +379,15 @@ function sendApprovalSMS(sheet, row) {
 
   // 합격 = 입금 확인 완료 → Purchase CAPI 전송
   const priceNum = rowData[COL.PRICE] ? parseInt(String(rowData[COL.PRICE]).replace(/[^0-9]/g, '')) || 0 : 0;
-  sendMetaCAPIPurchase({ phone: phone, name: name, gender: gender, price: priceNum });
-
-  updateRosterSheet();
+  sendMetaCAPIPurchase({
+    phone:    phone,
+    name:     name,
+    gender:   gender,
+    price:    priceNum,
+    fbp:      String(rowData[COL.FBP]       || ''),
+    fbc:      String(rowData[COL.FBC]       || ''),
+    clientIp: String(rowData[COL.CLIENT_IP] || '')
+  });
 }
 
 // ── Meta CAPI Purchase 전송 ───────────────────────────────────
@@ -388,10 +409,14 @@ function sendMetaCAPIPurchase(data) {
 
     const genderCode = data.gender === '여성' ? 'f' : 'm';
     const ud = {
-      ph: data.phone ? sha256(normalizePhone(data.phone)) : null,
-      fn: (data.name && data.name.length > 1) ? sha256(data.name.slice(1)) : null,
-      ln: data.name ? sha256(data.name.slice(0, 1)) : null,
-      ge: sha256(genderCode)
+      ph:                data.phone ? sha256(normalizePhone(data.phone)) : null,
+      fn:                (data.name && data.name.length > 1) ? sha256(data.name.slice(1)) : null,
+      ln:                data.name ? sha256(data.name.slice(0, 1)) : null,
+      ge:                sha256(genderCode),
+      external_id:       data.phone ? sha256(normalizePhone(data.phone)) : null,
+      fbp:               data.fbp      || null,
+      fbc:               data.fbc      || null,
+      client_ip_address: data.clientIp || null
     };
     Object.keys(ud).forEach(function(k){ if (ud[k] === null) delete ud[k]; });
 
@@ -734,8 +759,9 @@ function sendMetaCAPI(payload) {
       ln:  payload.name  ? sha256(payload.name.slice(0, 1)) : null,
       ge:  sha256(genderCode),
       db:  dob ? sha256(dob) : null,
-      fbc: payload.fbc || null,
-      fbp: payload.fbp || null,
+      fbc:               payload.fbc      || null,
+      fbp:               payload.fbp      || null,
+      client_ip_address: payload.clientIp || null,
       client_user_agent: payload.userAgent || null
     };
     Object.keys(ud).forEach(function(k){ if (ud[k] === null) delete ud[k]; });
@@ -747,7 +773,8 @@ function sendMetaCAPI(payload) {
         event_id:         payload.eventId || ('daegu_gas_' + Date.now()),
         action_source:    'website',
         event_source_url: 'https://daegu.sumitparty.com/daegu-apply.html',
-        user_data:        ud
+        user_data:        ud,
+        custom_data:      { currency: 'KRW', value: payload.price ? Number(payload.price) : 0 }
       }]
     };
 

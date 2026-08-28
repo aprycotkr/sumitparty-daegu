@@ -229,20 +229,27 @@ function selGender(el, g) {
   }
 })();
 
-// 앞으로 12주간 토요일 날짜 생성
+// 앞으로 12주간 금·토 날짜 생성
 (function() {
   const select = document.getElementById('partyDate');
-  const FIRST_PARTY = new Date('2026-07-11T00:00:00+09:00');
-  const today = new Date(); today.setHours(0,0,0,0);
-  const start = today < FIRST_PARTY ? FIRST_PARTY : today;
+  const now = new Date();
   const dayNames = ['일','월','화','수','목','금','토'];
   const dates = [];
-  const cursor = new Date(start);
+
+  const aug15 = new Date('2026-08-15T00:00:00');
+  if (now < new Date('2026-08-15T19:00:00')) dates.push(aug15);
+
+  const fri = new Date('2026-08-21T00:00:00');
   while (dates.length < 12) {
-    if (cursor.getDay() === 6) dates.push(new Date(cursor));
-    cursor.setDate(cursor.getDate() + 1);
+    const sat = new Date(fri); sat.setDate(sat.getDate() + 1);
+    const friCutoff = new Date(fri); friCutoff.setHours(20, 0, 0, 0);
+    const satCutoff = new Date(sat); satCutoff.setHours(19, 0, 0, 0);
+    if (now < friCutoff) dates.push(new Date(fri));
+    if (dates.length < 12 && now < satCutoff) dates.push(new Date(sat));
+    fri.setDate(fri.getDate() + 7);
   }
-  dates.forEach(d => {
+
+  dates.slice(0, 12).forEach(d => {
     const val = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
     const label = `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 (${dayNames[d.getDay()]})`;
     const opt = document.createElement('option');
