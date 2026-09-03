@@ -562,9 +562,10 @@ const terms = [false, false, false];
   const wd = ['일','월','화','수','목','금','토'];
   fd.date = dateKey;
   fd.dateLabel = (d.getMonth()+1)+'월 '+d.getDate()+'일 ('+wd[d.getDay()]+')';
+  fd.timeStr = d.getDay() === 5 ? '20:00–23:30' : '19:00–23:30';
   document.getElementById('formSubtitle').textContent = '썸잇 솔로파티 ' + fd.dateLabel + ' — 대구점';
   const disp = document.getElementById('selectedDateDisplay');
-  if (disp) disp.textContent = fd.dateLabel + ' · 19:00–23:00';
+  if (disp) disp.textContent = fd.dateLabel + ' · ' + fd.timeStr;
 })();
 
 /* 날짜 상태 */
@@ -626,7 +627,7 @@ function step1Next() {
   document.getElementById('phoneErr').textContent = '';
   fd.phone = v;
   document.getElementById('selectedDateDisplay').textContent =
-    fd.date ? fd.dateLabel + ' · 19:00–23:00' : '날짜를 선택해주세요';
+    fd.date ? fd.dateLabel + ' · ' + (fd.timeStr || '19:00–23:30') : '날짜를 선택해주세요';
 
   goStep(2);
 }
