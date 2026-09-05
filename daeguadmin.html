@@ -109,7 +109,8 @@ async function loadDashboard() {
 }
 
 function renderList() {
-  const dates = getPartyDates(12);
+  const today = new Date(); today.setHours(0,0,0,0);
+  const dates = getPartyDates(12).filter(({ d }) => d >= today);
   const list = document.getElementById('dateList');
   if (!dates.length) { list.innerHTML = '<div class="loading-msg">파티 날짜가 없습니다.</div>'; return; }
 
