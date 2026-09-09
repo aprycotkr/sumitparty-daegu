@@ -428,13 +428,22 @@ function sendMetaCAPIPurchase(data) {
     };
     Object.keys(ud).forEach(function(k){ if (ud[k] === null) delete ud[k]; });
 
+    const eventId = 'daegu_purchase_' + sha256([
+      data.date || '', normalizePhone(data.phone) || data.name || ''
+    ].join('|'));
+    const sentKey = 'purchase_capi_sent:' + eventId;
+    const scriptProps = PropertiesService.getScriptProperties();
+    if (scriptProps.getProperty(sentKey)) {
+      Logger.log('[Meta CAPI Purchase SKIP] already accepted | event_id=%s', eventId);
+      recordMetaCapiLog('Purchase', eventId, 'SKIPPED', '', 'already accepted');
+      return;
+    }
+
     const payload = {
       data: [{
         event_name:       'Purchase',
         event_time:       Math.floor(new Date().getTime() / 1000),
-        event_id:         'daegu_purchase_' + sha256([
-          data.date || '', normalizePhone(data.phone) || data.name || ''
-        ].join('|')),
+        event_id:         eventId,
         action_source:    'website',
         event_source_url: 'https://daegu.sumitparty.com/daegu-apply.html',
         user_data:        ud,
@@ -447,10 +456,15 @@ function sendMetaCAPIPurchase(data) {
       { method: 'POST', contentType: 'application/json', payload: JSON.stringify(payload), muteHttpExceptions: true }
     );
     const body = response.getContentText();
+    let metaResult = {};
+    try { metaResult = JSON.parse(body); } catch (parseError) {}
+    const accepted = response.getResponseCode() >= 200 && response.getResponseCode() < 300 &&
+      Number(metaResult.events_received || 0) > 0;
     Logger.log('[Meta CAPI Purchase] HTTP %s | event_id=%s | body=%s',
       response.getResponseCode(), payload.data[0].event_id, body.slice(0, 500));
     console.log('[Meta CAPI Purchase] HTTP ' + response.getResponseCode() + ' | ' + body.slice(0, 500));
     recordMetaCapiLog('Purchase', payload.data[0].event_id, response.getResponseCode(), body, '');
+    if (accepted) scriptProps.setProperty(sentKey, new Date().toISOString());
   } catch(err) {
     Logger.log('[Meta CAPI Purchase ERROR] %s', err.message);
     console.log('[Meta CAPI Purchase ERROR] ' + err.message);
