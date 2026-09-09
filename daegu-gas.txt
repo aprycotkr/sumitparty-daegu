@@ -616,15 +616,27 @@ function updateRosterSheet() {
   // 합격자 날짜별 수집
   const applyData = applySheet.getDataRange().getValues();
   const dateMap = {};
+  const allApplicantsDateMap = {}; // 취소 포함 전체 신청자 (수동 추가 인원 구분용)
   for (let i = 1; i < applyData.length; i++) {
-    const row    = applyData[i];
-    const status = String(row[COL.STATUS] || '').trim();
-    if (!status.startsWith('합격')) continue;
+    const row     = applyData[i];
     const dateKey = toDateKey(row[COL.DATE]);
     if (!dateKey) continue;
-    if (!dateMap[dateKey]) dateMap[dateKey] = { male: [], female: [] };
+    const name   = String(row[COL.NAME]   || '').trim();
+    const phone  = String(row[COL.PHONE]  || '').trim();
     const gender = String(row[COL.GENDER] || '').trim();
-    const entry  = [String(row[COL.NAME] || ''), String(row[COL.PHONE] || '')];
+    const status = String(row[COL.STATUS] || '').trim();
+
+    // 신청자 시트에 있는 모든 인원 기록 (취소 여부 무관)
+    if (name) {
+      if (!allApplicantsDateMap[dateKey]) allApplicantsDateMap[dateKey] = { male: {}, female: {} };
+      const key = name + '|' + phone;
+      if (gender === '남성')      allApplicantsDateMap[dateKey].male[key]   = true;
+      else if (gender === '여성') allApplicantsDateMap[dateKey].female[key] = true;
+    }
+
+    if (!status.startsWith('합격')) continue;
+    if (!dateMap[dateKey]) dateMap[dateKey] = { male: [], female: [] };
+    const entry  = [name, phone];
     if (gender === '남성') dateMap[dateKey].male.push(entry);
     else                   dateMap[dateKey].female.push(entry);
   }
@@ -703,13 +715,15 @@ function updateRosterSheet() {
     male.forEach(function(m)   { if (m[0]) maleKeySet[m[0]   + '|' + m[1]] = true; });
     female.forEach(function(f) { if (f[0]) femaleKeySet[f[0] + '|' + f[1]] = true; });
 
-    // 수동 추가 인원 추출 (합격자 목록에 없는 사람)
+    // 수동 추가 인원 추출 (합격자 목록에 없고, 신청자 시트 자체에도 없는 사람만)
+    // 신청자 시트에 있는 사람(취소 포함)은 수동 추가로 보지 않아 시트1에서 제거됨
     const manualM = [], manualF = [];
+    const allKeys = allApplicantsDateMap[dateStr] || { male: {}, female: {} };
     existing.forEach(function(r) {
       const mn = String(r[0] || '').trim(), mp = String(r[1] || '').trim();
       const fn = String(r[2] || '').trim(), fp = String(r[3] || '').trim();
-      if (mn && !maleKeySet[mn + '|' + mp])   manualM.push([mn, mp]);
-      if (fn && !femaleKeySet[fn + '|' + fp]) manualF.push([fn, fp]);
+      if (mn && !maleKeySet[mn + '|' + mp]   && !allKeys.male[mn + '|' + mp])   manualM.push([mn, mp]);
+      if (fn && !femaleKeySet[fn + '|' + fp] && !allKeys.female[fn + '|' + fp]) manualF.push([fn, fp]);
     });
 
     // 합격자 먼저, 수동 추가 뒤에 배치
