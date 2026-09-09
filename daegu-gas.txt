@@ -363,7 +363,7 @@ function onEdit(e) {
 
 function sendApprovalSMS(sheet, row) {
   const rowData = sheet.getRange(row, 1, 1, 15).getValues()[0];
-  const phone   = String(rowData[COL.PHONE] || '').replace(/\D/g, '');
+  const phone   = normalizeKoreanPhone(rowData[COL.PHONE]);
   const name    = rowData[COL.NAME]   || '';
   const gender  = rowData[COL.GENDER] || '';
   const price   = rowData[COL.PRICE]  ? Number(rowData[COL.PRICE]).toLocaleString() : '';
@@ -374,8 +374,13 @@ function sendApprovalSMS(sheet, row) {
   const dow     = ['일','월','화','수','목','금','토'][dateObj.getDay()];
   const dateStr = (dateObj.getMonth()+1) + '/' + dateObj.getDate() + '(' + dow + ')';
 
-  sendSms(phone, buildPassMsg(name, gender, dateStr, price, dateObj.getDay(), toDateKey(rawDate)));
-  sheet.getRange(row, COL.STATUS + 1).setValue('합격✓발송');
+  let smsSent = false;
+  try {
+    smsSent = sendSms(phone, buildPassMsg(name, gender, dateStr, price, dateObj.getDay(), toDateKey(rawDate)));
+  } catch (err) {
+    Logger.log('[SMS Approval ERROR] %s', err.message);
+  }
+  if (smsSent) sheet.getRange(row, COL.STATUS + 1).setValue('합격✓발송');
 
   // 합격 = 입금 확인 완료 → Purchase CAPI 전송
   const priceNum = rowData[COL.PRICE] ? parseInt(String(rowData[COL.PRICE]).replace(/[^0-9]/g, '')) || 0 : 0;
@@ -384,6 +389,7 @@ function sendApprovalSMS(sheet, row) {
     name:     name,
     gender:   gender,
     price:    priceNum,
+    date:     toDateKey(rawDate),
     fbp:      String(rowData[COL.FBP]       || ''),
     fbc:      String(rowData[COL.FBC]       || ''),
     clientIp: String(rowData[COL.CLIENT_IP] || '')
@@ -402,8 +408,10 @@ function sendMetaCAPIPurchase(data) {
       return bytes.map(function(b){ return ('0' + (b & 0xFF).toString(16)).slice(-2); }).join('');
     }
     function normalizePhone(phone) {
-      let p = String(phone).replace(/\D/g, '');
-      if (p.startsWith('0')) p = '82' + p.slice(1);
+      let p = String(phone || '').replace(/\D/g, '');
+      if (p.startsWith('0082')) p = p.slice(2);
+      if (p.startsWith('82')) p = '0' + p.slice(2).replace(/^0/, '');
+      if (p.length === 10 && p.startsWith('10')) p = '0' + p;
       return p;
     }
 
@@ -424,7 +432,9 @@ function sendMetaCAPIPurchase(data) {
       data: [{
         event_name:       'Purchase',
         event_time:       Math.floor(new Date().getTime() / 1000),
-        event_id:         'daegu_purchase_' + Date.now(),
+        event_id:         'daegu_purchase_' + sha256([
+          data.date || '', normalizePhone(data.phone) || data.name || ''
+        ].join('|')),
         action_source:    'website',
         event_source_url: 'https://daegu.sumitparty.com/daegu-apply.html',
         user_data:        ud,
@@ -432,33 +442,43 @@ function sendMetaCAPIPurchase(data) {
       }]
     };
 
-    UrlFetchApp.fetch(
+    const response = UrlFetchApp.fetch(
       'https://graph.facebook.com/v21.0/' + PIXEL_ID + '/events?access_token=' + CAPI_ACCESS_TOKEN,
       { method: 'POST', contentType: 'application/json', payload: JSON.stringify(payload), muteHttpExceptions: true }
     );
-  } catch(err) {}
+    Logger.log('[Meta CAPI Purchase] HTTP %s | event_id=%s | body=%s',
+      response.getResponseCode(), payload.data[0].event_id, response.getContentText().slice(0, 500));
+  } catch(err) {
+    Logger.log('[Meta CAPI Purchase ERROR] %s', err.message);
+  }
 }
 
 function sendRejectionSMS(sheet, row) {
   const rowData = sheet.getRange(row, 1, 1, 11).getValues()[0];
-  const phone   = String(rowData[COL.PHONE] || '').replace(/\D/g, '');
+  const phone   = normalizeKoreanPhone(rowData[COL.PHONE]);
   const name    = rowData[COL.NAME] || '';
   if (!phone || !name) return;
 
-  sendSms(phone, buildFailMsg(name));
-  sheet.getRange(row, COL.STATUS + 1).setValue('불합격✓발송');
+  try {
+    if (sendSms(phone, buildFailMsg(name))) sheet.getRange(row, COL.STATUS + 1).setValue('불합격✓발송');
+  } catch (err) {
+    Logger.log('[SMS Rejection ERROR] %s', err.message);
+  }
 }
 
 function sendReminderSMS(sheet, row) {
   const rowData = sheet.getRange(row, 1, 1, 11).getValues()[0];
-  const phone   = String(rowData[COL.PHONE] || '').replace(/\D/g, '');
+  const phone   = normalizeKoreanPhone(rowData[COL.PHONE]);
   const name    = rowData[COL.NAME]   || '';
   const ticket  = rowData[COL.TICKET] || '';
   const price   = rowData[COL.PRICE]  || '';
   if (!phone || !name) return;
 
-  sendSms(phone, buildRemindMsg(name, ticket, price));
-  sheet.getRange(row, COL.STATUS + 1).setValue('리마인드✓발송');
+  try {
+    if (sendSms(phone, buildRemindMsg(name, ticket, price))) sheet.getRange(row, COL.STATUS + 1).setValue('리마인드✓발송');
+  } catch (err) {
+    Logger.log('[SMS Reminder ERROR] %s', err.message);
+  }
 }
 
 // ── SMS 메시지 템플릿 ─────────────────────────────────────────
@@ -541,10 +561,23 @@ function buildRemindMsg(name, ticket, price) {
 }
 
 // ── Solapi SMS 발송 ───────────────────────────────────────────
+function normalizeKoreanPhone(value) {
+  let p = String(value == null ? '' : value).replace(/\D/g, '');
+  if (p.startsWith('0082')) p = p.slice(2);
+  if (p.startsWith('82')) p = '0' + p.slice(2).replace(/^0/, '');
+  if (p.length === 10 && p.startsWith('10')) p = '0' + p;
+  return (/^010\d{8}$/.test(p) || /^01[16789]\d{7,8}$/.test(p)) ? p : '';
+}
+
 function sendSms(to, text) {
+  to = normalizeKoreanPhone(to);
+  if (!to) {
+    Logger.log('[SMS] invalid Korean phone; skipped');
+    return false;
+  }
   if (!CONFIG.SOLAPI_API_KEY || !CONFIG.SOLAPI_API_SECRET) {
-    console.warn('Solapi 키 미설정 — SMS 미발송:', to);
-    return;
+    Logger.log('[SMS] Solapi credentials missing; skipped for %s', to);
+    return false;
   }
 
   const date   = new Date().toISOString();
@@ -573,10 +606,20 @@ function sendSms(to, text) {
   };
 
   const res = UrlFetchApp.fetch('https://api.solapi.com/messages/v4/send', options);
-  const json = JSON.parse(res.getContentText());
-  if (json.errorCode) {
-    console.error('SMS 발송 실패:', json.errorCode, json.errorMessage);
+  const http = res.getResponseCode();
+  let json = {};
+  try { json = JSON.parse(res.getContentText()); } catch (err) {
+    Logger.log('[SMS] invalid provider response | HTTP %s | body=%s', http, res.getContentText().slice(0, 500));
+    return false;
   }
+  const hasMessage = !!json.messageId || !!json.groupId ||
+    (json.messageList && Object.keys(json.messageList).length > 0);
+  const hasFailure = !!json.errorCode ||
+    (json.failedMessageList && Object.keys(json.failedMessageList).length > 0);
+  const accepted = http >= 200 && http < 300 && hasMessage && !hasFailure;
+  Logger.log('[SMS] HTTP %s | accepted=%s | messageId=%s | errorCode=%s | body=%s',
+    http, accepted, json.messageId || '', json.errorCode || '', res.getContentText().slice(0, 500));
+  return accepted;
 }
 
 function buildHmac(date, salt) {
@@ -760,8 +803,10 @@ function sendMetaCAPI(payload) {
       return bytes.map(function(b){ return ('0' + (b & 0xFF).toString(16)).slice(-2); }).join('');
     }
     function normalizePhone(phone) {
-      let p = phone.replace(/\D/g, '');
-      if (p.startsWith('0')) p = '82' + p.slice(1);
+      let p = String(phone || '').replace(/\D/g, '');
+      if (p.startsWith('0082')) p = p.slice(2);
+      if (p.startsWith('82')) p = '0' + p.slice(2).replace(/^0/, '');
+      if (p.length === 10 && p.startsWith('10')) p = '0' + p;
       return p;
     }
 
@@ -794,7 +839,7 @@ function sendMetaCAPI(payload) {
       }]
     };
 
-    UrlFetchApp.fetch(
+    const response = UrlFetchApp.fetch(
       'https://graph.facebook.com/v21.0/' + PIXEL_ID + '/events?access_token=' + CAPI_ACCESS_TOKEN,
       {
         method:             'POST',
@@ -803,8 +848,10 @@ function sendMetaCAPI(payload) {
         muteHttpExceptions: true
       }
     );
+    Logger.log('[Meta CAPI Lead] HTTP %s | event_id=%s | body=%s',
+      response.getResponseCode(), apiPayload.data[0].event_id, response.getContentText().slice(0, 500));
   } catch(err) {
-    // 조용히 실패 — 신청 처리는 막지 않음
+    Logger.log('[Meta CAPI Lead ERROR] %s', err.message);
   }
 }
 
