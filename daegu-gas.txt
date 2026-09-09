@@ -446,10 +446,15 @@ function sendMetaCAPIPurchase(data) {
       'https://graph.facebook.com/v21.0/' + PIXEL_ID + '/events?access_token=' + CAPI_ACCESS_TOKEN,
       { method: 'POST', contentType: 'application/json', payload: JSON.stringify(payload), muteHttpExceptions: true }
     );
+    const body = response.getContentText();
     Logger.log('[Meta CAPI Purchase] HTTP %s | event_id=%s | body=%s',
-      response.getResponseCode(), payload.data[0].event_id, response.getContentText().slice(0, 500));
+      response.getResponseCode(), payload.data[0].event_id, body.slice(0, 500));
+    console.log('[Meta CAPI Purchase] HTTP ' + response.getResponseCode() + ' | ' + body.slice(0, 500));
+    recordMetaCapiLog('Purchase', payload.data[0].event_id, response.getResponseCode(), body, '');
   } catch(err) {
     Logger.log('[Meta CAPI Purchase ERROR] %s', err.message);
+    console.log('[Meta CAPI Purchase ERROR] ' + err.message);
+    recordMetaCapiLog('Purchase', '', 'ERROR', '', err.message);
   }
 }
 
@@ -636,6 +641,28 @@ function toDateKey(val) {
   if (!val) return '';
   if (val instanceof Date) return Utilities.formatDate(val, 'Asia/Seoul', 'yyyy-MM-dd');
   return String(val).trim();
+}
+
+// Meta CAPI 응답 확인용 로그. 로그 실패가 신청 처리를 막지 않도록 별도 처리.
+function recordMetaCapiLog(eventName, eventId, httpCode, body, errorMessage) {
+  try {
+    const ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
+    let logSheet = ss.getSheetByName('CAPI로그');
+    if (!logSheet) {
+      logSheet = ss.insertSheet('CAPI로그');
+      logSheet.appendRow(['기록시간', '이벤트', '이벤트 ID', 'HTTP 코드', '응답/오류']);
+      logSheet.setFrozenRows(1);
+    }
+    logSheet.appendRow([
+      Utilities.formatDate(new Date(), 'Asia/Seoul', 'yyyy-MM-dd HH:mm:ss'),
+      eventName,
+      eventId || '',
+      httpCode || 'ERROR',
+      String(errorMessage || body || '').slice(0, 2000)
+    ]);
+  } catch (logError) {
+    console.log('[CAPI LOG ERROR] ' + logError.message);
+  }
 }
 
 // ── 합격자 명단 자동 정리 (시트1) ────────────────────────────
@@ -848,10 +875,15 @@ function sendMetaCAPI(payload) {
         muteHttpExceptions: true
       }
     );
+    const body = response.getContentText();
     Logger.log('[Meta CAPI Lead] HTTP %s | event_id=%s | body=%s',
-      response.getResponseCode(), apiPayload.data[0].event_id, response.getContentText().slice(0, 500));
+      response.getResponseCode(), apiPayload.data[0].event_id, body.slice(0, 500));
+    console.log('[Meta CAPI Lead] HTTP ' + response.getResponseCode() + ' | ' + body.slice(0, 500));
+    recordMetaCapiLog('Lead', apiPayload.data[0].event_id, response.getResponseCode(), body, '');
   } catch(err) {
     Logger.log('[Meta CAPI Lead ERROR] %s', err.message);
+    console.log('[Meta CAPI Lead ERROR] ' + err.message);
+    recordMetaCapiLog('Lead', payload && payload.eventId, 'ERROR', '', err.message);
   }
 }
 
