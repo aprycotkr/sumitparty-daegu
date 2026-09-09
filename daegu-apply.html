@@ -853,9 +853,12 @@ async function submitForm() {
   let submitOk = true;
   if (DAEGU_CONFIG.DAEGU_GAS_URL) {
     try {
-      const gasParams = new URLSearchParams({ action: 'submitApplication', data: JSON.stringify(payload) });
       await Promise.race([
-        fetch(DAEGU_CONFIG.DAEGU_GAS_URL + '?' + gasParams.toString(), { mode: 'no-cors' }),
+        fetch(DAEGU_CONFIG.DAEGU_GAS_URL, {
+          method: 'POST', mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify(payload)
+        }),
         new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 10000))
       ]);
     } catch(e) { submitOk = false; }
