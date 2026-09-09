@@ -433,7 +433,8 @@ function sendMetaCAPIPurchase(data) {
     ].join('|'));
     const sentKey = 'purchase_capi_sent:' + eventId;
     const scriptProps = PropertiesService.getScriptProperties();
-    if (scriptProps.getProperty(sentKey)) {
+    if (scriptProps.getProperty(sentKey) || wasMetaCapiAccepted('Purchase', eventId)) {
+      scriptProps.setProperty(sentKey, new Date().toISOString());
       Logger.log('[Meta CAPI Purchase SKIP] already accepted | event_id=%s', eventId);
       recordMetaCapiLog('Purchase', eventId, 'SKIPPED', '', 'already accepted');
       return;
@@ -677,6 +678,23 @@ function recordMetaCapiLog(eventName, eventId, httpCode, body, errorMessage) {
   } catch (logError) {
     console.log('[CAPI LOG ERROR] ' + logError.message);
   }
+}
+
+function wasMetaCapiAccepted(eventName, eventId) {
+  try {
+    const ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
+    const sheet = ss.getSheetByName('CAPI로그');
+    if (!sheet || !eventId) return false;
+    const rows = sheet.getDataRange().getValues();
+    for (let i = rows.length - 1; i >= 1; i--) {
+      const body = String(rows[i][4] || '');
+      if (rows[i][1] === eventName && rows[i][2] === eventId &&
+          String(rows[i][3]) === '200' && body.indexOf('events_received') >= 0) return true;
+    }
+  } catch (err) {
+    console.log('[CAPI DEDUP LOOKUP ERROR] ' + err.message);
+  }
+  return false;
 }
 
 // ── 합격자 명단 자동 정리 (시트1) ────────────────────────────
