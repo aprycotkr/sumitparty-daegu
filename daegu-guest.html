@@ -277,7 +277,7 @@ function selGender(el, g) {
 
 async function submitGuest() {
   const name  = document.getElementById('name').value.trim();
-  let phone = document.getElementById('phone').value.trim();
+  const phone = document.getElementById('phone').value.trim();
   const date  = document.getElementById('partyDate').value;
   const price = document.getElementById('price').value.trim();
 
@@ -290,10 +290,8 @@ async function submitGuest() {
 
   var phoneClean = phone.replace(/\D/g, '');
   if (!/^01[0-9]{8,9}$/.test(phoneClean)) { document.getElementById('phoneErr').textContent = '올바른 휴대폰 번호를 입력해주세요.'; ok = false; }
-  else {
-    phone = phoneClean;
-    document.getElementById('phoneErr').textContent = '';
-  }
+  else phone = phoneClean;
+  else                                  document.getElementById('phoneErr').textContent = '';
 
   if (!date)  { document.getElementById('dateErr').textContent  = '파티 날짜를 선택해주세요.'; ok = false; }
   else          document.getElementById('dateErr').textContent  = '';
@@ -313,10 +311,6 @@ async function submitGuest() {
     date,
     price: Number(price),
     refBy: refBy || '직접등록',
-    eventId: 'lead_daegu_guest_' + Date.now() + '_' + Math.random().toString(36).slice(2),
-    fbp: getCookie('_fbp'),
-    fbc: getCookie('_fbc'),
-    userAgent: navigator.userAgent,
     submitTime: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })
   };
 
@@ -333,14 +327,10 @@ async function submitGuest() {
   document.getElementById('cName').textContent  = name;
   document.getElementById('cDate').textContent  = document.getElementById('partyDate').options[document.getElementById('partyDate').selectedIndex].text;
   document.getElementById('cPrice').textContent = Number(price).toLocaleString() + '원';
+  if (typeof fbq !== 'undefined') fbq('track', 'Lead', {content_name: '게스트 등록', content_category: 'daegu_guest'});
   document.getElementById('formCard').style.display   = 'none';
   document.getElementById('completeCard').style.display = 'block';
   window.scrollTo(0, 0);
-}
-
-function getCookie(name) {
-  const m = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
-  return m ? decodeURIComponent(m[2]) : null;
 }
 
 function copyAccount() {
