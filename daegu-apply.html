@@ -562,7 +562,7 @@ const terms = [false, false, false];
   const wd = ['일','월','화','수','목','금','토'];
   fd.date = dateKey;
   fd.dateLabel = (d.getMonth()+1)+'월 '+d.getDate()+'일 ('+wd[d.getDay()]+')';
-  fd.timeStr = (d.getDay() === 5 || dateKey === DAEGU_CONFIG.CHUSEOK_DATE) ? '20:00–23:30' : '19:00–23:30';
+  fd.timeStr = d.getDay() === 5 ? '20:00–23:30' : '19:00–23:30';
   document.getElementById('formSubtitle').textContent = '썸잇 솔로파티 ' + fd.dateLabel + ' — 대구점';
   const disp = document.getElementById('selectedDateDisplay');
   if (disp) disp.textContent = fd.dateLabel + ' · ' + fd.timeStr;
