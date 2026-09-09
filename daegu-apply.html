@@ -850,14 +850,16 @@ async function submitForm() {
     clientIp: clientIp,
   };
 
-  let submitOk = true;
+  let submitOk = false;
+  let submitMessage = '접수 결과를 확인하지 못했습니다. 다시 신청하기 전에 운영팀에 접수 여부를 확인해주세요.';
   if (DAEGU_CONFIG.DAEGU_GAS_URL) {
     try {
       const gasParams = new URLSearchParams({ action: 'submitApplication', data: JSON.stringify(payload) });
-      await Promise.race([
-        fetch(DAEGU_CONFIG.DAEGU_GAS_URL + '?' + gasParams.toString(), { mode: 'no-cors' }),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 10000))
-      ]);
+      const response = await fetch(DAEGU_CONFIG.DAEGU_GAS_URL + '?' + gasParams.toString());
+      if (!response.ok) throw new Error('application response failed');
+      const result = await response.json();
+      submitOk = result.result === 'success';
+      if (result.result === 'duplicate') submitMessage = '이미 해당 날짜에 접수된 연락처입니다. 추가 신청은 접수되지 않았습니다.';
     } catch(e) { submitOk = false; }
   }
 
@@ -865,7 +867,7 @@ async function submitForm() {
   if (!submitOk) {
     document.getElementById('loadingOverlay').classList.remove('show');
     document.getElementById('submitBtn').disabled = false;
-    alert('신청 전송에 실패했습니다. 인터넷 연결을 확인 후 다시 시도해주세요.');
+    alert(submitMessage);
     return;
   }
 
@@ -881,6 +883,7 @@ async function submitForm() {
   document.getElementById('cPrice').textContent = priceText;
   document.getElementById('cPrice2').textContent = priceText;
 
+  if (typeof fbq === 'function') fbq('track', 'Lead', { currency: 'KRW', value: submitPrice || 0 }, { eventID: fd.eventId });
   goStep(6);
 }
 
