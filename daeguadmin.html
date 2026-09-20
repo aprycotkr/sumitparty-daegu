@@ -42,6 +42,7 @@ html,body{min-height:100vh;background:var(--black);color:var(--white);font-famil
 .dc-dow{display:inline-block;font-size:0.55rem;font-weight:700;letter-spacing:0.08em;padding:2px 7px;border-radius:3px;margin-left:5px;vertical-align:middle}
 .dc-dow.sat{background:rgba(201,169,110,0.15);color:var(--gold)}
 .dc-dow.fri{background:rgba(100,160,255,0.15);color:#7eb5ff}
+.dc-dow.thu{background:rgba(251,146,60,0.15);color:#fdba74}
 .dc-indicator{font-size:0.6rem;letter-spacing:0.05em;transition:color 0.2s;min-width:60px;text-align:right}
 .dc-indicator.saving{color:var(--gold)}
 .dc-indicator.saved{color:var(--green)}
@@ -110,7 +111,7 @@ async function loadDashboard() {
 
 function renderList() {
   const today = new Date(); today.setHours(0,0,0,0);
-  const dates = getPartyDates(12).filter(({ d }) => d >= today);
+  const dates = getPartyDates().filter(({ d }) => d >= today).slice(0, MAX_DATES);
   const list = document.getElementById('dateList');
   if (!dates.length) { list.innerHTML = '<div class="loading-msg">파티 날짜가 없습니다.</div>'; return; }
 
@@ -134,7 +135,7 @@ function renderList() {
   <div class="dc-top">
     <div>
       <span class="dc-date-text">${m}월 ${d.getDate()}일</span>
-      <span class="dc-dow ${d.getDay() === 5 ? 'fri' : 'sat'}">${d.getDay() === 5 ? '금' : '토'}</span>
+      <span class="dc-dow ${DOW_CLS[d.getDay()]}">${DOW_LABEL[d.getDay()]}</span>
     </div>
     <span class="dc-indicator" id="ind-${dateStr}"></span>
   </div>
@@ -174,6 +175,9 @@ function renderList() {
   list.innerHTML = html;
 }
 
+const DOW_CLS   = { 4: 'thu', 5: 'fri', 6: 'sat' };
+const DOW_LABEL = { 4: '목', 5: '금', 6: '토' };
+const MAX_DATES = 30; // 고객 페이지(daegu-booking)와 동일한 노출 개수
 const STATUS_LABELS = { open: '정상', almost: '마감임박', closed: '마감' };
 
 function btnHtml(dateStr, gender, value, current) {
@@ -248,18 +252,28 @@ function toDateStr(d) {
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 }
 
-function getPartyDates(n) {
-  const result = [];
-  const aug15 = new Date('2026-08-15T00:00:00');
-  result.push({ dateStr: '2026-08-15', d: aug15, dow: 6 });
-  const fri = new Date('2026-08-21T00:00:00');
-  while (result.length < n) {
+// 고객 페이지(daegu.html / daegu-booking.html)의 getPartyDates와 날짜가 같아야 함
+const EXPLICIT_DATES = [
+  '2026-08-15',
+  '2026-08-21','2026-08-22',
+  '2026-08-28','2026-08-29',
+  '2026-09-04','2026-09-05',
+  '2026-09-11','2026-09-12',
+  '2026-09-18','2026-09-19',
+  '2026-09-24', // 목 (추석 특별)
+  '2026-09-25','2026-09-26'
+];
+
+function getPartyDates() {
+  const result = EXPLICIT_DATES.map(ds => ({ dateStr: ds, d: new Date(ds + 'T00:00:00') }));
+  const fri = new Date('2026-10-02T00:00:00');
+  for (let i = 0; i < 52; i++) { // 10/2부터 1년치 금·토
     const sat = new Date(fri); sat.setDate(sat.getDate() + 1);
-    result.push({ dateStr: toDateStr(fri), d: new Date(fri), dow: 5 });
-    if (result.length < n) result.push({ dateStr: toDateStr(sat), d: new Date(sat), dow: 6 });
+    result.push({ dateStr: toDateStr(fri), d: new Date(fri) });
+    result.push({ dateStr: toDateStr(sat), d: sat });
     fri.setDate(fri.getDate() + 7);
   }
-  return result.slice(0, n);
+  return result;
 }
 
 loadDashboard();
