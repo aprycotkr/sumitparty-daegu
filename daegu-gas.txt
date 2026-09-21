@@ -127,10 +127,39 @@ function doGet(e) {
     if (action === 'getDateSales') {
       return jsonResponse(getDateSales(e.parameter));
     }
+    if (action === 'getHeadcount') {
+      return jsonResponse(getHeadcount());
+    }
     return jsonResponse({ result: 'error', message: 'unknown action' });
   } catch (err) {
     return jsonResponse({ result: 'error', message: err.message });
   }
+}
+
+// ── 실시간 확정 인원 (관리자 페이지용) ─────────────────────────
+// 명단(시트1) 기준: 합격 + 입금완료 게스트 + 직접 추가한 인원. 개인정보 없이 날짜별 숫자만 반환
+function getHeadcount() {
+  const ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
+  const roster = ss.getSheetByName('시트1') || ss.getSheets()[0];
+  const data = {};
+  if (roster && roster.getName() !== CONFIG.SHEET_NAME && roster.getLastRow() > 0) {
+    const MAX = 35; // updateRosterSheet 섹션 인원 칸 수와 동일
+    const vals = roster.getRange(1, 1, roster.getLastRow(), 5).getValues();
+    const todayKey = Utilities.formatDate(new Date(), 'Asia/Seoul', 'yyyy-MM-dd');
+    for (let r = 0; r < vals.length; r++) {
+      const marker = String(vals[r][4] || '');
+      if (!marker.startsWith('__DATE__:')) continue;
+      const dateKey = marker.slice(9);
+      if (dateKey < todayKey) continue;
+      let male = 0, female = 0;
+      for (let k = r + 2; k < Math.min(r + 2 + MAX, vals.length); k++) {
+        if (String(vals[k][0] || '').trim()) male++;
+        if (String(vals[k][2] || '').trim()) female++;
+      }
+      data[dateKey] = { male: male, female: female };
+    }
+  }
+  return { result: 'success', updatedAt: new Date().toISOString(), data: data };
 }
 
 function doPost(e) {

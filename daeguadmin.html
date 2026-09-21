@@ -61,6 +61,13 @@ html,body{min-height:100vh;background:var(--black);color:var(--white);font-famil
 .sbtn.c   {background:rgba(248,113,113,0.05);border-color:rgba(248,113,113,0.12);color:rgba(248,113,113,0.4)}
 .sbtn.c.on{background:rgba(248,113,113,0.15);border-color:rgba(248,113,113,0.5);color:var(--red)}
 
+.hc-row{display:flex;align-items:center;gap:8px;margin:2px 0 10px;padding:8px 10px;background:rgba(201,169,110,0.06);border:1px solid rgba(201,169,110,0.15);border-radius:8px}
+.hc-label{font-size:0.58rem;color:var(--gold);font-weight:700;letter-spacing:0.05em;white-space:nowrap}
+.hc-nums{display:flex;gap:14px;flex:1;justify-content:flex-end}
+.hc-num{font-size:0.95rem;font-weight:700;color:var(--white);white-space:nowrap}
+.hc-num small{font-size:0.58rem;font-weight:600;margin-right:4px}
+.hc-num.m small{color:#8899ff}.hc-num.f small{color:#ff8888}
+.hc-updated{font-size:0.55rem;color:rgba(255,255,255,0.3);margin-top:4px}
 .loading-msg{text-align:center;padding:4rem 1rem;color:rgba(255,255,255,0.25);font-size:0.72rem;letter-spacing:0.15em}
 
 .seat-row{display:flex;align-items:center;gap:8px;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.05)}
@@ -79,6 +86,7 @@ html,body{min-height:100vh;background:var(--black);color:var(--white);font-famil
     <div class="admin-brand">
       <div class="logo">Sumit</div>
       <div class="sub">대구점 마감 관리</div>
+      <div class="hc-updated" id="hcUpdated">확정 인원 불러오는 중...</div>
     </div>
   </div>
   <div class="admin-body">
@@ -138,6 +146,13 @@ function renderList() {
       <span class="dc-dow ${DOW_CLS[d.getDay()]}">${DOW_LABEL[d.getDay()]}</span>
     </div>
     <span class="dc-indicator" id="ind-${dateStr}"></span>
+  </div>
+  <div class="hc-row">
+    <span class="hc-label">확정 인원</span>
+    <div class="hc-nums">
+      <span class="hc-num m"><small>남</small><span id="hcM-${dateStr}">${hcText(dateStr,'male')}</span></span>
+      <span class="hc-num f"><small>여</small><span id="hcF-${dateStr}">${hcText(dateStr,'female')}</span></span>
+    </div>
   </div>
   <div class="dc-row">
     <span class="dc-label">남성</span>
@@ -276,7 +291,36 @@ function getPartyDates() {
   return result;
 }
 
+// ── 실시간 확정 인원 (명단 시트 기준: 합격 + 입금완료 게스트 + 직접 추가) ──
+const HEADCOUNT_URL = 'https://script.google.com/macros/s/AKfycbxnJhftdjyEro7uKUNTfsAKp7U1g7knABAQBeebu5mfIIkonjXcTlgRK8qUanuOZ4prxw/exec?action=getHeadcount';
+let hcData = null;
+
+function hcText(dateStr, gender) {
+  if (!hcData) return '–';
+  const c = hcData[dateStr];
+  return (c ? c[gender] : 0) + '명';
+}
+
+async function loadHeadcount() {
+  try {
+    const res  = await fetch(HEADCOUNT_URL, { cache: 'no-store' });
+    const json = await res.json();
+    if (json.result !== 'success') throw new Error(json.message || 'error');
+    hcData = json.data || {};
+    document.querySelectorAll('[id^="hcM-"]').forEach(el => { el.textContent = hcText(el.id.slice(4), 'male'); });
+    document.querySelectorAll('[id^="hcF-"]').forEach(el => { el.textContent = hcText(el.id.slice(4), 'female'); });
+    const t = new Date();
+    document.getElementById('hcUpdated').textContent =
+      '확정 인원 ' + String(t.getHours()).padStart(2,'0') + ':' + String(t.getMinutes()).padStart(2,'0') + ' 기준 · 30초마다 자동 갱신';
+  } catch (e) {
+    document.getElementById('hcUpdated').textContent = '확정 인원 불러오기 실패 — 잠시 후 자동 재시도';
+  }
+}
+
 loadDashboard();
+loadHeadcount();
+setInterval(loadHeadcount, 30000);
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') loadHeadcount(); });
 </script>
 </body>
 </html>
