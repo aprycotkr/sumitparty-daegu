@@ -8,15 +8,6 @@
 <link rel="apple-touch-icon" href="favicon.png">
 <link rel="canonical" href="https://daegu.sumitparty.com/daegu-guest.html">
 <meta name="robots" content="noindex,nofollow">
-<script>
-!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
-n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,
-'script','https://connect.facebook.net/en_US/fbevents.js');
-fbq('init','821379504055811');fbq('track','PageView');
-</script>
-<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=821379504055811&ev=PageView&noscript=1"/></noscript>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -290,8 +281,7 @@ async function submitGuest() {
 
   var phoneClean = phone.replace(/\D/g, '');
   if (!/^01[0-9]{8,9}$/.test(phoneClean)) { document.getElementById('phoneErr').textContent = '올바른 휴대폰 번호를 입력해주세요.'; ok = false; }
-  else phone = phoneClean;
-  else                                  document.getElementById('phoneErr').textContent = '';
+  else { phone = phoneClean; document.getElementById('phoneErr').textContent = ''; }
 
   if (!date)  { document.getElementById('dateErr').textContent  = '파티 날짜를 선택해주세요.'; ok = false; }
   else          document.getElementById('dateErr').textContent  = '';
@@ -327,7 +317,6 @@ async function submitGuest() {
   document.getElementById('cName').textContent  = name;
   document.getElementById('cDate').textContent  = document.getElementById('partyDate').options[document.getElementById('partyDate').selectedIndex].text;
   document.getElementById('cPrice').textContent = Number(price).toLocaleString() + '원';
-  if (typeof fbq !== 'undefined') fbq('track', 'Lead', {content_name: '게스트 등록', content_category: 'daegu_guest'});
   document.getElementById('formCard').style.display   = 'none';
   document.getElementById('completeCard').style.display = 'block';
   window.scrollTo(0, 0);

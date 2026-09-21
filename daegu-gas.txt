@@ -152,6 +152,7 @@ function doPost(e) {
         date:    payload.date,
         price:   payload.price,
         ticket:  payload.ticket || '게스트',
+        isGuest: true,
         refBy:   payload.refBy  || '직접등록',
       };
       return jsonResponse(submitApplication(guestPayload));
@@ -326,8 +327,8 @@ function submitApplication(payload) {
     sendSms(phone, buildApplyMsg(payload.name, payload.date || '', priceNum));
   }
 
-  // Meta CAPI: 서버사이드 Lead 이벤트 전송
-  sendMetaCAPI(payload);
+  // Meta CAPI: 서버사이드 Lead 이벤트 전송 (게스트 등록은 광고 최적화 Lead에서 제외)
+  if (!payload.isGuest && payload.ticket !== '게스트') sendMetaCAPI(payload);
 
   return { result: 'success' };
 }
@@ -861,17 +862,22 @@ function sendMetaCAPI(payload) {
       );
       return bytes.map(function(b){ return ('0' + (b & 0xFF).toString(16)).slice(-2); }).join('');
     }
+    // Meta 권장 형식: 국가번호 포함 (010xxxxxxxx → 8210xxxxxxxx)
     function normalizePhone(phone) {
       let p = String(phone || '').replace(/\D/g, '');
       if (p.startsWith('0082')) p = p.slice(2);
-      if (p.startsWith('82')) p = '0' + p.slice(2).replace(/^0/, '');
       if (p.length === 10 && p.startsWith('10')) p = '0' + p;
+      if (p.startsWith('0')) p = '82' + p.slice(1);
       return p;
     }
 
     const genderCode = payload.gender === '여성' ? 'f' : 'm';
-    const birth = String(payload.birth || payload.bdate || '').replace(/[^0-9]/g, '');
-    const dob = birth.length >= 8 ? birth.slice(0, 8) : null;
+    // 생년월일: '1998년 3월 5일' / '19980305' 모두 YYYYMMDD로 변환
+    const birthRaw = String(payload.birth || payload.bdate || '');
+    let dob = null;
+    const bm = birthRaw.match(/(\d{4})\D+(\d{1,2})\D+(\d{1,2})/);
+    if (bm) dob = bm[1] + bm[2].padStart(2, '0') + bm[3].padStart(2, '0');
+    else if (birthRaw.replace(/\D/g, '').length >= 8) dob = birthRaw.replace(/\D/g, '').slice(0, 8);
 
     const ud = {
       ph:  payload.phone ? sha256(normalizePhone(String(payload.phone))) : null,

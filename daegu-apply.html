@@ -878,6 +878,8 @@ async function submitForm() {
   document.getElementById('cPrice').textContent = priceText;
   document.getElementById('cPrice2').textContent = priceText;
 
+  // 브라우저 Lead — 서버(GAS CAPI)와 같은 eventID로 보내 Meta가 중복 제거
+  if (typeof fbq === 'function') fbq('track', 'Lead', { currency: 'KRW', value: submitPrice || 0, content_name: '1+2부', content_category: '파티신청' }, { eventID: fd.eventId });
   goStep(6);
 }
 
