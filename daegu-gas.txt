@@ -144,18 +144,7 @@ function doPost(e) {
       return jsonResponse(updateDateStatus(payload));
     }
     if (action === 'submitGuest') {
-      const guestPayload = {
-        action:  'submitApplication',
-        name:    payload.name,
-        gender:  payload.gender,
-        phone:   payload.phone,
-        date:    payload.date,
-        price:   payload.price,
-        ticket:  payload.ticket || '게스트',
-        isGuest: true,
-        refBy:   payload.refBy  || '직접등록',
-      };
-      return jsonResponse(submitApplication(guestPayload));
+      return jsonResponse(handleGuest(payload));
     }
     return jsonResponse({ result: 'error', message: 'unknown action' });
   } catch (err) {
@@ -337,10 +326,89 @@ function submitApplication(payload) {
 // 스프레드시트에서 K열(인덱스 10)을 수동으로 "합격" 또는 "불합격"으로 바꾸면
 // onEdit 트리거가 실행되어 자동으로 SMS 발송.
 //
+// ── 게스트 (부산 방식) ────────────────────────────────────────
+// 등록: 게스트명단 탭에 저장, 등록 시 문자 없음 (입금 계좌는 등록 완료 화면에 표시)
+// H열 '입금완료' → 참가 확정 문자 + 명단(시트1) 반영 / '취소' → 명단에서 제거
+const GUEST_SHEET_NAME = '게스트명단';
+
+function handleGuest(payload) {
+  const ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
+  let sheet = ss.getSheetByName(GUEST_SHEET_NAME);
+  if (!sheet) sheet = ss.insertSheet(GUEST_SHEET_NAME);
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(['제출시간', '파티날짜', '이름', '성별', '연락처', '참가비', '초대자', '입금상태']);
+    sheet.getRange(1, 1, 1, 8).setBackground('#1a1a1a').setFontColor('#C9A96E').setFontWeight('bold');
+    sheet.getRange('E:E').setNumberFormat('@'); // 연락처 앞자리 0 유지
+    sheet.setFrozenRows(1);
+  }
+
+  const phone   = normalizeKoreanPhone(payload.phone);
+  const dateKey = String(payload.date || '').trim();
+  const name    = String(payload.name || '').trim();
+  if (!phone || !dateKey || !name) return { result: 'error', message: '필수 정보 누락' };
+
+  // 중복 방지: 같은 날짜 + 같은 연락처
+  const rows = sheet.getDataRange().getValues();
+  for (let i = 1; i < rows.length; i++) {
+    if (normalizeKoreanPhone(rows[i][4]) === phone && toDateKey(rows[i][1]) === dateKey) {
+      return { result: 'duplicate', message: '이미 등록된 연락처입니다.' };
+    }
+  }
+
+  sheet.appendRow([
+    Utilities.formatDate(new Date(), 'Asia/Seoul', 'yyyy-MM-dd HH:mm:ss'),
+    dateKey,
+    name,
+    payload.gender || '',
+    phone,
+    Number(payload.price) || '',
+    payload.refBy || '직접등록',
+    '입금대기'
+  ]);
+  return { result: 'success' };
+}
+
+function handleGuestEdit(e) {
+  const sheet = e.range.getSheet();
+  const col = e.range.getColumn();
+  const row = e.range.getRow();
+  if (col !== 8 || row <= 1) return;
+  const value = String(e.value || '').trim();
+  if (value === '입금완료') {
+    sendGuestConfirmSMS(sheet, row);
+    updateRosterSheet();
+  } else if (value === '취소') {
+    updateRosterSheet();
+  }
+}
+
+function sendGuestConfirmSMS(sheet, row) {
+  const r       = sheet.getRange(row, 1, 1, 8).getValues()[0];
+  const rawDate = r[1];
+  const name    = String(r[2] || '').trim();
+  const gender  = String(r[3] || '').trim();
+  const phone   = normalizeKoreanPhone(r[4]);
+  if (!phone || !name || !rawDate) return;
+
+  const dateKey = toDateKey(rawDate);
+  const dateObj = new Date(dateKey + 'T00:00:00+09:00');
+  const dow     = ['일','월','화','수','목','금','토'][dateObj.getDay()];
+  const dateStr = (dateObj.getMonth() + 1) + '/' + dateObj.getDate() + '(' + dow + ')';
+
+  let sent = false;
+  try {
+    sent = sendSms(phone, buildPassMsg(name, gender, dateStr, '', dateObj.getDay(), dateKey));
+  } catch (err) {
+    Logger.log('[SMS Guest ERROR] %s', err.message);
+  }
+  if (sent) sheet.getRange(row, 8).setValue('입금완료✓발송');
+}
+
 // 설치: Apps Script 편집기 → 트리거 추가 → onEdit → 스프레드시트 편집 시
 function onEdit(e) {
   try {
     const sheet = e.range.getSheet();
+    if (sheet.getName() === GUEST_SHEET_NAME) { handleGuestEdit(e); return; }
     if (sheet.getName() !== CONFIG.SHEET_NAME) return;
 
     const col = e.range.getColumn();      // 1-based
@@ -742,6 +810,28 @@ function updateRosterSheet() {
     const entry  = [name, phone];
     if (gender === '남성') dateMap[dateKey].male.push(entry);
     else                   dateMap[dateKey].female.push(entry);
+  }
+
+  // 게스트명단: 입금완료 게스트를 '이름 (게스트)'로 명단에 포함
+  const guestSheet = ss.getSheetByName(GUEST_SHEET_NAME);
+  if (guestSheet && guestSheet.getLastRow() > 1) {
+    const gData = guestSheet.getDataRange().getValues();
+    for (let i = 1; i < gData.length; i++) {
+      const dateKey = toDateKey(gData[i][1]);
+      const gName   = String(gData[i][2] || '').trim();
+      if (!dateKey || !gName) continue;
+      const gender  = String(gData[i][3] || '').trim();
+      const phone   = String(gData[i][4] || '').trim();
+      const status  = String(gData[i][7] || '').trim();
+      const label   = gName + ' (게스트)';
+      if (!allApplicantsDateMap[dateKey]) allApplicantsDateMap[dateKey] = { male: {}, female: {} };
+      if (gender === '남성')      allApplicantsDateMap[dateKey].male[label + '|' + phone]   = true;
+      else if (gender === '여성') allApplicantsDateMap[dateKey].female[label + '|' + phone] = true;
+      if (!status.startsWith('입금완료')) continue;
+      if (!dateMap[dateKey]) dateMap[dateKey] = { male: [], female: [] };
+      if (gender === '남성') dateMap[dateKey].male.push([label, phone]);
+      else                   dateMap[dateKey].female.push([label, phone]);
+    }
   }
 
   // 기존 날짜 섹션 탐색 (E열 __DATE__: 마커 기반)
