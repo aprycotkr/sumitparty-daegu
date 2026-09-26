@@ -276,13 +276,15 @@ const EXPLICIT_DATES = [
   '2026-09-11','2026-09-12',
   '2026-09-18','2026-09-19',
   '2026-09-24', // 목 (추석 특별)
-  '2026-09-25','2026-09-26'
+  '2026-09-25','2026-09-26',
+  '2026-10-02','2026-10-03',
+  '2026-10-04' // 일 (30대 솔로파티)
 ];
 
 function getPartyDates() {
   const result = EXPLICIT_DATES.map(ds => ({ dateStr: ds, d: new Date(ds + 'T00:00:00') }));
-  const fri = new Date('2026-10-02T00:00:00');
-  for (let i = 0; i < 52; i++) { // 10/2부터 1년치 금·토
+  const fri = new Date('2026-10-09T00:00:00');
+  for (let i = 0; i < 52; i++) { // 10/9부터 1년치 금·토
     const sat = new Date(fri); sat.setDate(sat.getDate() + 1);
     result.push({ dateStr: toDateStr(fri), d: new Date(fri) });
     result.push({ dateStr: toDateStr(sat), d: sat });

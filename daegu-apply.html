@@ -511,7 +511,9 @@ const DAEGU_CONFIG = {
   EARLYBIRD_PRICES:         { '남성': 56000, '여성': 40000 },
   CHUSEOK_DATE:             '2026-09-24',
   CHUSEOK_PRICES:           { '남성': 55000, '여성': 40000 },
-  CHUSEOK_EARLYBIRD_PRICES: { '남성': 50000, '여성': 35000 }
+  CHUSEOK_EARLYBIRD_PRICES: { '남성': 50000, '여성': 35000 },
+  THIRTIES_DATE:            '2026-10-04',  // 30대 솔로파티 (가격은 일반과 동일)
+  THIRTIES_BIRTH_YEARS:     { '남성': [1987, 1998], '여성': [1988, 2000] }
 };
 
 function isEarlybirdDate(dateKey) {
@@ -564,7 +566,9 @@ const terms = [false, false, false];
   fd.dateLabel = (d.getMonth()+1)+'월 '+d.getDate()+'일 ('+wd[d.getDay()]+')';
   var isLateStart = d.getDay() === 5 || dateKey === DAEGU_CONFIG.CHUSEOK_DATE;
   fd.timeStr = isLateStart ? '19:50 입장 · 20:00–23:30' : '19:00–23:30';
-  document.getElementById('formSubtitle').textContent = '썸잇 솔로파티 ' + fd.dateLabel + ' — 대구점';
+  var isThirties = dateKey === DAEGU_CONFIG.THIRTIES_DATE;
+  if (isThirties) fd.timeStr = '19:00–23:00';
+  document.getElementById('formSubtitle').textContent = '썸잇 ' + (isThirties ? '30대 ' : '') + '솔로파티 ' + fd.dateLabel + ' — 대구점';
   const disp = document.getElementById('selectedDateDisplay');
   if (disp) disp.textContent = fd.dateLabel + ' · ' + fd.timeStr;
 })();
@@ -663,7 +667,15 @@ async function step2Next() {
   if (bdateRaw.length !== 8) { document.getElementById('bdayErr').textContent = '생년월일 8자리를 입력해주세요. (예: 19980523)'; return; }
   const by = bdateRaw.slice(0,4), bm = bdateRaw.slice(4,6), bd = bdateRaw.slice(6,8);
   const yr = parseInt(by), mo = parseInt(bm), dy = parseInt(bd);
-  if (yr < 1990 || yr > 2007 || mo < 1 || mo > 12 || dy < 1 || dy > 31 || new Date(yr, mo-1, dy).getDate() !== dy) {
+  if (mo < 1 || mo > 12 || dy < 1 || dy > 31 || new Date(yr, mo-1, dy).getDate() !== dy) {
+    document.getElementById('bdayErr').textContent = '올바른 생년월일을 입력해주세요.'; return;
+  }
+  if (fd.date === DAEGU_CONFIG.THIRTIES_DATE) {
+    const range = DAEGU_CONFIG.THIRTIES_BIRTH_YEARS[fd.gender];
+    if (range && (yr < range[0] || yr > range[1])) {
+      document.getElementById('bdayErr').textContent = `30대 솔로파티는 ${fd.gender} ${String(range[0]).slice(2)}~${String(range[1]).slice(2)}년생만 참가 가능합니다.`; return;
+    }
+  } else if (yr < 1990 || yr > 2007) {
     document.getElementById('bdayErr').textContent = '올바른 생년월일을 입력해주세요. (90~07년생)'; return;
   }
   document.getElementById('bdayErr').textContent = '';

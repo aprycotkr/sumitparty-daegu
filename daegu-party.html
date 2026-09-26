@@ -289,7 +289,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
           <span class="val" id="leftPriceMain">남 61,000원 / 여 45,000원</span>
         </div>
         <div class="info-divider"></div>
-        <div class="info-row"><span>참가 연령</span><span class="iv">90~07년생 (남녀 동일)</span></div>
+        <div class="info-row"><span>참가 연령</span><span class="iv" id="leftAge">90~07년생 (남녀 동일)</span></div>
         <div class="info-row"><span>정원</span><span class="iv">남녀 각 25~30명</span></div>
         <div class="info-row"><span>심사 방식</span><span class="iv gold">외모 승인제</span></div>
         <div class="viewer-badge" style="margin-top:0.4rem"><span class="vb-flame">🔥</span><span class="viewer-count-num">5</span>명이 보고 있어요!</div>
@@ -313,7 +313,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
         <strong id="rightPriceMain">남 61,000 / 여 45,000원</strong>
       </div>
       <div class="card-divider"></div>
-      <div class="card-info-row"><span>참가 연령</span><span>90~07년생</span></div>
+      <div class="card-info-row"><span>참가 연령</span><span id="rightAge">90~07년생</span></div>
       <div class="card-info-row"><span>정원</span><span>남녀 각 25~30명</span></div>
       <div class="card-info-row"><span>심사 방식</span><span class="gold">외모 승인제</span></div>
       <div class="card-divider"></div>
@@ -344,6 +344,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 <script>
 var OPEN_DATE = '2026-07-11';
 var CHUSEOK_DATE = '2026-09-24';
+var THIRTIES_DATE = '2026-10-04'; // 30대 솔로파티
 
 var _statusMap = {};
 firebase.initializeApp({
@@ -396,10 +397,17 @@ _statusReady.then(function() {
     var isChuseok = dateParam === CHUSEOK_DATE;
     var timeStr = (d.getDay() === 5 || isChuseok) ? '20:00–23:30' : '19:00–23:30';
     var timeDisplay = isChuseok ? '19:50 입장 · 20:00–23:30' : timeStr;
-    document.getElementById('mainTitle').innerHTML = '썸잇 솔로파티<br>'+dateText+'<br>대구점';
+    var partyName = '썸잇 솔로파티';
+    if (dateParam === THIRTIES_DATE) {
+      timeDisplay = '19:00–23:00';
+      partyName = '썸잇 30대 솔로파티';
+      document.getElementById('leftAge').textContent = '남 87~98년생 / 여 88~00년생';
+      document.getElementById('rightAge').textContent = '남 87~98 / 여 88~00년생';
+    }
+    document.getElementById('mainTitle').innerHTML = partyName+'<br>'+dateText+'<br>대구점';
     document.getElementById('metaDate').innerHTML = '📅 '+dateText;
     document.getElementById('metaTime').innerHTML = '🕒 '+timeDisplay;
-    document.getElementById('floatingTitle').textContent = '썸잇 솔로파티 '+dateText+' — 대구점';
+    document.getElementById('floatingTitle').textContent = partyName+' '+dateText+' — 대구점';
     document.getElementById('floatingSub').textContent = dateText+' · '+timeDisplay;
   }
 

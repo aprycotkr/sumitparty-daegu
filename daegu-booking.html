@@ -194,6 +194,7 @@ firebase.initializeApp({
 });
 
 var CHUSEOK_DATE = '2026-09-24';
+var THIRTIES_DATE = '2026-10-04'; // 30대 솔로파티 (남 87~98년생 / 여 88~00년생)
 var DAY_NAMES = ['일','월','화','수','목','금','토'];
 var MONTH_NAMES = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
 
@@ -218,11 +219,14 @@ function getPartyDates(n) {
     { date: new Date('2026-09-24T00:00:00'), cutoff: new Date('2026-09-24T20:00:00'), dayType: 'special' },
     { date: new Date('2026-09-25T00:00:00'), cutoff: new Date('2026-09-25T20:00:00'), dayType: 'fri' },
     { date: new Date('2026-09-26T00:00:00'), cutoff: new Date('2026-09-26T19:00:00'), dayType: 'sat' },
+    { date: new Date('2026-10-02T00:00:00'), cutoff: new Date('2026-10-02T20:00:00'), dayType: 'fri' },
+    { date: new Date('2026-10-03T00:00:00'), cutoff: new Date('2026-10-03T19:00:00'), dayType: 'sat' },
+    { date: new Date('2026-10-04T00:00:00'), cutoff: new Date('2026-10-04T19:00:00'), dayType: 'thirties' }, // 일 (30대 솔로파티)
   ];
   explicit.forEach(function(e) {
     if (results.length < n && now < e.cutoff) results.push({ date: e.date, dayType: e.dayType });
   });
-  var fri = new Date('2026-10-02T00:00:00');
+  var fri = new Date('2026-10-09T00:00:00');
   while (results.length < n) {
     var sat = new Date(fri); sat.setDate(sat.getDate() + 1);
     var friCutoff = new Date(fri); friCutoff.setHours(20,0,0,0);
@@ -267,6 +271,7 @@ function getStatusInfo(ds) {
 }
 
 function getPartyTime(dayType) {
+  if (dayType === 'thirties') return '19:00~23:00';
   return dayType === 'sat' ? '19:00~23:30' : '20:00~23:30';
 }
 
@@ -314,6 +319,7 @@ function renderSchedule() {
       var isSelected = selectedDate && selectedDate.ds === ds;
       var isSoon = st.label === '마감임박';
       var isChuseok = ds === CHUSEOK_DATE;
+      var isThirties = ds === THIRTIES_DATE;
       var eb = isEarlyBird(ds);
 
       var statusEl;
@@ -323,6 +329,8 @@ function renderSchedule() {
         statusEl = '<div class="date-card-status"><span class="date-card-badge-soon">마감임박</span></div>';
       } else if (isChuseok) {
         statusEl = '<div class="date-card-status"><span class="date-card-badge-special">추석특별</span></div>';
+      } else if (isThirties) {
+        statusEl = '<div class="date-card-status"><span class="date-card-badge-special">30대</span></div>';
       } else if (eb && st.label === '예약가능') {
         statusEl = '<div class="date-card-status"><span class="date-card-badge-eb">얼리버드</span></div>';
       } else {
@@ -364,6 +372,7 @@ function renderSchedule() {
         + '<span class="info-meta-item">📍 대구 중구</span>'
         + (isSoonPanel ? '<span class="info-meta-divider">·</span><span class="soon-badge">마감임박</span>' : '')
         + '</div>'
+        + (selectedDate.ds === THIRTIES_DATE ? '<div class="info-price" style="margin-bottom:0.5rem;padding-bottom:0;border-bottom:none;font-weight:600">30대 솔로파티 · 남 87~98년생 / 여 88~00년생</div>' : '')
         + getPriceHtml(selectedDate.ds)
         + seatsHtml
         + '<button class="cta-btn" onclick="goToApply(\'' + selectedDate.ds + '\')">' + btnLabel + '</button>'
