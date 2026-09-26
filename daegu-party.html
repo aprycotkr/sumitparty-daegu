@@ -344,6 +344,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 <script>
 var OPEN_DATE = '2026-07-11';
 var CHUSEOK_DATE = '2026-09-24';
+var HOLIDAY_DATE = '2026-10-08'; // 목 연휴 특별 (20:00 시작)
 var THIRTIES_DATE = '2026-10-04'; // 30대 솔로파티
 
 var _statusMap = {};
@@ -394,9 +395,9 @@ _statusReady.then(function() {
   }
 
   if (dateText) {
-    var isChuseok = dateParam === CHUSEOK_DATE;
-    var timeStr = (d.getDay() === 5 || isChuseok) ? '20:00–23:30' : '19:00–23:30';
-    var timeDisplay = isChuseok ? '19:50 입장 · 20:00–23:30' : timeStr;
+    var isSpecialLate = dateParam === CHUSEOK_DATE || dateParam === HOLIDAY_DATE;
+    var timeStr = (d.getDay() === 5 || isSpecialLate) ? '20:00–23:30' : '19:00–23:30';
+    var timeDisplay = isSpecialLate ? '19:50 입장 · 20:00–23:30' : timeStr;
     var partyName = '썸잇 솔로파티';
     if (dateParam === THIRTIES_DATE) {
       timeDisplay = '19:00–23:00';

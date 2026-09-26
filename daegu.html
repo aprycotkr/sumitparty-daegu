@@ -475,6 +475,7 @@ window._fbStatusRef = firebase.database().ref('/daegu/dateStatus');
       { date: new Date('2026-10-02T00:00:00'), cutoff: new Date('2026-10-02T20:00:00'), dayType: 'fri' },
       { date: new Date('2026-10-03T00:00:00'), cutoff: new Date('2026-10-03T19:00:00'), dayType: 'sat' },
       { date: new Date('2026-10-04T00:00:00'), cutoff: new Date('2026-10-04T19:00:00'), dayType: 'thirties' }, // 일 (30대 솔로파티)
+      { date: new Date('2026-10-08T00:00:00'), cutoff: new Date('2026-10-08T20:00:00'), dayType: 'special' }, // 목 (연휴 특별)
     ];
     explicit.forEach(function(e) {
       if (results.length < n && now < e.cutoff) results.push({ date: e.date, dayType: e.dayType });
@@ -813,6 +814,7 @@ window._fbStatusRef = firebase.database().ref('/daegu/dateStatus');
     { date: new Date('2026-10-02T00:00:00'), cutoff: new Date('2026-10-02T20:00:00'), dayType: 'fri' },
     { date: new Date('2026-10-03T00:00:00'), cutoff: new Date('2026-10-03T19:00:00'), dayType: 'sat' },
     { date: new Date('2026-10-04T00:00:00'), cutoff: new Date('2026-10-04T19:00:00'), dayType: 'thirties' }, // 일 (30대 솔로파티)
+    { date: new Date('2026-10-08T00:00:00'), cutoff: new Date('2026-10-08T20:00:00'), dayType: 'special' }, // 목 (연휴 특별)
   ];
   for (var hi = 0; hi < heroExplicit.length; hi++) {
     if (now < heroExplicit[hi].cutoff) { nextParty = heroExplicit[hi].date; nextDayType = heroExplicit[hi].dayType; break; }

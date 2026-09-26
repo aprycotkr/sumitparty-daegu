@@ -512,6 +512,7 @@ const DAEGU_CONFIG = {
   CHUSEOK_DATE:             '2026-09-24',
   CHUSEOK_PRICES:           { '남성': 55000, '여성': 40000 },
   CHUSEOK_EARLYBIRD_PRICES: { '남성': 50000, '여성': 35000 },
+  HOLIDAY_DATE:             '2026-10-08',  // 목 연휴 특별 (20:00 시작, 가격은 일반과 동일)
   THIRTIES_DATE:            '2026-10-04',  // 30대 솔로파티 (가격은 일반과 동일)
   THIRTIES_BIRTH_YEARS:     { '남성': [1987, 1998], '여성': [1988, 2000] }
 };
@@ -564,7 +565,7 @@ const terms = [false, false, false];
   const wd = ['일','월','화','수','목','금','토'];
   fd.date = dateKey;
   fd.dateLabel = (d.getMonth()+1)+'월 '+d.getDate()+'일 ('+wd[d.getDay()]+')';
-  var isLateStart = d.getDay() === 5 || dateKey === DAEGU_CONFIG.CHUSEOK_DATE;
+  var isLateStart = d.getDay() === 5 || dateKey === DAEGU_CONFIG.CHUSEOK_DATE || dateKey === DAEGU_CONFIG.HOLIDAY_DATE;
   fd.timeStr = isLateStart ? '19:50 입장 · 20:00–23:30' : '19:00–23:30';
   var isThirties = dateKey === DAEGU_CONFIG.THIRTIES_DATE;
   if (isThirties) fd.timeStr = '19:00–23:00';

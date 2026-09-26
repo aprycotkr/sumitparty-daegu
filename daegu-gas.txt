@@ -623,7 +623,8 @@ function buildApplyMsg(name, dateStr, priceText) {
 function buildPassMsg(name, gender, dateStr, price, dayOfWeek, dateKey) {
   var isFri = dayOfWeek === 5;
   var isChuseok = dateKey === '2026-09-24';
-  var isLateStart = isFri || isChuseok;
+  var isHoliday = dateKey === '2026-10-08'; // 목 연휴 특별
+  var isLateStart = isFri || isChuseok || isHoliday;
   var startTime = isLateStart ? '오후 8시' : '오후 7시';
   var entryTime = isLateStart ? '19:50' : '18:50';
   return (

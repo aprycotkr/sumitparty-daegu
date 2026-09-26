@@ -194,6 +194,7 @@ firebase.initializeApp({
 });
 
 var CHUSEOK_DATE = '2026-09-24';
+var HOLIDAY_DATE = '2026-10-08'; // 목 연휴 특별 (20:00 시작)
 var THIRTIES_DATE = '2026-10-04'; // 30대 솔로파티 (남 87~98년생 / 여 88~00년생)
 var DAY_NAMES = ['일','월','화','수','목','금','토'];
 var MONTH_NAMES = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
@@ -222,6 +223,7 @@ function getPartyDates(n) {
     { date: new Date('2026-10-02T00:00:00'), cutoff: new Date('2026-10-02T20:00:00'), dayType: 'fri' },
     { date: new Date('2026-10-03T00:00:00'), cutoff: new Date('2026-10-03T19:00:00'), dayType: 'sat' },
     { date: new Date('2026-10-04T00:00:00'), cutoff: new Date('2026-10-04T19:00:00'), dayType: 'thirties' }, // 일 (30대 솔로파티)
+    { date: new Date('2026-10-08T00:00:00'), cutoff: new Date('2026-10-08T20:00:00'), dayType: 'special' }, // 목 (연휴 특별)
   ];
   explicit.forEach(function(e) {
     if (results.length < n && now < e.cutoff) results.push({ date: e.date, dayType: e.dayType });
@@ -320,6 +322,7 @@ function renderSchedule() {
       var isSoon = st.label === '마감임박';
       var isChuseok = ds === CHUSEOK_DATE;
       var isThirties = ds === THIRTIES_DATE;
+      var isHoliday = ds === HOLIDAY_DATE;
       var eb = isEarlyBird(ds);
 
       var statusEl;
@@ -329,6 +332,8 @@ function renderSchedule() {
         statusEl = '<div class="date-card-status"><span class="date-card-badge-soon">마감임박</span></div>';
       } else if (isChuseok) {
         statusEl = '<div class="date-card-status"><span class="date-card-badge-special">추석특별</span></div>';
+      } else if (isHoliday) {
+        statusEl = '<div class="date-card-status"><span class="date-card-badge-special">연휴특별</span></div>';
       } else if (isThirties) {
         statusEl = '<div class="date-card-status"><span class="date-card-badge-special">30대 솔로파티</span></div>';
       } else if (eb && st.label === '예약가능') {
