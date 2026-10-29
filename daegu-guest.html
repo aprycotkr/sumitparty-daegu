@@ -249,12 +249,14 @@ function selGender(el, g) {
   ];
   explicit.forEach(e => { if (results.length < n && now < e.cutoff) results.push(e.date); });
 
+  const CLOSED_FRIS = ['2026-10-30']; // 예약 닫은 금요일
   const fri = new Date('2026-10-09T00:00:00');
   while (results.length < n) {
     const sat = new Date(fri); sat.setDate(sat.getDate() + 1);
     const friCutoff = new Date(fri); friCutoff.setHours(20, 0, 0, 0);
     const satCutoff = new Date(sat); satCutoff.setHours(19, 0, 0, 0);
-    if (now < friCutoff) results.push(new Date(fri));
+    const friOpen = !CLOSED_FRIS.includes(fri.getFullYear()+'-'+String(fri.getMonth()+1).padStart(2,'0')+'-'+String(fri.getDate()).padStart(2,'0'));
+    if (friOpen && now < friCutoff) results.push(new Date(fri));
     if (results.length < n && now < satCutoff) results.push(new Date(sat));
     fri.setDate(fri.getDate() + 7);
   }

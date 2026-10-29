@@ -479,12 +479,14 @@ window._fbStatusRef = firebase.database().ref('/daegu/dateStatus');
     explicit.forEach(function(e) {
       if (results.length < n && now < e.cutoff) results.push({ date: e.date, dayType: e.dayType });
     });
+    var CLOSED_FRIS = ['2026-10-30']; // 예약 닫은 금요일
     var fri = new Date('2026-10-09T00:00:00');
     while (results.length < n) {
       var sat = new Date(fri); sat.setDate(sat.getDate() + 1);
       var friCutoff = new Date(fri); friCutoff.setHours(20,0,0,0);
       var satCutoff = new Date(sat); satCutoff.setHours(19,0,0,0);
-      if (now < friCutoff) results.push({ date: new Date(fri), dayType: 'fri' });
+      var friOpen = CLOSED_FRIS.indexOf(fri.getFullYear()+'-'+String(fri.getMonth()+1).padStart(2,'0')+'-'+String(fri.getDate()).padStart(2,'0')) === -1;
+      if (friOpen && now < friCutoff) results.push({ date: new Date(fri), dayType: 'fri' });
       if (results.length < n && now < satCutoff) results.push({ date: new Date(sat), dayType: 'sat' });
       fri.setDate(fri.getDate() + 7);
     }
@@ -818,12 +820,14 @@ window._fbStatusRef = firebase.database().ref('/daegu/dateStatus');
     if (now < heroExplicit[hi].cutoff) { nextParty = heroExplicit[hi].date; nextDayType = heroExplicit[hi].dayType; break; }
   }
   if (!nextParty) {
+    var CLOSED_FRIS = ['2026-10-30']; // 예약 닫은 금요일
     var fri = new Date('2026-10-09T00:00:00');
     while (!nextParty) {
       var sat = new Date(fri); sat.setDate(sat.getDate() + 1);
       var friCutoff = new Date(fri); friCutoff.setHours(20,0,0,0);
       var satCutoff = new Date(sat); satCutoff.setHours(19,0,0,0);
-      if (now < friCutoff) { nextParty = new Date(fri); nextDayType = 'fri'; }
+      var friOpen = CLOSED_FRIS.indexOf(fri.getFullYear()+'-'+String(fri.getMonth()+1).padStart(2,'0')+'-'+String(fri.getDate()).padStart(2,'0')) === -1;
+      if (friOpen && now < friCutoff) { nextParty = new Date(fri); nextDayType = 'fri'; }
       else if (now < satCutoff) { nextParty = new Date(sat); nextDayType = 'sat'; }
       else fri.setDate(fri.getDate() + 7);
     }
