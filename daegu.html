@@ -523,10 +523,11 @@ window._fbStatusRef = firebase.database().ref('/daegu/dateStatus');
       var maleSt = st.male || 'open';
       var femSt  = st.female || 'open';
       var allClosed = maleSt === 'closed' && femSt === 'closed';
+      var soonByDate = Math.ceil((d - today) / (1000*60*60*24)) <= 3; // 파티 3일 이내면 자동 마감임박
 
       var statusText, badgeClass;
       if (allClosed) { statusText = '마감'; badgeClass = 'dg-badge dg-badge-closed'; }
-      else if (maleSt === 'almost' || femSt === 'almost') { statusText = '마감임박'; badgeClass = 'dg-badge dg-badge-almost'; }
+      else if (maleSt === 'almost' || femSt === 'almost' || soonByDate) { statusText = '마감임박'; badgeClass = 'dg-badge dg-badge-almost'; }
       else { statusText = '신청가능'; badgeClass = 'dg-badge dg-badge-open'; }
 
       var subBadgeHtml = '';
@@ -892,10 +893,15 @@ window._fbStatusRef = firebase.database().ref('/daegu/dateStatus');
                  : (st.femaleRemaining !== undefined)                      ? Number(st.femaleRemaining)
                  : null;
 
+    // 파티 3일 이내면 자동 마감임박 (부산점과 동일)
+    var _today = new Date(); _today.setHours(0,0,0,0);
+    var _party = new Date(window._nextPartyDate || TARGET + 'T00:00:00'); _party.setHours(0,0,0,0);
+    var soonByDate = Math.ceil((_party - _today) / (1000*60*60*24)) <= 3;
+
     function badge(status, left) {
       if (status === 'closed') return { cls: 'closed', text: '마감' };
+      if (status === 'almost' || soonByDate) return { cls: 'open', text: '마감임박' };
       if (left !== null)       return { cls: 'open',   text: '잔여 ' + left + '석' };
-      if (status === 'almost') return { cls: 'open',   text: '마감임박' };
       return { cls: 'open', text: '모집 중' };
     }
 

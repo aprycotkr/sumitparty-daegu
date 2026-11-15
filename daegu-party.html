@@ -367,6 +367,14 @@ _statusReady.then(function() {
   var date = new URLSearchParams(window.location.search).get('date') || '';
   if (!date) return;
   var st = _statusMap[date] || {};
+  // 마감임박 배지: 관리자 '마감임박' 설정 또는 파티 3일 이내 (전체 마감이면 숨김)
+  var _db = document.getElementById('deadlineBadge');
+  if (_db) {
+    var _t = new Date(); _t.setHours(0,0,0,0);
+    var _soon = Math.ceil((new Date(date + 'T00:00:00') - _t) / 86400000) <= 3;
+    var _allClosed = st.male === 'closed' && st.female === 'closed';
+    _db.style.display = (!_allClosed && (st.male === 'almost' || st.female === 'almost' || _soon)) ? '' : 'none';
+  }
   var el = document.getElementById('cardTopStatus');
   if (!el) return;
   if (st.male === 'closed' && st.female === 'closed') {

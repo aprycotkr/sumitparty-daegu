@@ -263,10 +263,20 @@ function isEarlyBird(ds) {
   return Math.floor((party - today) / 86400000) > 7;
 }
 
+// 파티 3일 이내면 자동 마감임박 (부산점과 동일)
+function isSoonByDate(ds) {
+  var today = new Date(); today.setHours(0,0,0,0);
+  var party = new Date(ds + 'T00:00:00');
+  return Math.ceil((party - today) / 86400000) <= 3;
+}
+
 function getStatusInfo(ds) {
   var st = dateStatusMap[ds] || {};
-  var male = st.male || '정상';
-  var female = st.female || '정상';
+  // 관리자 페이지는 open/almost/closed 로 저장 → 한글 라벨로 맞춤
+  var KO = { open:'정상', almost:'마감임박', closed:'마감' };
+  var male = KO[st.male] || st.male || '정상';
+  var female = KO[st.female] || st.female || '정상';
+  if (male !== '마감' && female !== '마감' && isSoonByDate(ds)) return { label:'마감임박', dot:'#EF4444', textColor:'#DC2626', disabled:false };
   if (male === '마감' && female === '마감') return { label:'마감', dot:'#C4C4C4', textColor:'#9CA3AF', disabled:true };
   if (male === '마감임박' || female === '마감임박') return { label:'마감임박', dot:'#EF4444', textColor:'#DC2626', disabled:false };
   if (male === '마감' && female !== '마감') return { label:'남자마감', dot:'#6366F1', textColor:'#4F46E5', disabled:false };
@@ -361,7 +371,7 @@ function renderSchedule() {
       var fL = stData.femaleRemaining !== undefined ? stData.femaleRemaining : stData.femaleLeft;
       var hasMale = mL !== '' && mL !== null && mL !== undefined;
       var hasFemale = fL !== '' && fL !== null && fL !== undefined;
-      var isSoonPanel = stData.male === '마감임박' || stData.female === '마감임박';
+      var isSoonPanel = getStatusInfo(selectedDate.ds).label === '마감임박';
       var partyTime = getPartyTime(selectedDate.dayType);
       var mUrgent = hasMale && Number(mL) <= 3;
       var fUrgent = hasFemale && Number(fL) <= 3;
