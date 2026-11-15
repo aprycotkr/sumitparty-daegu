@@ -508,10 +508,10 @@ const DAEGU_CONFIG = {
   EARLYBIRD_DAYS: 7,              // 파티 N일 전까지 얼리버드
   PRICES:                   { '남성': 61000, '여성': 45000 },
   OPEN_PRICES:              { '남성': 49900, '여성': 39900 },
-  EARLYBIRD_PRICES:         { '남성': 56000, '여성': 40000 },
+  EARLYBIRD_PRICES:         { '남성': 61000, '여성': 40000 },  // 얼리버드는 여성만
   CHUSEOK_DATE:             '2026-09-24',
   CHUSEOK_PRICES:           { '남성': 55000, '여성': 40000 },
-  CHUSEOK_EARLYBIRD_PRICES: { '남성': 50000, '여성': 35000 },
+  CHUSEOK_EARLYBIRD_PRICES: { '남성': 55000, '여성': 35000 },
   HOLIDAY_DATE:             '2026-10-08',  // 목 연휴 특별 (20:00 시작, 가격은 일반과 동일)
   THIRTIES_DATE:            '2026-10-04',  // 30대 솔로파티 (가격은 일반과 동일)
   THIRTIES_BIRTH_YEARS:     { '남성': [1987, 1998], '여성': [1988, 2000] }
@@ -741,7 +741,7 @@ function updateTicketPrice() {
   if (info) info.textContent = fd.gender === '남성' ? '남성 참가비' : '여성 참가비';
   if (badge) {
     if (isOpenDate) { badge.textContent = 'OPEN 할인'; badge.style.display = 'block'; }
-    else if (isEarlybird) { badge.textContent = '얼리버드 할인'; badge.style.display = 'block'; }
+    else if (isEarlybird && fd.gender === '여성') { badge.textContent = '얼리버드 할인'; badge.style.display = 'block'; }
     else { badge.style.display = 'none'; }
   }
 }

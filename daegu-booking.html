@@ -124,7 +124,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
   .month-group{padding:1.2rem 1rem}
   .date-grid{grid-template-columns:repeat(auto-fill,minmax(82px,1fr));gap:6px}
   .date-card{padding:0.85rem 0.4rem 0.75rem}
-  .date-card-badge-special{letter-spacing:0;white-space:nowrap}
+  .date-card-badge-special,.date-card-badge-eb{letter-spacing:0;white-space:nowrap}
   .date-card-num{font-size:1.2rem}
 }
 </style>
@@ -293,11 +293,11 @@ function getPriceHtml(ds) {
   var eb = isEarlyBird(ds);
   if (ds === CHUSEOK_DATE) {
     return eb
-      ? '<div class="info-price"><span class="info-price-eb">얼리버드</span>남 <s>55,000</s> <strong>50,000원</strong> &nbsp;·&nbsp; 여 <s>40,000</s> <strong>35,000원</strong></div>'
+      ? '<div class="info-price"><span class="info-price-eb">여성 얼리버드</span>남 <strong>55,000원</strong> &nbsp;·&nbsp; 여 <s>40,000</s> <strong>35,000원</strong></div>'
       : '<div class="info-price">남성 55,000원 &nbsp;·&nbsp; 여성 40,000원</div>';
   }
   return eb
-    ? '<div class="info-price"><span class="info-price-eb">얼리버드</span>남 <s>61,000</s> <strong>56,000원</strong> &nbsp;·&nbsp; 여 <s>45,000</s> <strong>40,000원</strong></div>'
+    ? '<div class="info-price"><span class="info-price-eb">여성 얼리버드</span>남 <strong>61,000원</strong> &nbsp;·&nbsp; 여 <s>45,000</s> <strong>40,000원</strong></div>'
     : '<div class="info-price">남성 61,000원 &nbsp;·&nbsp; 여성 45,000원</div>';
 }
 
@@ -349,7 +349,7 @@ function renderSchedule() {
       } else if (isThirties) {
         statusEl = '<div class="date-card-status"><span class="date-card-badge-special">30대 솔로파티</span></div>';
       } else if (eb && st.label === '예약가능') {
-        statusEl = '<div class="date-card-status"><span class="date-card-badge-eb">얼리버드</span></div>';
+        statusEl = '<div class="date-card-status"><span class="date-card-badge-eb">여성 얼리버드</span></div>';
       } else {
         statusEl = '<div class="date-card-status" style="color:' + st.textColor + '">' + st.label + '</div>';
       }

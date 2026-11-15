@@ -269,13 +269,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
         </div>
         <div class="earlybird-banner" id="earlybirdBannerLeft" style="display:none">
           <div class="earlybird-banner-title">🏷️ 얼리버드 할인 적용 중!</div>
-          <div class="earlybird-banner-body">파티 7일 이전 신청 시 <strong>5,000원 할인</strong>이 적용됩니다.<br><span id="earlybirdCountdown"></span></div>
-          <div class="eb-price-grid">
-            <div class="eb-price-cell">
-              <div class="ep-label">남성</div>
-              <div class="ep-original">61,000원</div>
-              <div class="ep-discounted">56,000원</div>
-            </div>
+          <div class="earlybird-banner-body">파티 7일 이전 신청 시 <strong>여성 5,000원 할인</strong>이 적용됩니다.<br><span id="earlybirdCountdown"></span></div>
+          <div class="eb-price-grid" style="grid-template-columns:1fr">
             <div class="eb-price-cell">
               <div class="ep-label">여성</div>
               <div class="ep-original">45,000원</div>
@@ -306,7 +301,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
       <div class="card-top" id="cardTopStatus">✦ 현재 신청 가능</div>
       <div class="earlybird-banner" id="earlybirdBannerRight" style="display:none;margin-bottom:0.8rem">
         <div class="earlybird-banner-title" style="font-size:0.7rem">🏷️ 얼리버드 할인 적용 중!</div>
-        <div class="earlybird-banner-body" style="font-size:0.62rem;margin-bottom:0">파티 7일 이전 신청 시 <strong>5,000원 할인</strong></div>
+        <div class="earlybird-banner-body" style="font-size:0.62rem;margin-bottom:0">파티 7일 이전 신청 시 <strong>여성 5,000원 할인</strong></div>
       </div>
       <div class="card-price-row hl">
         <span>1+2부 <span class="inki-badge">추천</span></span>
@@ -446,16 +441,14 @@ _statusReady.then(function() {
       document.getElementById('earlybirdCountdown').textContent = '얼리버드 마감까지 ' + ebDaysLeftC + '일 남았습니다.';
       var epOrigs = document.querySelectorAll('.ep-original');
       var epDiscs = document.querySelectorAll('.ep-discounted');
-      if (epOrigs[0]) epOrigs[0].textContent = '55,000원';
-      if (epOrigs[1]) epOrigs[1].textContent = '40,000원';
-      if (epDiscs[0]) epDiscs[0].textContent = '50,000원';
-      if (epDiscs[1]) epDiscs[1].textContent = '35,000원';
+      if (epOrigs[0]) epOrigs[0].textContent = '40,000원';
+      if (epDiscs[0]) epDiscs[0].textContent = '35,000원';
       cEl.innerHTML =
-        '<span style="text-decoration:line-through;opacity:0.45;font-size:0.65rem;white-space:nowrap">55,000원/40,000원</span>' +
-        '<span style="white-space:nowrap">남 50,000원 / 여 35,000원</span>';
+        '<span style="text-decoration:line-through;opacity:0.45;font-size:0.65rem;white-space:nowrap">여 40,000원</span>' +
+        '<span style="white-space:nowrap">남 55,000원 / 여 35,000원</span>';
       document.getElementById('rightPriceMain').innerHTML =
-        '<span style="font-size:0.65rem;text-decoration:line-through;opacity:0.5">55,000/40,000원</span><br>남 50,000 / 여 35,000원';
-      document.getElementById('cardTopStatus').textContent = '🏷️ 얼리버드 할인 적용 중';
+        '<span style="font-size:0.65rem;text-decoration:line-through;opacity:0.5">여 40,000원</span><br>남 55,000 / 여 35,000원';
+      document.getElementById('cardTopStatus').textContent = '🏷️ 여성 얼리버드 할인 적용 중';
     } else {
       cEl.innerHTML = '<span style="white-space:nowrap">남 55,000원 / 여 40,000원</span>';
       document.getElementById('rightPriceMain').innerHTML = '남 55,000 / 여 40,000원';
@@ -474,11 +467,11 @@ _statusReady.then(function() {
       var el2 = document.getElementById('leftPriceMain');
       el2.style.cssText = 'display:flex;flex-direction:column;align-items:flex-end;gap:2px';
       el2.innerHTML =
-        '<span style="text-decoration:line-through;opacity:0.45;font-size:0.65rem;white-space:nowrap">61,000원/45,000원</span>' +
-        '<span style="white-space:nowrap">남 56,000원 / 여 40,000원</span>';
+        '<span style="text-decoration:line-through;opacity:0.45;font-size:0.65rem;white-space:nowrap">여 45,000원</span>' +
+        '<span style="white-space:nowrap">남 61,000원 / 여 40,000원</span>';
       document.getElementById('rightPriceMain').innerHTML =
-        '<span style="font-size:0.65rem;text-decoration:line-through;opacity:0.5">61,000/45,000원</span><br>남 56,000 / 여 40,000원';
-      document.getElementById('cardTopStatus').textContent = '🏷️ 얼리버드 할인 적용 중';
+        '<span style="font-size:0.65rem;text-decoration:line-through;opacity:0.5">여 45,000원</span><br>남 61,000 / 여 40,000원';
+      document.getElementById('cardTopStatus').textContent = '🏷️ 여성 얼리버드 할인 적용 중';
     }
   }
 })();
