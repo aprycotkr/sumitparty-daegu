@@ -900,8 +900,8 @@ window._fbStatusRef = firebase.database().ref('/daegu/dateStatus');
 
     function badge(status, left) {
       if (status === 'closed') return { cls: 'closed', text: '마감' };
+      if (left !== null)       return { cls: 'open',   text: left + '자리' };
       if (status === 'almost' || soonByDate) return { cls: 'open', text: '마감임박' };
-      if (left !== null)       return { cls: 'open',   text: '잔여 ' + left + '석' };
       return { cls: 'open', text: '모집 중' };
     }
 
