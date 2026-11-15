@@ -249,7 +249,7 @@ function selGender(el, g) {
   ];
   explicit.forEach(e => { if (results.length < n && now < e.cutoff) results.push(e.date); });
 
-  const CLOSED_FRIS = ['2026-10-30', '2026-11-20']; // 예약 닫은 금요일
+  const CLOSED_FRIS = ['2026-10-30', '2026-11-20', '2026-11-27']; // 예약 닫은 금요일
   const fri = new Date('2026-10-09T00:00:00');
   while (results.length < n) {
     const sat = new Date(fri); sat.setDate(sat.getDate() + 1);

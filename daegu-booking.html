@@ -228,7 +228,7 @@ function getPartyDates(n) {
   explicit.forEach(function(e) {
     if (results.length < n && now < e.cutoff) results.push({ date: e.date, dayType: e.dayType });
   });
-  var CLOSED_FRIS = ['2026-10-30', '2026-11-20']; // 예약 닫은 금요일
+  var CLOSED_FRIS = ['2026-10-30', '2026-11-20', '2026-11-27']; // 예약 닫은 금요일
   var fri = new Date('2026-10-09T00:00:00');
   while (results.length < n) {
     var sat = new Date(fri); sat.setDate(sat.getDate() + 1);
