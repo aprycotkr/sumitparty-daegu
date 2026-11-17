@@ -533,7 +533,8 @@ window._fbStatusRef = firebase.database().ref('/daegu/dateStatus');
       var subBadgeHtml = '';
       if (!allClosed) {
         var daysUntil = Math.ceil((d - today) / (1000*60*60*24));
-        if (daysUntil > 7) subBadgeHtml = '<div style="margin-top:5px"><span class="dg-earlybird-badge">🏷️ 여성 얼리버드 할인</span></div>';
+        if (key === '2026-11-28') subBadgeHtml = '<div style="margin-top:5px"><span class="dg-earlybird-badge">🎉 썸잇 1주년 이벤트 · 여성 1만원</span></div>';
+        else if (daysUntil > 7) subBadgeHtml = '<div style="margin-top:5px"><span class="dg-earlybird-badge">🏷️ 여성 얼리버드 할인</span></div>';
       }
 
       var row = document.createElement('a');

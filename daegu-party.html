@@ -340,6 +340,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 var OPEN_DATE = '2026-07-11';
 var CHUSEOK_DATE = '2026-09-24';
 var HOLIDAY_DATE = '2026-10-08'; // 목 연휴 특별 (20:00 시작)
+var ANNIV_DATE = '2026-11-28'; // 썸잇 1주년 이벤트 (여성 10,000원, 남성 정가)
 var THIRTIES_DATE = '2026-10-04'; // 30대 솔로파티
 
 var _statusMap = {};
@@ -408,6 +409,7 @@ _statusReady.then(function() {
       document.getElementById('leftAge').textContent = '남 87~98년생 / 여 88~00년생';
       document.getElementById('rightAge').textContent = '남 87~98 / 여 88~00년생';
     }
+    if (dateParam === ANNIV_DATE) partyName = '썸잇 1주년 이벤트';
     document.getElementById('mainTitle').innerHTML = partyName+'<br>'+dateText+'<br>대구점';
     document.getElementById('metaDate').innerHTML = '📅 '+dateText;
     document.getElementById('metaTime').innerHTML = '🕒 '+timeDisplay;
@@ -415,8 +417,25 @@ _statusReady.then(function() {
     document.getElementById('floatingSub').textContent = dateText+' · '+timeDisplay;
   }
 
+  // 썸잇 1주년 이벤트 (11월 28일) — 여성 10,000원, 남성 정가
+  if (dateParam === ANNIV_DATE) {
+    var ob = document.getElementById('openBadge');
+    ob.textContent = '🎉 1주년 이벤트'; ob.style.display = '';
+    var obl = document.getElementById('openBannerLeft');
+    obl.querySelector('.open-banner-title').textContent = '🎉 썸잇 1주년 이벤트!';
+    obl.querySelector('.open-banner-body').textContent = '11월 28일(토) 단 하루, 여성 참가비 10,000원 (남성은 정가)';
+    obl.style.display = '';
+    var ae = document.getElementById('leftPriceMain');
+    ae.style.cssText = 'display:flex;flex-direction:column;align-items:flex-end;gap:2px';
+    ae.innerHTML =
+      '<span style="text-decoration:line-through;opacity:0.45;font-size:0.65rem;white-space:nowrap">여 45,000원</span>' +
+      '<span style="white-space:nowrap">남 62,000원 / 여 10,000원</span>';
+    document.getElementById('rightPriceMain').innerHTML =
+      '<span style="font-size:0.65rem;text-decoration:line-through;opacity:0.5">여 45,000원</span><br>남 62,000 / 여 10,000원';
+    document.getElementById('cardTopStatus').textContent = '🎉 썸잇 1주년 이벤트 · 여성 1만원';
+
   // OPEN 할인 (7월 11일)
-  if (dateParam === OPEN_DATE) {
+  } else if (dateParam === OPEN_DATE) {
     document.getElementById('openBadge').style.display = '';
     document.getElementById('openBannerLeft').style.display = '';
     var el = document.getElementById('leftPriceMain');

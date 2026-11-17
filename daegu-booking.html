@@ -196,6 +196,7 @@ firebase.initializeApp({
 
 var CHUSEOK_DATE = '2026-09-24';
 var HOLIDAY_DATE = '2026-10-08'; // 목 연휴 특별 (20:00 시작)
+var ANNIV_DATE = '2026-11-28'; // 썸잇 1주년 이벤트 (여성 10,000원, 남성 정가)
 var THIRTIES_DATE = '2026-10-04'; // 30대 솔로파티 (남 87~98년생 / 여 88~00년생)
 var DAY_NAMES = ['일','월','화','수','목','금','토'];
 var MONTH_NAMES = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
@@ -291,6 +292,9 @@ function getPartyTime(dayType) {
 
 function getPriceHtml(ds) {
   var eb = isEarlyBird(ds);
+  if (ds === ANNIV_DATE) {
+    return '<div class="info-price"><span class="info-price-eb">1주년 이벤트</span>남 <strong>62,000원</strong> &nbsp;·&nbsp; 여 <s>45,000</s> <strong>10,000원</strong></div>';
+  }
   if (ds === CHUSEOK_DATE) {
     return eb
       ? '<div class="info-price"><span class="info-price-eb">여성 얼리버드</span>남 <strong>55,000원</strong> &nbsp;·&nbsp; 여 <s>40,000</s> <strong>35,000원</strong></div>'
@@ -335,11 +339,14 @@ function renderSchedule() {
       var isChuseok = ds === CHUSEOK_DATE;
       var isThirties = ds === THIRTIES_DATE;
       var isHoliday = ds === HOLIDAY_DATE;
-      var eb = isEarlyBird(ds);
+      var isAnniv = ds === ANNIV_DATE;
+      var eb = isEarlyBird(ds) && !isAnniv;
 
       var statusEl;
       if (isSelected) {
         statusEl = '<div class="date-card-status" style="color:rgba(255,255,255,0.88)">✓ 선택</div>';
+      } else if (isAnniv && !st.disabled) {
+        statusEl = '<div class="date-card-status"><span class="date-card-badge-special">1주년 이벤트</span></div>';
       } else if (isSoon) {
         statusEl = '<div class="date-card-status"><span class="date-card-badge-soon">마감임박</span></div>';
       } else if (isChuseok) {
